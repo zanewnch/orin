@@ -1,6 +1,6 @@
 // Plan-mode GATED probe. Unlike plan-reject-probe (which ACKs everything to
 // observe grok's raw behavior), this one wires in the EXACT shipped policy
-// (out/plan-gate.js) and responds with the same JSON-RPC error the extension
+// (out/acp/plan-gate.js) and responds with the same JSON-RPC error the extension
 // sends when the gate blocks. It answers the real UX question surfaced by the
 // reject probe:
 //
@@ -13,7 +13,7 @@ const readline = require("node:readline");
 const os = require("node:os");
 const path = require("node:path");
 const fs = require("node:fs");
-const gate = require("../out/plan-gate.js");
+const gate = require("../out/acp/plan-gate.js");
 
 const GROK = path.join(os.homedir(), ".grok", "bin", "grok.exe");
 const cwd = fs.mkdtempSync(path.join(os.tmpdir(), "grok-gated-exp-"));

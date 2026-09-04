@@ -8,8 +8,8 @@
 // carries only a leading-verb title and no `kind`.
 import { describe, it, expect } from "vitest";
 import { bootWebview, dispatch } from "./webview-harness";
-import { normalizeCodexUpdate } from "../src/codex-backend";
-import { createMcpPrepareState, prepareMcpToolCall } from "../src/mcp-tool";
+import { normalizeCodexUpdate } from "../src/acp/codex-backend";
+import { createMcpPrepareState, prepareMcpToolCall } from "../src/mcp/mcp-tool";
 // @ts-expect-error — plain JS module, no types
 import { middleElide, TOOL_LABEL_MAX } from "../media/webview-helpers.js";
 

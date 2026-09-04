@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { Window } from "happy-dom";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { RAIL_EXPANDED, RAIL_PREVIEW } from "../src/projects-rail";
+import { RAIL_EXPANDED, RAIL_PREVIEW } from "../src/projects/projects-rail";
 
 const read = (rel: string) => readFileSync(fileURLToPath(new URL(rel, import.meta.url)), "utf8");
 const railSrc = read("../media/projects-rail.js");

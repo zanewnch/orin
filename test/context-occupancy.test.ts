@@ -5,13 +5,13 @@ import {
   occupancyFromAdapterTurn,
   occupancyFromUsageLog,
   type ContextOccupancyState,
-} from "../src/acp-dispatch";
+} from "../src/acp/acp-dispatch";
 import {
   contextUsageFromLog,
   persistSessionContext,
   persistedContextUsage,
   type SessionMetaOverride,
-} from "../src/sessions";
+} from "../src/session/sessions";
 
 describe("applyContextOccupancy", () => {
   it("starts empty and takes the first prompt size", () => {

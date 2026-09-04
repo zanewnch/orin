@@ -21,7 +21,7 @@ import { describe, expect, it } from "vitest";
  * guards is invisible locally and only shows up as "the rail is stale".
  */
 const src = readFileSync(
-  path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+  path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
   "utf8",
 );
 

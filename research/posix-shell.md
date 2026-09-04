@@ -6,7 +6,7 @@ macOS/Linux instead of always `/bin/sh`.
 ## Root cause
 
 In ACP mode grok does not run shell commands itself. It sends `terminal/create`
-with a raw command string and the client spawns it (`src/acp.ts` →
+with a raw command string and the client spawns it (`src/acp/acp.ts` →
 `TerminalManager.create`). The host used Node's `shell: true`, which is
 **`/bin/sh`**. On macOS `/bin/sh` is bash 3.2. A login bash sources
 `~/.bash_profile`, sdkman sees `$BASH_VERSION`, and `${candidate_name^^}`

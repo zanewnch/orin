@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { bootWebview, click, dispatch, press } from "./webview-harness";
 
-const sidebarSrc = readFileSync(new URL("../src/sidebar.ts", import.meta.url), "utf8");
+const sidebarSrc = readFileSync(new URL("../src/sidebar/grok-sidebar.ts", import.meta.url), "utf8");
 
 function key(window: any, el: Element, init: Record<string, unknown>) {
   const event = new window.KeyboardEvent("keydown", {

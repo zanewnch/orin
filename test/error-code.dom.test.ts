@@ -3,7 +3,7 @@
 import { describe, it, expect } from "vitest";
 import { bootWebview, dispatch } from "./webview-harness";
 import { INTERRUPTED_SEND_CODE } from "../src/protocol";
-import { INTERRUPTED_SEND_TEXT } from "../src/session";
+import { INTERRUPTED_SEND_TEXT } from "../src/session/session";
 
 describe("error.code → data-error-code", () => {
   it("stamps data-error-code when the host sends a code", () => {

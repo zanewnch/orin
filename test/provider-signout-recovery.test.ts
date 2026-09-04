@@ -12,8 +12,8 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { GrokSidebar } from "../src/sidebar";
-import { RemoteClientState } from "../src/remote-client-state";
-import { Session } from "../src/session";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { Session } from "../src/session/session";
 import type { HostMsg } from "../src/protocol";
 
 const fixtureAdapter = path.join(

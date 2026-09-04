@@ -60,7 +60,7 @@ Run it: `node research/vision-probe.cjs` (env: `PROBE_PNG_SIZE=<px>`,
   first build are also stripped; a tag-looking string in the *middle* of the
   user's words is left alone.
 - **`[Image #N]` is assigned once, at attach, and never rewritten.**
-  `allocateImageIndex` (`src/chips.ts`) stamps the chip from
+  `allocateImageIndex` (`src/composer/chips.ts`) stamps the chip from
   `Session.imageIndexHighWater`. That high-water resets to zero only when
   nothing is staged — composer empty *and* queue empty — so a plain send
   still starts at `#1`, while a chip shown as `#2` keeps `#2` after `#1`

@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 // @ts-expect-error — plain JS module, no types
 import { formatWaitElapsed, looksLikeFileRef, formatRelativeTime, FILE_EXTS, modelPickerLabel, modelDisplayName, nextMicState, trailingSendPhrase, versionedSiblingUrl, buildQuestionAnswers, isFreeTextOptionLabel, isSubagentToolCall, subagentLabel, cleanSubagentOutput, parseSubagentTaskResult, shouldStickToBottom, stickThresholdPx, splitMath, stripUnsupportedTex, parseAttachmentContext, parseSelectionBlocks, parseImageTags, toolFailureText, isMediaGenToolCall, mediaGenZeroRetentionHint, TOOL_LABEL_MAX, middleElide, filterCommands, highlightQueryParts, appendHighlightedText, commandProgramLabel, commandTextPreview, MAX_COMMAND_OUTPUT_CHARS, capCommandOutput, extractToolResultOutput, commandOutputWasCancelled, commandOutputTruncationNote, computeLineDiff, spokenTextFromMarkdown, isRelaySendRejection, panelReclampOnResizeAllowed, wireFullscreenSafeReclamp, distributeSidePanelWidths, chatZoomFactor, unzoomClientPx, createPendingOverlay, contextOverheadTokens, nextContextBreakdown, contextBreakdownIsCurrent, flattenHistoryMessages, splitHistoryWindow, countHistoryReplayCounters, partitionHistoryCards } from "../media/webview-helpers.js";
 import { Window } from "happy-dom";
-import { buildPrompt, buildPromptWithImages } from "../src/prompt-builder";
-import { makeExplicitChip, makeImplicitChip, makeImageChip } from "../src/chips";
+import { buildPrompt, buildPromptWithImages } from "../src/composer/prompt-builder";
+import { makeExplicitChip, makeImplicitChip, makeImageChip } from "../src/composer/chips";
 
 describe("contextOverheadTokens", () => {
   it("is used minus system minus messages when that remainder is positive", () => {

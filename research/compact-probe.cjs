@@ -3,7 +3,7 @@
 // prompt response `_meta.totalTokens` report around it?
 //
 // Four variants. A and B mirror the extension's two send paths (src/sidebar.ts
-// handleSend + src/prompt-builder.ts buildPrompt); C and D are the fix shapes
+// handleSend + src/composer/prompt-builder.ts buildPrompt); C and D are the fix shapes
 // (slash at position 0, context trailing) — findings in research/compact.md:
 //   A) bare        — text block is exactly "/compact" (gear-menu path,
 //                    bare:true clears chips, slash sits at position 0)
@@ -36,7 +36,7 @@ const PER_VARIANT_TIMEOUT_MS = 180_000;
 const POST_COMPACT_WAIT_MS = Number(process.env.POST_COMPACT_WAIT_MS || 800);
 const ONLY = process.env.VARIANT || "";
 
-// Must match CONTEXT_TAG_OPEN/CLOSE in src/prompt-builder.ts — variant B is
+// Must match CONTEXT_TAG_OPEN/CLOSE in src/composer/prompt-builder.ts — variant B is
 // byte-identical to buildPrompt("/compact", [implicit README.md]).
 const ENVELOPE =
   '<vscode-context note="added by the editor, not typed by the user">\n' +

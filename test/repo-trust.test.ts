@@ -13,9 +13,9 @@
 import { describe, expect, it } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { alwaysApproveSource, configForcesAlwaysApprove } from "../src/grok-config";
-import { sessionScopedRoots } from "../src/auth-roots";
-import { resolveTreePath, writeTreeFile } from "../src/desktop/file-tree";
+import { alwaysApproveSource, configForcesAlwaysApprove } from "../src/providers/grok-config";
+import { sessionScopedRoots } from "../src/auth/auth-roots";
+import { resolveTreePath, writeTreeFile } from "../src/desktop/files/file-tree";
 
 // Platform-injected fs stubs so both path worlds are testable from either OS —
 // the whole reason the bug below survived is that nothing exercised POSIX.
@@ -31,7 +31,7 @@ const posixFs = stubFs("/") as never;
 const win32Fs = stubFs("\\") as never;
 
 const sidebarSrc = () =>
-  fs.readFileSync(path.join(__dirname, "..", "src", "sidebar.ts"), "utf8");
+  fs.readFileSync(path.join(__dirname, "..", "src", "sidebar", "grok-sidebar.ts"), "utf8");
 
 const ALWAYS = '[ui]\npermission_mode = "always-approve"\n';
 const ASK = '[ui]\npermission_mode = "ask"\n';
@@ -250,7 +250,7 @@ describe("a save cannot follow the workspace to another project", () => {
   // against whatever root was current. The mtime stamp caught the common case
   // and then offered Overwrite, which completed the loss.
   const ipcSrc = () =>
-    fs.readFileSync(path.join(__dirname, "..", "src", "desktop", "file-tree-ipc.ts"), "utf8");
+    fs.readFileSync(path.join(__dirname, "..", "src", "desktop", "files", "file-tree-ipc.ts"), "utf8");
 
   it("the save handler refuses when the read-time path no longer resolves there", () => {
     const src = ipcSrc();
@@ -269,7 +269,7 @@ describe("a save cannot follow the workspace to another project", () => {
     // Overwrite is the dangerous one: it is the branch the user reaches AFTER
     // being told the file changed, so it must carry the binding too.
     const panel = fs.readFileSync(
-      path.join(__dirname, "..", "src", "desktop", "file-tree-panel.ts"),
+      path.join(__dirname, "..", "src", "desktop", "files", "file-tree-panel.ts"),
       "utf8",
     );
     const saves = panel.match(/api\.save\(\{[^}]*\}/g) || [];

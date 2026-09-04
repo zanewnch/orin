@@ -4,13 +4,13 @@
  * These tests drive the real handleSend / startSession pair.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { RemoteClientState } from "../src/remote-client-state";
+import { RemoteClientState } from "../src/remote/remote-client-state";
 import {
   INTERRUPTED_SEND_TEXT,
   Session,
   beginTurn,
   turnIsInFlight,
-} from "../src/session";
+} from "../src/session/session";
 import { INTERRUPTED_SEND_CODE, type HostMsg } from "../src/protocol";
 
 const promptControl = {
@@ -20,9 +20,9 @@ const promptControl = {
   rejectOnDispose: null as ((err: Error) => void) | null,
 };
 
-vi.mock("../src/acp", async (importOriginal) => {
+vi.mock("../src/acp/acp", async (importOriginal) => {
   const { EventEmitter } = await import("node:events");
-  const actual = await importOriginal<typeof import("../src/acp")>();
+  const actual = await importOriginal<typeof import("../src/acp/acp")>();
   class FakeAcpClient extends EventEmitter {
     provider = "grok" as const;
     usesClientPlanGate = false;

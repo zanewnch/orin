@@ -11,10 +11,10 @@
 import { describe, expect, it } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Session, sessionHasWorkInFlight, turnIsInFlight } from "../src/session";
+import { Session, sessionHasWorkInFlight, turnIsInFlight } from "../src/session/session";
 
 const sidebarSrc = () =>
-  fs.readFileSync(path.join(__dirname, "..", "src", "sidebar.ts"), "utf8");
+  fs.readFileSync(path.join(__dirname, "..", "src", "sidebar", "grok-sidebar.ts"), "utf8");
 
 describe("sessionHasWorkInFlight", () => {
   it("is false for an idle session — closing that folder costs nothing", () => {

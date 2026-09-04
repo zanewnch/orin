@@ -117,7 +117,7 @@ Other machine-dependent inputs on the same path:
 - `defaultMode: "dontAsk"` produces the *opposite* failure (auto-deny instead of prompt,
   `manager.rs:1476-1484`).
 
-**Implement:** extend `src/grok-config.ts` to read the Claude-settings chain (+
+**Implement:** extend `src/providers/grok-config.ts` to read the Claude-settings chain (+
 `permission.toml`, `[claude_compat].imported`) and (a) show an honest mode label
 ("Auto accept — from ~/.claude/settings.json") like we already do for `[ui] permission_mode`,
 (b) explain *why* no permission cards appear, with the remedy. Then answer #49 with the root
@@ -283,7 +283,7 @@ Three facts that decide the #53 UI:
 - **The terminal hole is confirmed present at HEAD.** `plan_mode_edit_gate`
   (`xai-grok-shell/src/session/acp_session_impl/tool_calls.rs:166-181`) rejects only
   `AccessKind::Edit`; `Bash` falls to `_ => PlanEditGate::Allow` — its own doc-comment says bash
-  is never gated there. Our client-side gate (`src/plan-gate.ts`) remains the only barrier; keep
+  is never gated there. Our client-side gate (`src/acp/plan-gate.ts`) remains the only barrier; keep
   it. Upstream fix would be ~10 lines in that one function (the caller already maps any
   non-Allow verdict to a rejection message) — worth citing in ACP-feedback.md.
 - **Semantic rejection exists — we've been using the wrong shape.** The client should reply to

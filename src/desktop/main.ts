@@ -32,50 +32,50 @@ import {
   desktopLogPath,
   formatLogLine,
   prepareLogFile,
-} from "./log-file";
+} from "./config/log-file";
 import { GrokSidebar } from "../sidebar";
 import { Uri } from "../host";
 import type { HostContext, HostDisposable } from "../host";
-import { ConfigStore, SensitiveConfigStore } from "./config-store";
-import { createAppResourceHandler } from "./app-resource-handler";
-import type { DesktopOpenFileContext } from "./desktop-policy";
-import { createElectronHost, ensureWorkspaceRoot, type ElectronRemoteActions } from "./electron-host";
+import { ConfigStore, SensitiveConfigStore } from "./config/config-store";
+import { createAppResourceHandler } from "./resources/app-resource-handler";
+import type { DesktopOpenFileContext } from "./policy/desktop-policy";
+import { createElectronHost, ensureWorkspaceRoot, type ElectronRemoteActions } from "./host/electron-host";
 import {
   APP_RESOURCE_SCHEME,
   desktopChromeBootSource,
   ElectronWebview,
   isAppDocumentUrl,
-} from "./electron-webview";
+} from "./host/electron-webview";
 import {
   DESKTOP_APP_FULL_NAME,
   DESKTOP_APP_DISPLAY_NAME,
   DESKTOP_APP_SHORT_NAME,
   DESKTOP_PUBLIC_REPO_URL,
-} from "./host-dialogs";
-import { createFileMemento } from "./memento";
-import { extensionIdFromPackageMeta, isCloudBuildFromPackageMeta } from "./package-meta";
+} from "./host/host-dialogs";
+import { createFileMemento } from "./config/memento";
+import { extensionIdFromPackageMeta, isCloudBuildFromPackageMeta } from "./config/package-meta";
 import {
   desktopUserHomeDir,
   provisionDefaultProjectDir,
   resolveDesktopProfileDir,
   resolveExtensionRoot,
   resolveUserDataDir,
-} from "./paths";
-import { createSafeStorageSecrets } from "./safe-secrets";
+} from "./config/paths";
+import { createSafeStorageSecrets } from "./policy/safe-secrets";
 import {
   RELAY_DEVICE_TOKEN_ENV,
   RELAY_DEVICE_TOKEN_SECRET,
   consumeInjectedDeviceToken,
   withInjectedSecret,
-} from "../remote-frames";
+} from "../remote/remote-frames";
 import {
   injectFileTreePanelLogged,
   registerFileTreeIpc,
-} from "./file-tree-ipc";
+} from "./files/file-tree-ipc";
 import {
   installWindowSecurityLocks,
   isTrustedMainFrameIpc,
-} from "./window-security";
+} from "./host/window-security";
 import { autoUpdater } from "electron-updater";
 import {
   DESKTOP_RELEASES_API_URL,
@@ -83,7 +83,7 @@ import {
   attachDesktopAutoUpdate,
   noticeIfUpdateAvailable,
   type GithubReleaseLike,
-} from "./app-update";
+} from "./config/app-update";
 import {
   desktopAppMenuTemplate,
   desktopDevToolsAllowed,
@@ -91,7 +91,7 @@ import {
   secondInstanceShouldOpenDevTools,
   shouldOpenDevToolsAtStartup,
   type DesktopAppMenuActions,
-} from "./app-menu";
+} from "./host/app-menu";
 
 // Electron dies with launch-failed if sandbox is left at the platform default
 // in some setups; we set it explicitly on the BrowserWindow. Also strip the

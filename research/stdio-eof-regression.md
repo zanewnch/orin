@@ -142,7 +142,7 @@ The current recovery target and native-plan floor are **0.2.117**
 (`GROK_STDIO_DOWNGRADE_TARGET === GROK_REQUIRED_VERSION`). Before spawning, the
 extension reads `grok --version`; if a Windows build is in the bounded broken range
 **0.2.61–0.2.70** (`isStdioBrokenGrokVersion`,
-[src/cli-locator.ts](../src/cli-locator.ts)), `maybePinBrokenCli` runs
+[src/providers/cli-locator.ts](../src/providers/cli-locator.ts)), `maybePinBrokenCli` runs
 `grok update --version 0.2.117`, moving it past the stdin regression. Windows updates
 are no longer paused, and `shouldReactivelyDowngrade` remains the observed-failure
 backstop at `initialize` or `session/new` when proactive recovery could not run.
@@ -210,7 +210,7 @@ the broken build to check whether the regression is platform-specific:
 
 The EOF-gated-first-read hang **does not reproduce on macOS** — the bug is
 **Windows-only**. This confirms the stdin-regression workaround's `win32` gate is correct:
-`isStdioBrokenGrokVersion` / `grokUpdatePolicy` (`src/cli-locator.ts`) early-return to
+`isStdioBrokenGrokVersion` / `grokUpdatePolicy` (`src/providers/cli-locator.ts`) early-return to
 a no-op on every non-win32 platform, so the regression auto-pin never fires off Windows.
 The separate `GROK_REQUIRED_VERSION` Plan-availability check applies on every platform.
 Widen/remove only the regression gate if the EOF bug is later observed elsewhere.

@@ -20,7 +20,7 @@ One environment variable, read in one place:
 GROK_CLOUD_ENVIRONMENT=1
 ```
 
-`isCloudEnvironment()` in [`src/remote-frames.ts`](../src/remote-frames.ts) is
+`isCloudEnvironment()` in [`src/remote/remote-frames.ts`](../src/remote/remote-frames.ts) is
 the only reader. Deliberately not inferred from the platform or the relay URL —
 both of those have other reasons to look cloud-shaped, and a host that guesses
 wrong about what it is will guess wrong about what it may do.

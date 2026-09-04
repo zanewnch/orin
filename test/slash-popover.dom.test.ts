@@ -201,6 +201,17 @@ describe("/ slash popover — skills anywhere, commands only at position 0 (#110
     expect(slashNames(h)).not.toContain("/effort");
   });
 
+  it("offers host /plan at position 0 like other commands", () => {
+    const h = bootWebview();
+    loadCommands(h, [
+      { name: "plan", description: "Switch to Plan mode; extra text is sent as the task" },
+      { name: "compact", description: "Compress conversation" },
+    ]);
+    typeInComposer(h, "/pl");
+    expect(slashPopover(h).hidden).toBe(false);
+    expect(slashNames(h)).toEqual(["/plan"]);
+  });
+
   it("hides the popover for a mid-prompt command token", () => {
     const h = bootWebview();
     loadCommands(h, MIXED);

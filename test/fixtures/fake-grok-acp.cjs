@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Minimal fake `grok agent stdio` for integration tests. Speaks the subset of
-// ACP that src/acp.ts actually exercises:
+// ACP that src/acp/acp.ts actually exercises:
 //   - initialize, session/new, session/load, session/set_model, session/set_mode,
 //     session/prompt, session/cancel  (client → server)
 //   - session/load reads GROK_HOME/sessions/<encoded-cwd>/<id>/{updates,chat_history}.jsonl

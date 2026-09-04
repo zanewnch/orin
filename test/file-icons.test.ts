@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { fileTreePanelBootSource } from "../src/desktop/file-tree-panel";
+import { fileTreePanelBootSource } from "../src/desktop/files/file-tree-panel";
 import { Window } from "happy-dom";
 
 const iconsDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "media", "file-icons");

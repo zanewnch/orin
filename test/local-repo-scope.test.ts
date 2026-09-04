@@ -22,12 +22,12 @@ import { describe, expect, it } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { repoScopeFor } from "../src/remote-policy";
-import { relativePathWithin } from "../src/sessions";
+import { repoScopeFor } from "../src/remote/remote-policy";
+import { relativePathWithin } from "../src/session/sessions";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sidebar = fs
-  .readFileSync(path.join(root, "src", "sidebar.ts"), "utf8")
+  .readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8")
   .replace(/\r\n/g, "\n");
 
 /** Body of a method, sliced from its declaration to the first dedented `}`. */

@@ -36,8 +36,8 @@
  * scheduled window and must not consume one.
  */
 
-import type { AcpProvider } from "./acp-backend";
-import { AUTO_NAME_MAX_CHARS } from "./sessions";
+import type { AcpProvider } from "./acp/acp-backend";
+import { AUTO_NAME_MAX_CHARS } from "./session/sessions";
 
 /** `PersistedState` key — routine definitions. Runs live in their own files. */
 export const ROUTINES_KEY = "grok.routines";

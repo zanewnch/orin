@@ -15,12 +15,12 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Window } from "happy-dom";
-import { shouldKeepAwake } from "../src/keep-awake";
+import { shouldKeepAwake } from "../src/remote/keep-awake";
 import { GrokSidebar } from "../src/sidebar";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const sidebar = fs.readFileSync(path.join(root, "src", "sidebar.ts"), "utf8").replace(/\r\n/g, "\n");
-const modelCache = fs.readFileSync(path.join(root, "src", "codex-model-cache.ts"), "utf8");
+const sidebar = fs.readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8").replace(/\r\n/g, "\n");
+const modelCache = fs.readFileSync(path.join(root, "src", "providers", "codex-model-cache.ts"), "utf8");
 
 function methodBody(signature: string): string {
   const start = sidebar.indexOf(signature);
@@ -655,7 +655,7 @@ describe("a device-code sign-in finishes the job", () => {
 });
 
 describe("signing out resets what the next sign-in is told", () => {
-  const sidebarSrc = fs.readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+  const sidebarSrc = fs.readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
 
   it("clears the preflight latch, so step 1 is shown again", () => {
     // The latch stops the advice repeating inside ONE flow. A sign-out ends

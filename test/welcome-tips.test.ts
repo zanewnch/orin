@@ -132,7 +132,7 @@ describe("the registries a device-global frame has to be named in", () => {
   // read as empty — a tip the user had retired came back on every empty screen
   // and the once-a-day rule never applied.
   const sidebarSrc = readFileSync(
-    fileURLToPath(new URL("../src/sidebar.ts", import.meta.url)),
+    fileURLToPath(new URL("../src/sidebar/grok-sidebar.ts", import.meta.url)),
     "utf8",
   );
 

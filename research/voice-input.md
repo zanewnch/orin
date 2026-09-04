@@ -4,8 +4,8 @@
 > "not buildable today" conclusion was later overturned. Voice input **was** built —
 > via "Path B" below: mic capture moved into the **extension host** (an `ffmpeg`
 > child process), with transcription POSTed/streamed to `api.x.ai/v1/stt`. See
-> [src/voice.ts](../src/voice.ts), [src/voice-recorder.ts](../src/voice-recorder.ts),
-> [src/voice-streamer.ts](../src/voice-streamer.ts), the `grok.voice*` settings, the
+> [src/voice/voice.ts](../src/voice/voice.ts), [src/voice/voice-recorder.ts](../src/voice/voice-recorder.ts),
+> [src/voice/voice-streamer.ts](../src/voice/voice-streamer.ts), the `grok.voice*` settings, the
 > `ws` dependency, and CHANGELOG § Voice input. The verification probes are
 > `research/voice-stt-probe.cjs`, `voice-stream-probe.cjs`, `voice-stream-verify.cjs`,
 > `voice-e2e-verify.cjs`, `voice-cost-probe.cjs`. The **evidence** sections below
@@ -130,7 +130,7 @@ Blockers, all real:
    > so voice works without a separate key. A dedicated `grok.voiceApiKey` still
    > wins. It remains undocumented xAI behavior (a `capabilities`/`vision-prompt`-
    > style drift risk), and the transmission is disclosed in [docs/privacy.md](../docs/privacy.md).
-   > See `extractGrokAuthKey`/`resolveVoiceKey` in [src/voice.ts](../src/voice.ts).
+   > See `extractGrokAuthKey`/`resolveVoiceKey` in [src/voice/voice.ts](../src/voice/voice.ts).
 2. **Billing.** ~$0.10/hr batch — a paid dependency the extension doesn't have today.
 3. **Architecture break.** The extension is a thin client where *all* state lives
    in the CLI (see CLAUDE.md). A direct HTTP call to `api.x.ai` is a new, non-CLI

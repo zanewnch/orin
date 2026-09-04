@@ -7,7 +7,7 @@ import { bootWebview, dispatch, click, Posted } from "./webview-harness";
 
 const $ = (doc: Document, id: string) => doc.getElementById(id) as HTMLElement;
 const types = (posted: Posted[]) => posted.map((p) => p.type);
-const sidebarSrc = readFileSync(new URL("../src/sidebar.ts", import.meta.url), "utf8");
+const sidebarSrc = readFileSync(new URL("../src/sidebar/grok-sidebar.ts", import.meta.url), "utf8");
 
 describe("voice control mic button", () => {
   it("starts idle showing the mic icon", () => {

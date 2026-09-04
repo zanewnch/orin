@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const sidebar = readFileSync(new URL("../src/sidebar.ts", import.meta.url), "utf8");
+const sidebar = readFileSync(new URL("../src/sidebar/grok-sidebar.ts", import.meta.url), "utf8");
 const chat = readFileSync(new URL("../media/chat.js", import.meta.url), "utf8");
 
 const toolCallStart = sidebar.indexOf("    const replayedCommandOutputs = new Set<string>();");

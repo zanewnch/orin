@@ -4,8 +4,8 @@
  * Auth still surfaces immediately; only the last of 3 plain attempts emits.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { RemoteClientState } from "../src/remote-client-state";
-import { Session } from "../src/session";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { Session } from "../src/session/session";
 import type { HostMsg } from "../src/protocol";
 
 const startControl = {
@@ -18,9 +18,9 @@ const startControl = {
   exitDuringNewSessionRemaining: 0,
 };
 
-vi.mock("../src/acp", async (importOriginal) => {
+vi.mock("../src/acp/acp", async (importOriginal) => {
   const { EventEmitter } = await import("node:events");
-  const actual = await importOriginal<typeof import("../src/acp")>();
+  const actual = await importOriginal<typeof import("../src/acp/acp")>();
   class FakeAcpClient extends EventEmitter {
     provider = "grok" as const;
     usesClientPlanGate = false;

@@ -29,8 +29,8 @@ import {
   SensitiveConfigStore,
   SENSITIVE_CONFIG_KEYS,
   normalizeWorkspaceRoots,
-} from "../src/desktop/config-store";
-import { createFileMemento } from "../src/desktop/memento";
+} from "../src/desktop/config/config-store";
+import { createFileMemento } from "../src/desktop/config/memento";
 import {
   buildDiffViewerHtml,
   buildTextViewerHtml,
@@ -39,7 +39,7 @@ import {
   MAX_DOCUMENT_VIEW_CHARS,
   prepareDocumentViewText,
   resolveDocumentText,
-} from "../src/desktop/document-view";
+} from "../src/desktop/host/document-view";
 import {
   asAppResourceRegistryUrl,
   asAppResourceUrl,
@@ -51,22 +51,22 @@ import {
   DESKTOP_THEME_CSS,
   desktopChromeBootSource,
   isAppDocumentUrl,
-} from "../src/desktop/electron-webview";
+} from "../src/desktop/host/electron-webview";
 import { Uri } from "../src/host";
-import { findFilesUnder } from "../src/desktop/find-files";
+import { findFilesUnder } from "../src/desktop/files/find-files";
 import {
   createSafeStorageSecrets,
   EncryptionUnavailableError,
   isWindowsReplaceRenameError,
   writeFileAtomic,
   type SafeStorageLike,
-} from "../src/desktop/safe-secrets";
+} from "../src/desktop/policy/safe-secrets";
 import {
   appResourceMayServe,
   isGeneratedSessionMediaPath,
   resolveAppResourceServe,
   rootServePolicy,
-} from "../src/desktop/app-resource-policy";
+} from "../src/desktop/resources/app-resource-policy";
 import { AsyncSerialQueue } from "../src/async-serial";
 import {
   authorizeDesktopWebviewMsg,
@@ -78,15 +78,15 @@ import {
   isExecutablePath,
   resolveAuthorizedFileForOpen,
   revalidateOpenFileForUse,
-} from "../src/desktop/desktop-policy";
+} from "../src/desktop/policy/desktop-policy";
 import {
   FileSelectionRegistry,
   isFileSelectionId,
-} from "../src/desktop/file-selection-registry";
+} from "../src/desktop/files/file-selection-registry";
 import {
   planOpenCliInTerminal,
   planRunCommandInTerminal,
-} from "../src/desktop/external-terminal";
+} from "../src/desktop/host/external-terminal";
 import {
   breadcrumbSegments,
   classifyFilePreview,
@@ -100,34 +100,34 @@ import {
   resolveTreePath,
   type TreePathFs,
   writeTreeFile,
-} from "../src/desktop/file-tree";
-import { isIpcFromMainWindow, resolveTreeOpenTarget } from "../src/desktop/file-tree-ipc";
-import { fileTreePanelBootSource } from "../src/desktop/file-tree-panel";
-import { mayRegisterResourcePath } from "../src/desktop/media-provenance";
+} from "../src/desktop/files/file-tree";
+import { isIpcFromMainWindow, resolveTreeOpenTarget } from "../src/desktop/files/file-tree-ipc";
+import { fileTreePanelBootSource } from "../src/desktop/files/file-tree-panel";
+import { mayRegisterResourcePath } from "../src/desktop/resources/media-provenance";
 import {
   ResourceRegistry,
   registryIdFromUrlPath,
-} from "../src/desktop/resource-registry";
-import { parseWebviewMsg } from "../src/desktop/webview-msg-validate";
+} from "../src/desktop/resources/resource-registry";
+import { parseWebviewMsg } from "../src/desktop/policy/webview-msg-validate";
 import {
   deliverSuggestedFileSave,
   planSuggestedSaveDialog,
   saveDialogTitleForFilename,
   saveFiltersForFilename,
   writeSuggestedFileOrCancel,
-} from "../src/desktop/suggested-save";
+} from "../src/desktop/files/suggested-save";
 import {
   base64DecodedByteLength,
   isRefusedMediaBasename,
   isRefusedMediaPath,
   isTrustedGeneratedMediaPath,
   MAX_INLINE_MEDIA_BYTES,
-} from "../src/media-serve";
+} from "../src/composer/media-serve";
 import {
   findSessionCatalogCwd,
   orderedResumeCwdCandidates,
   sessionsDirFor,
-} from "../src/sessions";
+} from "../src/session/sessions";
 import {
   buildInputBoxHtml,
   buildQuickPickHtml,
@@ -138,14 +138,14 @@ import {
   planMessageBoxButtons,
   resolveMessageBoxChoice,
   selectQuickPickIndex,
-} from "../src/desktop/host-dialogs";
+} from "../src/desktop/host/host-dialogs";
 
 import {
   isAllowedAppNavigationUrl,
   shouldBlockNavigation,
   shouldOpenExternally,
   windowOpenDecision,
-} from "../src/desktop/window-security";
+} from "../src/desktop/host/window-security";
 import {
   DESKTOP_OPEN_DEVTOOLS_ENV,
   DESKTOP_OPEN_DEVTOOLS_FLAG,
@@ -155,7 +155,7 @@ import {
   isDesktopDevToolsShortcut,
   secondInstanceShouldOpenDevTools,
   shouldOpenDevToolsAtStartup,
-} from "../src/desktop/app-menu";
+} from "../src/desktop/host/app-menu";
 
 const testRepoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const filePanelJs = fs.readFileSync(path.join(testRepoRoot, "media", "file-panel.js"), "utf8");
@@ -519,7 +519,7 @@ describe("createSafeStorageSecrets", () => {
       .toBeUndefined();
     // Sidebar must not require a successful get before delete.
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     expect(sidebar).toContain("readDeviceToken");
@@ -534,7 +534,7 @@ describe("createSafeStorageSecrets", () => {
 
   it("startup tolerates an undecryptable device token (no throw)", async () => {
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     // readDeviceToken catches decrypt failures; callers use it instead of bare get.
@@ -568,7 +568,7 @@ describe("createSafeStorageSecrets", () => {
 
   it("writes secrets via temp file then rename (crash-safe)", async () => {
     const src = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "safe-secrets.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "policy", "safe-secrets.ts"),
       "utf8",
     );
     expect(src).toContain("writeFileAtomic");
@@ -620,7 +620,7 @@ describe("desktop main wiring (source gates)", () => {
   });
 
   it("desktop remoteSignOut uses the same native confirm as unlinkRemoteDevice", () => {
-    const sidebar = fs.readFileSync(path.join(testRepoRoot, "src", "sidebar.ts"), "utf8");
+    const sidebar = fs.readFileSync(path.join(testRepoRoot, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     const start = sidebar.indexOf('case "remoteSignOut"');
     const end = sidebar.indexOf('case "openRemotePortal"', start);
     const body = sidebar.slice(start, end);
@@ -650,11 +650,11 @@ describe("desktop main wiring (source gates)", () => {
     expect(provisionAt).toBeGreaterThan(0);
     expect(sidebarAt).toBeGreaterThan(provisionAt);
 
-    const host = fs.readFileSync(path.join(testRepoRoot, "src", "desktop", "electron-host.ts"), "utf8");
+    const host = fs.readFileSync(path.join(testRepoRoot, "src", "desktop", "host", "electron-host.ts"), "utf8");
     expect(host).toContain("provisionDefaultProject?.()");
     expect(host).toContain("seeded.length");
 
-    const sidebar = fs.readFileSync(path.join(testRepoRoot, "src", "sidebar.ts"), "utf8");
+    const sidebar = fs.readFileSync(path.join(testRepoRoot, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     expect(sidebar).toContain("presentEmptyProjectState");
     // Third fixed window into this one method, and the third to be broken by a
     // few lines landing at its top rather than by anything it tests. It only
@@ -699,12 +699,12 @@ describe("desktop main wiring (source gates)", () => {
     // Capability flag only — chat may detect desktop shell for client zoom.
     expect(chatJs).toContain("grokDesktopShell");
 
-    const sidebar = fs.readFileSync(path.join(testRepoRoot, "src", "sidebar.ts"), "utf8");
+    const sidebar = fs.readFileSync(path.join(testRepoRoot, "src", "sidebar", "html.ts"), "utf8");
     const assetGate = sidebar.slice(
       sidebar.indexOf("const filePanelStyle"),
       sidebar.indexOf("return `<!DOCTYPE html>", sidebar.indexOf("const filePanelStyle")),
     );
-    expect(assetGate).toContain("this.host.canSwitchWorkspaceFolder");
+    expect(assetGate).toContain("opts.canSwitchWorkspaceFolder");
     expect(assetGate).toContain('mediaUri("file-panel.css")');
     expect(assetGate).toContain('mediaUri("file-panel.js")');
     // An empty branch means the VS Code webview receives neither tag; absence
@@ -724,7 +724,7 @@ describe("desktop main wiring (source gates)", () => {
     // A lastOpenedPath diagnostic survived project switches and returned
     // project-A paths after the root moved to B. Tests use openSink only.
     const ipc = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "file-tree-ipc.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "files", "file-tree-ipc.ts"),
       "utf8",
     );
     const preload = fs.readFileSync(
@@ -1424,12 +1424,7 @@ describe("webview message schema validation", () => {
 
   it("source gate: ElectronWebview.dispatchMessage validates before listeners", () => {
     const src = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-webview.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-webview.ts",
       ),
       "utf8",
     );
@@ -1518,7 +1513,7 @@ describe("session export save dialog", () => {
 
   it("desktop openUntitledText honors a suggested filename via the save helper", () => {
     const src = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "electron-host.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts"),
       "utf8",
     );
     const start = src.indexOf("async openUntitledText");
@@ -1567,12 +1562,7 @@ describe("window navigation and open locks", () => {
     );
     expect(main).toContain("installWindowSecurityLocks");
     const sec = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "window-security.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "window-security.ts",
       ),
       "utf8",
     );
@@ -1624,7 +1614,7 @@ describe("desktop quick pick and input dialogs", () => {
     // title bar of every prompt. Minimise/maximise are what made the frame read
     // as a window rather than a dialog.
     const src = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "electron-host.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts"),
       "utf8",
     );
     const dialog = src.slice(src.indexOf("function showHtmlDialog"));
@@ -1712,12 +1702,7 @@ describe("desktop messageBox cancel / dismiss contract", () => {
 
   it("source gate: electron-host wires plan + resolve (not raw buttons[response])", () => {
     const src = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-host.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts",
       ),
       "utf8",
     );
@@ -1734,12 +1719,7 @@ describe("desktop messageBox cancel / dismiss contract", () => {
 describe("desktop quick pick (continued)", () => {
   it("source gate: electron-host no longer cancels large quick picks", () => {
     const src = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-host.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts",
       ),
       "utf8",
     );
@@ -1924,12 +1904,7 @@ describe("desktop DevTools gate (non-production only)", () => {
     // Child viewers share the packaging lock but never auto-open.
     // Gear door (capability + host method) so discoverability is not Alt→View only.
     const host = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-host.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts",
       ),
       "utf8",
     );
@@ -1983,12 +1958,7 @@ describe("desktop branding and menu", () => {
     expect(main).not.toMatch(/Learn More|Community Discussions|Search Issues/);
     // Reading width lives in desktop theme CSS, not shared chat.css.
     const theme = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-webview.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-webview.ts",
       ),
       "utf8",
     );
@@ -2002,12 +1972,7 @@ describe("desktop branding and menu", () => {
 
   it("ports AFK Pilot selection greys (not Dark+ blue) for active rail rows", () => {
     const theme = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-webview.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-webview.ts",
       ),
       "utf8",
     );
@@ -2078,12 +2043,7 @@ describe("desktop branding and menu", () => {
 
   it("main document loads via APP_DOCUMENT_URL (source gate)", () => {
     const webview = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-webview.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-webview.ts",
       ),
       "utf8",
     );
@@ -2107,7 +2067,7 @@ describe("desktop theme prefs (userData file)", () => {
       parseDesktopTheme,
       writeDesktopThemeFile,
       readDesktopThemeFile,
-    } = await import("../src/desktop/theme-prefs");
+    } = await import("../src/desktop/host/theme-prefs");
     expect(resolveDesktopTheme("light", true)).toBe("light");
     expect(resolveDesktopTheme("dark", false)).toBe("dark");
     expect(resolveDesktopTheme(undefined, true)).toBe("dark");
@@ -2159,7 +2119,7 @@ describe("external terminal plans (not silent no-ops)", () => {
 
   it("source gate: createTerminal no longer has empty sendText body", () => {
     const src = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "electron-host.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts"),
       "utf8",
     );
     expect(src).toContain("planRunCommandInTerminal");
@@ -2202,7 +2162,7 @@ describe("file-tree panel assets", () => {
     // Owner preference: Remote, Session history, New, ⋯, |, Panel — not ⋯ first.
     // Separator lives on the Panel toggle so remote (no panel) has no dangling |.
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "html.ts"),
       "utf8",
     );
     const topBar = sidebar.match(/<header class="top-bar">[\s\S]*?<\/header>/)?.[0] ?? "";
@@ -3255,12 +3215,7 @@ describe("desktop openFile / openUrl policy (A1)", () => {
 
   it("source gate: ElectronWebview.dispatchMessage applies desktop policy", () => {
     const src = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-webview.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-webview.ts",
       ),
       "utf8",
     );
@@ -3270,16 +3225,11 @@ describe("desktop openFile / openUrl policy (A1)", () => {
 
   it("file-tree IPC open refuses executables (same policy as chat openFile)", () => {
     const ipcSrc = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "file-tree-ipc.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "files", "file-tree-ipc.ts",
       ),
       "utf8",
     );
-    expect(ipcSrc).toContain('import { isExecutableOpenTarget } from "./desktop-policy"');
+    expect(ipcSrc).toContain('import { isExecutableOpenTarget } from "../policy/desktop-policy"');
     expect(ipcSrc).toContain("executable path refused");
     // Must run before the OS open, not only document in comments.
     const openHandler = ipcSrc.indexOf("ipcMain.handle(CH_OPEN");
@@ -3425,7 +3375,7 @@ describe("media provenance + registry (A2)", () => {
     expect(base64DecodedByteLength(under)).toBeLessThanOrEqual(MAX_INLINE_MEDIA_BYTES);
     // Source gate: postGeneratedMedia must apply this before emit.
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     expect(sidebar).toContain("base64DecodedByteLength");
@@ -3437,7 +3387,7 @@ describe("media provenance + registry (A2)", () => {
   it("mutation: skipping the inline size check would re-admit oversized data: media", () => {
     // If postGeneratedMedia only checked the file-path branch, this gate is gone.
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     const dataBranch = sidebar.match(
@@ -3512,12 +3462,7 @@ describe("media provenance + registry (A2)", () => {
 
   it("source gate: asWebviewUri passes allowedRoots into register", () => {
     const src = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-webview.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-webview.ts",
       ),
       "utf8",
     );
@@ -3537,12 +3482,7 @@ describe("atomic secrets write (A3)", () => {
 
   it("never unlinks the destination before a successful replacement is staged", () => {
     const src = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "safe-secrets.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "policy", "safe-secrets.ts",
       ),
       "utf8",
     );
@@ -3568,12 +3508,7 @@ describe("atomic secrets write (A3)", () => {
     // Profile now owns the open-folder set and session metadata — a mid-write
     // crash must not truncate and silently reset preferences.
     const cfg = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "config-store.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "config", "config-store.ts",
       ),
       "utf8",
     );
@@ -3583,12 +3518,7 @@ describe("atomic secrets write (A3)", () => {
     expect(saveBody).not.toMatch(/writeFileSync\(this\.filePath/);
 
     const mem = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "memento.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "config", "memento.ts",
       ),
       "utf8",
     );
@@ -3621,12 +3551,7 @@ describe("watcher chain helpers (A4)", () => {
 
   it("source gate: createBoundFileSystemWatcher rebinds when base vanishes", () => {
     const src = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-host.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts",
       ),
       "utf8",
     );
@@ -4020,7 +3945,7 @@ describe("file-tree editing panel contract", () => {
   it("exposes the save bridge and unregisters its IPC handler", () => {
     const base = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
     const preload = fs.readFileSync(path.join(base, "src", "desktop", "preload.ts"), "utf8");
-    const ipc = fs.readFileSync(path.join(base, "src", "desktop", "file-tree-ipc.ts"), "utf8");
+    const ipc = fs.readFileSync(path.join(base, "src", "desktop", "files", "file-tree-ipc.ts"), "utf8");
     expect(preload).toContain('ipcRenderer.invoke("desk-ft:save", request)');
     expect(ipc).toContain('const CH_SAVE = "desk-ft:save"');
     expect(ipc).toContain("writeTreeFile");
@@ -4219,7 +4144,7 @@ describe("local workspace switch serialization (P1-2)", () => {
 
   it("source gate: switchLocalWorkspaceFolder uses AsyncSerialQueue", () => {
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     expect(sidebar).toContain("localWorkspaceSwitchQueue");
@@ -4231,7 +4156,7 @@ describe("local workspace switch serialization (P1-2)", () => {
 
   it("local resume follows the host-owned session project", () => {
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     const openStart = sidebar.indexOf("private async openSession(id: string");
@@ -4258,7 +4183,7 @@ describe("local workspace switch serialization (P1-2)", () => {
 
   it("worktree resume follows its owning project, not the worktree cwd", () => {
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     const followStart = sidebar.indexOf("private async followSessionWorkspace(");
@@ -4467,7 +4392,7 @@ describe("openFile / openDiff session roots (P2-4 / P2-5)", () => {
       // Source gate: openSessionReserved must resolve via catalog helpers, not
       // `sessionCwd || …` assignment.
       const sidebar = fs.readFileSync(
-        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
         "utf8",
       );
       expect(sidebar).toContain("findSessionCatalogCwd");
@@ -4548,7 +4473,7 @@ describe("openFile / openDiff session roots (P2-4 / P2-5)", () => {
       // Source: desktop branch of localTrustedSessionCwds uses openWorkspaceFolders,
       // not repoCatalog(). VS Code branch still walks repoCatalog().
       const sidebar = fs.readFileSync(
-        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
         "utf8",
       );
       const trustStart = sidebar.indexOf("private localTrustedSessionCwds(");
@@ -4594,7 +4519,7 @@ describe("openFile / openDiff session roots (P2-4 / P2-5)", () => {
     // on "No sessions yet" forever — even when indexSessions would find dozens
     // of conversations (including after drive-letter case-alias merge).
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     const readyStart = sidebar.indexOf('case "ready":');
@@ -4624,7 +4549,7 @@ describe("openFile / openDiff session roots (P2-4 / P2-5)", () => {
 
   it("local listRepoSessions/selectRepo refuse non-open roots; setActive abort is mandatory", () => {
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     // resolveLocalRepoTarget is the single local gate — open-folder catalog only.
@@ -4697,12 +4622,12 @@ describe("openFile / openDiff session roots (P2-4 / P2-5)", () => {
 
     // Host contract: setActive returns boolean (not void advisory).
     const hostSrc = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "host.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "types", "host.ts"),
       "utf8",
     );
     expect(hostSrc).toMatch(/setActiveWorkspaceFolder\(cwd: string\):\s*boolean/);
     const electronHost = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "electron-host.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts"),
       "utf8",
     );
     const setActiveStart = electronHost.indexOf("setActiveWorkspaceFolder(cwd: string)");
@@ -4713,7 +4638,7 @@ describe("openFile / openDiff session roots (P2-4 / P2-5)", () => {
 
   it("VS Code keeps full-catalog local trust (must not regress to open-folders-only)", () => {
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     // localRepoCatalogEntries: when !canSwitchWorkspaceFolder, use full catalog.
@@ -4800,7 +4725,7 @@ describe("typed config open intents (host-resolved paths)", () => {
 
   it("sidebar dispatches openGlobalConfig / openProjectConfig as host intents", () => {
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     // Gear intents call typed Host methods — not openResource with a joined path.
@@ -4827,12 +4752,7 @@ describe("typed config open intents (host-resolved paths)", () => {
 
   it("electron host opens configs via openHostPath, not openFsPath revalidation", () => {
     const hostSrc = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-host.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts",
       ),
       "utf8",
     );
@@ -4865,12 +4785,7 @@ describe("typed config open intents (host-resolved paths)", () => {
   it("mutation: openGlobalConfig must not funnel through openFsPath", () => {
     // Documents the hole: openResource → openFsPath refuses ~/.grok/config.toml.
     const hostSrc = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-host.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts",
       ),
       "utf8",
     );
@@ -5030,12 +4945,7 @@ describe("chat openFile / openDiff use-time revalidation (round 16)", () => {
       // Without revalidateOpenFileForUse, callers would open gate.absPath even
       // after a later swap. The use-time helper must be the only open path.
       const hostSrc = fs.readFileSync(
-        path.join(
-          path.dirname(fileURLToPath(import.meta.url)),
-          "..",
-          "src",
-          "desktop",
-          "electron-host.ts",
+        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts",
         ),
         "utf8",
       );
@@ -5055,7 +4965,7 @@ describe("chat openFile / openDiff use-time revalidation (round 16)", () => {
       expect(openBody).toMatch(/File not found|not found/i);
 
       const sidebarSrc = fs.readFileSync(
-        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
         "utf8",
       );
       const readDiff = sidebarSrc.slice(
@@ -5235,12 +5145,7 @@ describe("chat openFile path resolution + panel routing", () => {
 
   it("openFsPath prefers panel for previewable types and OS only for external", () => {
     const hostSrc = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-host.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts",
       ),
       "utf8",
     );
@@ -5261,12 +5166,7 @@ describe("chat openFile path resolution + panel routing", () => {
 
   it("mutation: without panel branch, chat md would only hit shell.openPath", () => {
     const hostSrc = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "electron-host.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "host", "electron-host.ts",
       ),
       "utf8",
     );
@@ -5283,12 +5183,7 @@ describe("chat openFile path resolution + panel routing", () => {
 
   it("file-tree IPC exposes openPathInFilePanel for host chat opens", () => {
     const ipcSrc = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "file-tree-ipc.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "files", "file-tree-ipc.ts",
       ),
       "utf8",
     );
@@ -5389,12 +5284,7 @@ describe("voice-key migration never deletes unencryptable credential (round 12)"
   it("mutation: scrubbing on encrypt failure reopens credential destruction", () => {
     // Old (wrong) path: delete prefs key in the catch before rethrow.
     const src = fs.readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "src",
-        "desktop",
-        "config-store.ts",
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "config", "config-store.ts",
       ),
       "utf8",
     );

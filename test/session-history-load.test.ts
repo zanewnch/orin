@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { Session, runExclusiveHistoryLoad } from "../src/session";
+import { Session, runExclusiveHistoryLoad } from "../src/session/session";
 import { GrokSidebar } from "../src/sidebar";
 import type { HostMsg } from "../src/protocol";
 
@@ -235,7 +235,7 @@ describe("replayLoadedHistory exclusive join", () => {
 
 describe("history-load exclusivity wiring", () => {
   const root = fileURLToPath(new URL("..", import.meta.url));
-  const sidebarSrc = readFileSync(new URL("../src/sidebar.ts", import.meta.url), "utf8");
+  const sidebarSrc = readFileSync(new URL("../src/sidebar/grok-sidebar.ts", import.meta.url), "utf8");
 
   it("keeps the remote-forwarding gate as a boolean any-replay check", () => {
     expect(sidebarSrc).toMatch(/if \(!session\.replaying\) this\.sendRemoteSession/);
@@ -253,6 +253,6 @@ describe("history-load exclusivity wiring", () => {
   });
 
   it("exports the helper from the session module used by the map", () => {
-    expect(readFileSync(`${root}/src/session.ts`, "utf8")).toContain("export async function runExclusiveHistoryLoad");
+    expect(readFileSync(`${root}/src/session/session.ts`, "utf8")).toContain("export async function runExclusiveHistoryLoad");
   });
 });

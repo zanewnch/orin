@@ -319,6 +319,25 @@ describe("edit totals paint mid-turn, before the batch closes (#45 follow-up)", 
     expect((doc.querySelector(".tool-item-details") as HTMLElement).hidden).toBe(true);
     expect(doc.querySelector(".tool-group")!.classList.contains("expanded")).toBe(false);
   });
+
+  it("paints Cursor-style Editing lines with +/− stats and a pending ghost", () => {
+    const { window, doc } = bootWebview();
+    edit(window, "e1", "sidebar.ts", "old line\n", "new line\nextra\n");
+    const group = doc.querySelector(".tool-group")!;
+    expect(group.classList.contains("edit-live")).toBe(true);
+    const rows = [...doc.querySelectorAll(".tool-edit-live-row")];
+    expect(rows.length).toBe(2);
+    expect(rows[0].querySelector(".tool-edit-verb")!.textContent).toBe("Editing");
+    expect(rows[0].querySelector(".tool-edit-file")!.textContent).toBe("sidebar.ts");
+    expect(rows[0].querySelector(".diff-stat-add")).not.toBeNull();
+    expect(rows[0].querySelector(".diff-stat-del")).not.toBeNull();
+    expect(rows[1].classList.contains("pending")).toBe(true);
+    expect(rows[1].querySelector(".tool-edit-file")).toBeNull();
+
+    dispatch(window, { type: "promptComplete", meta: {} });
+    expect(doc.querySelector(".tool-edit-live")).toBeNull();
+    expect(group.classList.contains("edit-live")).toBe(false);
+  });
 });
 
 // Wire fact (research/edit-diff-timing.log, grok 0.2.99): every edit reports its diff

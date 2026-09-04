@@ -45,7 +45,7 @@
 // until killed", which is Electron's natural shape. vscode-test is "run a
 // suite and exit"; a never-finishing mocha test would also hang
 // `npm run test:integration` if it ever landed in that glob. The shipped
-// code path is `src/sidebar.ts` + `src/remote-uplink.ts` either way.
+// code path is `src/sidebar/` + `src/remote/remote-uplink.ts` either way.
 //
 // Token injection cannot be a Node pre-seed of SecretStorage — desktop
 // ciphertext is OS-keyed. The env token is honoured only by
@@ -379,7 +379,7 @@ function ensureSessionCatalogs(grokHome, workspaces) {
 
 export async function runLifecycleHost(opts) {
   const envIn = opts.env ?? process.env;
-  const framesPath = path.join(root, "out", "remote-frames.js");
+  const framesPath = path.join(root, "out", "remote", "remote-frames.js");
   if (!fs.existsSync(framesPath)) {
     throw new Error(`Missing ${framesPath} — run \`npm run compile\` first`);
   }

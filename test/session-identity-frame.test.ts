@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { GrokSidebar } from "../src/sidebar";
-import { Session } from "../src/session";
+import { Session } from "../src/session/session";
 
 /**
  * Re-focusing a LIVE conversation must say which agent it belongs to.
@@ -30,7 +30,7 @@ import { Session } from "../src/session";
  * The end-to-end path needs a real host and belongs in the integration suite.
  */
 const src = readFileSync(
-  path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+  path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
   "utf8",
 );
 

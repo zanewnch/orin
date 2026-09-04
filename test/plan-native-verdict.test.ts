@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const sidebar = readFileSync(new URL("../src/sidebar.ts", import.meta.url), "utf8");
-const session = readFileSync(new URL("../src/session.ts", import.meta.url), "utf8");
-const primer = readFileSync(new URL("../src/grok-primer.ts", import.meta.url), "utf8");
-const acp = readFileSync(new URL("../src/acp.ts", import.meta.url), "utf8");
+const sidebar = readFileSync(new URL("../src/sidebar/grok-sidebar.ts", import.meta.url), "utf8");
+const session = readFileSync(new URL("../src/session/session.ts", import.meta.url), "utf8");
+const primer = readFileSync(new URL("../src/providers/grok-primer.ts", import.meta.url), "utf8");
+const acp = readFileSync(new URL("../src/acp/acp.ts", import.meta.url), "utf8");
 
 const start = sidebar.indexOf("  private handleExitPlan(");
 const end = sidebar.indexOf("  private recoverUnavailablePlanMode(", start);

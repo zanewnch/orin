@@ -26,7 +26,7 @@ import {
   resolveInjectedDeviceToken,
   resolveRelayUrl,
   withInjectedSecret,
-} from "../src/remote-frames";
+} from "../src/remote/remote-frames";
 
 const STAGING = "wss://staging-relay.example";
 
@@ -287,7 +287,7 @@ describe("injected-token consumers", () => {
     expect(sidebarAt).toBeGreaterThan(consumeAt);
     // VS Code never reads the env token — ExtensionMode.Production has no
     // overlay, and Development/Test still start the uplink from SecretStorage.
-    const sidebar = src("sidebar.ts");
+    const sidebar = src(path.join("sidebar", "grok-sidebar.ts"));
     expect(sidebar).not.toContain("resolveInjectedDeviceToken");
     expect(sidebar).not.toContain("consumeInjectedDeviceToken");
     expect(sidebar).not.toContain("RELAY_DEVICE_TOKEN_ENV");
@@ -298,8 +298,8 @@ describe("injected-token consumers", () => {
 
   it("keeps the SecretStorage key in one place", () => {
     expect(RELAY_DEVICE_TOKEN_SECRET).toBe("grok.remoteControl.deviceToken");
-    expect(src("sidebar.ts")).toContain("RELAY_DEVICE_TOKEN_SECRET");
-    expect(src("sidebar.ts")).not.toContain('"grok.remoteControl.deviceToken"');
+    expect(src(path.join("sidebar", "grok-sidebar.ts"))).toContain("RELAY_DEVICE_TOKEN_SECRET");
+    expect(src(path.join("sidebar", "grok-sidebar.ts"))).not.toContain('"grok.remoteControl.deviceToken"');
   });
 });
 

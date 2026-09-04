@@ -17,7 +17,7 @@ import {
   sameRepoCwd,
   collectRecentSessions,
   RAIL_RECENT_CAP,
-} from "../src/projects-rail";
+} from "../src/projects/projects-rail";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 

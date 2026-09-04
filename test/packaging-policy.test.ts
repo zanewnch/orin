@@ -124,20 +124,31 @@ describe("VSIX excludes desktop app", () => {
     // exclusion does work — that is how the two modules below are re-included —
     // but the broad form must stay out.
     expect(vscodeignore).toMatch(/^\s*!out\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/acp\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/providers\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/session\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/remote\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/auth\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/mcp\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/voice\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/composer\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/projects\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/types\/\*\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/sidebar\/\*\.js\s*$/m);
     expect(vscodeignore).not.toMatch(/^\s*!out\/\*\*\/\*\.js\s*$/m);
   });
 
   it("re-includes the desktop modules the EXTENSION requires at runtime", () => {
-    // #101: out/sidebar.js requires ./desktop/desktop-policy, which requires
-    // ./file-tree. Excluding them shipped six releases (3.2.0-3.2.5) that threw
-    // during activation before registering a command, so every Grok command
-    // reported "not found" and the sidebar never appeared.
+    // #101: out/sidebar.js requires ./desktop/policy/desktop-policy, which
+    // requires ../files/file-tree. Excluding them shipped six releases
+    // (3.2.0-3.2.5) that threw during activation before registering a command,
+    // so every Grok command reported "not found" and the sidebar never appeared.
     //
     // A tripwire, not the enforcement — `npm run check:vsix` resolves every
     // require in the packed output against the packed file list and fails
     // packaging. This just stops the two lines being deleted as dead weight.
-    expect(vscodeignore).toMatch(/^\s*!out\/desktop\/desktop-policy\.js\s*$/m);
-    expect(vscodeignore).toMatch(/^\s*!out\/desktop\/file-tree\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/desktop\/policy\/desktop-policy\.js\s*$/m);
+    expect(vscodeignore).toMatch(/^\s*!out\/desktop\/files\/file-tree\.js\s*$/m);
   });
 
   it("packaging cannot run without the require check", () => {

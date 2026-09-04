@@ -40,10 +40,18 @@ Present in subscription mode, not on API-key auth.
 
 Since v1.4.0 the extension **renders the result inline** — `/imagine` output shows as an image (click to open the source file), `/imagine-video` as a playable `<video>`. Grok writes the file into its session directory and the extension serves it to the webview via `asWebviewUri` (streamed from disk; a base64 `data:` URI is used only as a fallback for files outside grok's served roots). Inline media is capped at 320px, and hovering an image/video reveals **Copy path** / **Open in VS Code** actions pinned to the media. When `/imagine` is given a source image to edit, grok runs an `image_edit` tool call, which the extension detects and renders the same way. See [research/image-generation.md](../research/image-generation.md) for the wire format.
 
+## Extension-owned
+
+These are injected by the extension. They are not grok CLI slash commands.
+
+| Command | Effect |
+|---|---|
+| `/plan` | Switch to **Plan mode** (same as the bottom-toolbar picker). Extra text after `/plan` is sent as the planning task. Bare `/plan` only switches mode. Plan is unavailable when the CLI is below the required version or its version cannot be verified. |
+
 ## Not slash commands
 
 A few things look like slash commands but are surfaced through the extension UI, not the CLI:
 
 - **New session** — sidebar `+` button (`Grok: New Session` from the command palette)
-- **Plan mode** — mode picker in the bottom toolbar; native CLI verdicts drive plan review, while the extension's safety gate blocks workspace writes and non-read-only commands until approval (see [src/plan-gate.ts](../src/plan-gate.ts)); Plan is unavailable when the CLI is below the required version or its version cannot be verified
+- **Plan mode** — also the mode picker in the bottom toolbar; `/plan` is the composer shortcut. Native CLI verdicts drive plan review, while the extension's safety gate blocks workspace writes and non-read-only commands until approval (see [src/acp/plan-gate.ts](../src/acp/plan-gate.ts))
 - **Auto accept (YOLO)** — mode picker; toggles auto-approval on the client side

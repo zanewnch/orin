@@ -14,7 +14,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ConfigStore } from "../src/desktop/config-store";
+import { ConfigStore } from "../src/desktop/config/config-store";
 
 describe("session config overrides (--config-json)", () => {
   let dir: string;

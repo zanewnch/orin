@@ -11,7 +11,7 @@
  * verdicts, so changing either alone fails here.
  */
 import { describe, it, expect } from "vitest";
-import { isMediaGenToolCall as hostImpl } from "../src/acp-dispatch";
+import { isMediaGenToolCall as hostImpl } from "../src/acp/acp-dispatch";
 import { isMediaGenToolCall as webviewImpl } from "../media/webview-helpers.js";
 
 /** Every shape either copy claims to recognise, plus the ones it must not. */

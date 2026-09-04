@@ -22,10 +22,12 @@ const chatSrc = read("../media/chat.js");
 // Mirror of getHtml()'s <body> — only the ids chat.js queries at startup matter.
 export const BODY = `
   <header class="top-bar">
-    <div id="session-name-chip" class="session-name-chip" hidden>
-      <button id="session-name-label" class="session-name-label" type="button"></button>
-      <span id="session-name-repo" class="session-name-repo" hidden></span>
-      <button id="session-name-edit" class="session-name-edit icon-btn" type="button" hidden></button>
+    <div id="session-tabs" class="session-tabs">
+      <div id="session-name-chip" class="session-name-chip" hidden>
+        <button id="session-name-label" class="session-name-label" type="button"></button>
+        <span id="session-name-repo" class="session-name-repo" hidden></span>
+        <button id="session-name-edit" class="session-name-edit icon-btn" type="button" hidden></button>
+      </div>
     </div>
     <button id="repo-btn" type="button"></button>
     <button id="remote-btn" hidden></button>
@@ -46,18 +48,23 @@ export const BODY = `
   </main>
   <footer class="composer">
     <button id="scroll-bottom-btn" class="scroll-bottom-btn"></button>
+    <div id="composer-context-bar" hidden>
+      <button id="context-files-btn"></button>
+      <button id="review-btn">Review</button>
+    </div>
     <div class="composer-card">
       <div id="attachments"></div>
       <div class="composer-input-wrap">
         <div id="input-highlight"></div>
         <textarea id="input"></textarea>
-        <button id="mic-btn"></button>
       </div>
-      <button id="add-btn"></button>
-      <button id="gear-btn"></button>
-      <div id="donut"><svg><circle id="donut-arc"/></svg><span id="donut-label"></span></div>
-      <div id="chips"></div>
       <button id="mode-btn"></button>
+      <button id="model-btn"></button>
+      <button id="gear-btn"></button>
+      <div id="chips"></div>
+      <div id="donut"><svg><circle id="donut-arc"/></svg><span id="donut-label"></span></div>
+      <button id="add-btn"></button>
+      <button id="mic-btn"></button>
       <button id="send-btn"></button>
     </div>
     <div id="mode-popover" hidden></div>

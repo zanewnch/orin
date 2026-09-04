@@ -23,7 +23,7 @@ import { describe, expect, it } from "vitest";
  * emit, not that a frame reaches one client and not another.
  */
 const src = readFileSync(
-  path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+  path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
   "utf8",
 );
 

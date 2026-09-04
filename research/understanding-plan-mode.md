@@ -36,7 +36,7 @@ CLI's typed native outcome while keeping its own gate as defense-in-depth.
 | **Cancel**                | Lowered          | Return `abandoned`; queue any comment as an ordinary send because abandon has no continuation step. | The planning turn ends in Agent mode. |
 
 The verdict is carried by the `exit_plan_mode` response itself. There is no
-bracketed marker or hidden primer. `src/grok-primer.ts` contains legacy-only
+bracketed marker or hidden primer. `src/providers/grok-primer.ts` contains legacy-only
 recognizers used to hide historical primer turns and keep their replay/rewind
 coordinates from shifting visible content.
 
@@ -82,7 +82,7 @@ The cost is that the extension now owns a small but security-sensitive policy (t
 
 ## Lesson 3: The Two Layers of Enforcement
 
-### Layer 1 — Pure Policy (`src/plan-gate.ts`)
+### Layer 1 — Pure Policy (`src/acp/plan-gate.ts`)
 
 All the decision logic is deliberately pure (no vscode, no fs, no spawn) so it can be unit-tested exhaustively (30+ tests in `test/plan-gate.test.ts`).
 
@@ -100,7 +100,7 @@ Key exported pieces:
 
 When the gate is active, a blocked mutation still lets the agent continue (it receives the JSON-RPC error with the friendly message). The extension also emits `mutationBlocked` so the webview can show a small notice instead of a scary failure.
 
-### Layer 2 — The ACP Choke Points (`src/acp.ts`)
+### Layer 2 — The ACP Choke Points (`src/acp/acp.ts`)
 
 The real handlers live here (the host in `sidebar.ts` only wires up the fs and terminal implementations):
 
@@ -190,7 +190,7 @@ This is why a session you "Kept planning" on comes back with the gate already
 raised. If the CLI is below the native-verdict floor or its version is unknown,
 restore fails closed by forcing Agent instead of re-entering unavailable Plan.
 
-The pure helpers live in `src/plan-restore.ts` (15 unit tests).
+The pure helpers live in `src/acp/plan-restore.ts` (15 unit tests).
 
 ---
 
@@ -222,7 +222,7 @@ CLI meets `GROK_REQUIRED_VERSION`; the exact version/update reason is shown othe
 The three scripts in `research/` are designed for this:
 - `plan-probe.cjs` — single-turn observation (logs every server→client call).
 - `plan-reject-probe.cjs` — full reject → feedback → second planning turn.
-- `plan-gated-probe.cjs` — same flow but with the *shipped* `out/plan-gate.js` policy active.
+- `plan-gated-probe.cjs` — same flow but with the *shipped* `out/acp/plan-gate.js` policy active.
 - `plan-mode-recheck-probe.cjs` — native outcome, interjection, and legacy synthetic-flow comparisons.
 
 They ACK writes without touching disk and are safe to run in a temp directory.
@@ -263,10 +263,10 @@ These give you high confidence that the policy and the card rendering match the 
 
 | Concept                        | Primary location(s)                                      |
 |--------------------------------|----------------------------------------------------------|
-| Policy decisions               | `src/plan-gate.ts`                                       |
-| Restore decision table         | `src/plan-restore.ts`                                    |
-| Gate enforcement points        | `src/acp.ts` fs/terminal request handlers                |
-| Native outcome response        | `src/acp-dispatch.ts` `makeExitPlanResponse`             |
+| Policy decisions               | `src/acp/plan-gate.ts`                                       |
+| Restore decision table         | `src/acp/plan-restore.ts`                                    |
+| Gate enforcement points        | `src/acp/acp.ts` fs/terminal request handlers                |
+| Native outcome response        | `src/acp/acp-dispatch.ts` `makeExitPlanResponse`             |
 | Verdict/interjection ordering  | `src/sidebar.ts` `handleExitPlan`                        |
 | Availability and recovery      | `src/sidebar.ts` `planModeCompatibility` / `recoverUnavailablePlanMode` |
 | Gate asymmetry on mode updates | `src/sidebar.ts` `modeChanged` listener                  |

@@ -135,7 +135,7 @@ describe("insertActiveMention accepts non-file schemes (regression #1)", () => {
 
     // Source gate: accepts opts.uri (portable Uri) end-to-end — never opts.path
     // string rebuilt with Uri.file (drops remote authority for Send File).
-    const src = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     const start = src.indexOf("insertActiveMention(");
     expect(start).toBeGreaterThan(-1);
     // To the end of the method, not a fixed byte window: a comment added inside
@@ -169,7 +169,7 @@ describe("insertActiveMention accepts non-file schemes (regression #1)", () => {
 
 describe("closeDiffTabs URI comparison symmetry (regression #2)", () => {
   it("Host.closeDiffTabs takes portable Uri values, not pre-stringified keys", () => {
-    const hostSrc = readFileSync(path.join(root, "src", "host.ts"), "utf8");
+    const hostSrc = readFileSync(path.join(root, "src", "types", "host.ts"), "utf8");
     expect(hostSrc).toMatch(/closeDiffTabs\(\s*original:\s*Uri\s*,\s*modified:\s*Uri\s*\)/);
 
     const adapter = readFileSync(path.join(root, "src", "vscode-host.ts"), "utf8");
@@ -187,7 +187,7 @@ describe("closeDiffTabs URI comparison symmetry (regression #2)", () => {
     expect(closeFn).not.toMatch(/input\.original\.toString\(\)\s*===\s*original\b/);
     expect(closeFn).not.toMatch(/input\.modified\.toString\(\)\s*===\s*modified\b/);
 
-    const sidebar = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const sidebar = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     expect(sidebar).toMatch(/closeDiffTabs\(\s*uris\.left\s*,\s*uris\.right\s*\)/);
     expect(sidebar).not.toMatch(/closeDiffTabs\([^)]*\.toString\(\)/);
   });
@@ -204,7 +204,7 @@ describe("closeDiffTabs URI comparison symmetry (regression #2)", () => {
 
 describe("asRelativePath takes Uri (remote identity)", () => {
   it("Host.asRelativePath is typed on Uri, not a path string", () => {
-    const hostSrc = readFileSync(path.join(root, "src", "host.ts"), "utf8");
+    const hostSrc = readFileSync(path.join(root, "src", "types", "host.ts"), "utf8");
     expect(hostSrc).toMatch(/asRelativePath\(\s*uri:\s*Uri\s*\)/);
     expect(hostSrc).not.toMatch(/asRelativePath\(\s*fsPath:\s*string\s*\)/);
 
@@ -218,7 +218,7 @@ describe("asRelativePath takes Uri (remote identity)", () => {
   });
 
   it("sidebar passes Uri into asRelativePath, not a plain abs path", () => {
-    const sidebar = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const sidebar = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     expect(sidebar).not.toMatch(/asRelativePath\(\s*absPath\s*\)/);
     expect(sidebar).not.toMatch(/asRelativePath\(\s*abs\s*\)/);
     expect(sidebar).toMatch(/asRelativePath\(\s*pathUri\s*\)|asRelativePath\(\s*uri\s*\)|asRelativePath\(\s*editor\.document\.uri\s*\)/);
@@ -227,7 +227,7 @@ describe("asRelativePath takes Uri (remote identity)", () => {
 
 describe("typed Host command surface (design #5)", () => {
   it("declares openResource, openDiff, setContext, relocateView, openSettings, link/unlink on Host", () => {
-    const hostSrc = readFileSync(path.join(root, "src", "host.ts"), "utf8");
+    const hostSrc = readFileSync(path.join(root, "src", "types", "host.ts"), "utf8");
     expect(hostSrc).toMatch(/openResource\(/);
     expect(hostSrc).toMatch(/openDiff\(/);
     expect(hostSrc).toMatch(/setContext\(/);
@@ -243,7 +243,7 @@ describe("typed Host command surface (design #5)", () => {
   });
 
   it("sidebar uses typed methods and never executeCommand", () => {
-    const sidebar = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const sidebar = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     expect(sidebar).not.toMatch(/\.executeCommand\s*\(/);
     expect(sidebar).not.toMatch(/executeCommand\(\s*["']vscode\.open["']/);
     expect(sidebar).not.toMatch(/executeCommand\(\s*["']vscode\.diff["']/);
@@ -271,9 +271,9 @@ describe("typed Host command surface (design #5)", () => {
  * These source gates fail if any of the three sites (or the types) are reverted.
  */
 describe("URI identity at the Host boundary (remote-safe class fix)", () => {
-  const hostSrc = () => readFileSync(path.join(root, "src", "host.ts"), "utf8");
+  const hostSrc = () => readFileSync(path.join(root, "src", "types", "host.ts"), "utf8");
   const adapter = () => readFileSync(path.join(root, "src", "vscode-host.ts"), "utf8");
-  const sidebar = () => readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+  const sidebar = () => readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
   const extension = () => readFileSync(path.join(root, "src", "extension.ts"), "utf8");
 
   it("HostContext carries extensionUri + globalStorageUri (Uri), not path strings", () => {
@@ -341,15 +341,12 @@ describe("URI identity at the Host boundary (remote-safe class fix)", () => {
   });
 
   it("getHtml and localResourceRoots join under extensionUri (not path.join of extensionPath)", () => {
-    const src = sidebar();
+    const src = readFileSync(path.join(root, "src", "sidebar", "html.ts"), "utf8");
     expect(src).toMatch(
-      /asWebviewUri\(\s*Uri\.joinPath\(\s*this\.context\.extensionUri\s*,\s*["']media["']/,
+      /asWebviewUri\(\s*Uri\.joinPath\(\s*opts\.extensionUri\s*,\s*["']media["']/,
     );
     expect(src).toMatch(
-      /Uri\.joinPath\(\s*this\.context\.extensionUri\s*,\s*["']media["']\s*\)/,
-    );
-    expect(src).toMatch(
-      /Uri\.joinPath\(\s*this\.context\.extensionUri\s*,\s*["']resources["']\s*\)/,
+      /Uri\.joinPath\(\s*opts\.extensionUri\s*,\s*["']resources["']/,
     );
     // Flattened form that blanked remote webviews.
     expect(src).not.toMatch(/this\.context\.extensionPath/);
@@ -468,23 +465,23 @@ describe("untitledTextOpenOptions (View all language passthrough)", () => {
   });
 
   it("sidebar initialState supplies commandLanguage from the host shell dialect", () => {
-    const src = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     expect(src).toMatch(/commandLanguageForDialect\(\s*resolvedTerminalShellDialect\(\)\s*\)/);
     expect(src).toMatch(/commandLanguage\s*\?\s*\{\s*commandLanguage\s*\}/);
   });
 
   it("sidebar initialState forwards previewInApp from the host capability", () => {
-    const src = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     expect(src).toMatch(/previewInApp:\s*this\.host\.canPreviewInApp/);
   });
 
   it("sidebar initialState forwards settingsEditor from the host capability", () => {
-    const src = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     expect(src).toMatch(/settingsEditor:\s*this\.host\.canOpenSettingsEditor/);
   });
 
   it("sidebar advertises mcpSettings only when the host opts in", () => {
-    const src = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     expect(src).toMatch(/canShowMcpSettings\s*\?\s*\{\s*mcpSettings:\s*true\s*\}/);
   });
 });

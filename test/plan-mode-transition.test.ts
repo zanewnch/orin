@@ -1,12 +1,12 @@
 import { createInterface } from "node:readline";
 import { PassThrough } from "node:stream";
 import { describe, expect, it, vi } from "vitest";
-import { AcpClient } from "../src/acp";
-import type { AcpBackend } from "../src/acp-backend";
-import { ClaudeBackend } from "../src/claude-backend";
-import { CodexBackend } from "../src/codex-backend";
+import { AcpClient } from "../src/acp/acp";
+import type { AcpBackend } from "../src/acp/acp-backend";
+import { ClaudeBackend } from "../src/acp/claude-backend";
+import { CodexBackend } from "../src/acp/codex-backend";
 import { GrokSidebar } from "../src/sidebar";
-import { Session } from "../src/session";
+import { Session } from "../src/session/session";
 
 function makeSidebar(session: Session): any {
   const sidebar = Object.create(GrokSidebar.prototype) as any;

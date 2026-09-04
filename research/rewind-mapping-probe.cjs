@@ -30,7 +30,7 @@ const GROK =
   path.join(os.homedir(), ".grok", "bin", process.platform === "win32" ? "grok.exe" : "grok");
 
 // Reuse the SHIPPED helpers, so what this prints is what the extension computes.
-const rw = require(path.join(__dirname, "..", "out", "rewind.js"));
+const rw = require(path.join(__dirname, "..", "out", "session", "rewind.js"));
 
 const proc = spawn(GROK, ["agent", "stdio"], { cwd: CWD });
 let nextId = 1;

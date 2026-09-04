@@ -47,7 +47,7 @@ export function parseRelayConsts(source) {
 export function formatRelayPackageFailure({ found, expected }) {
   return [
     `✗ Cannot package: REMOTE_RELAY_URL is ${JSON.stringify(found)}, expected ${JSON.stringify(expected)}.`,
-    `  A published .vsix must point at the production relay. Restore src/remote-frames.ts to:`,
+    `  A published .vsix must point at the production relay. Restore src/remote/remote-frames.ts to:`,
     `    ${RESTORE_LINE}`,
   ].join("\n");
 }
@@ -63,14 +63,14 @@ export function evaluateRelayPackageGuard(source, env = process.env) {
     return {
       ok: false,
       message:
-        "✗ Cannot package: src/remote-frames.ts has no `export const PRODUCTION_RELAY_URL = \"...\";`.",
+        "✗ Cannot package: src/remote/remote-frames.ts has no `export const PRODUCTION_RELAY_URL = \"...\";`.",
     };
   }
   if (remoteForm === "missing" || remote === null) {
     return {
       ok: false,
       message:
-        "✗ Cannot package: src/remote-frames.ts has no `export const REMOTE_RELAY_URL` assignment.",
+        "✗ Cannot package: src/remote/remote-frames.ts has no `export const REMOTE_RELAY_URL` assignment.",
     };
   }
   if (remote === production) {
@@ -104,13 +104,13 @@ function isMain() {
 
 if (isMain()) {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-  const framesPath = path.join(root, "src", "remote-frames.ts");
+  const framesPath = path.join(root, "src", "remote", "remote-frames.ts");
   let source;
   try {
     source = readFileSync(framesPath, "utf8");
   } catch (err) {
     const why = err && typeof err === "object" && "message" in err ? err.message : String(err);
-    console.error(`✗ Cannot package: failed to read src/remote-frames.ts (${why}).`);
+    console.error(`✗ Cannot package: failed to read src/remote/remote-frames.ts (${why}).`);
     process.exit(1);
   }
   const result = evaluateRelayPackageGuard(source, process.env);

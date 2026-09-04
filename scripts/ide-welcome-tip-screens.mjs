@@ -29,7 +29,7 @@ const log = (m) => console.log(`[welcome-tip] ${m}`);
 // shell's VS Code palette.
 const harness = fs.readFileSync(path.join(root, "test", "webview-harness.ts"), "utf8");
 const BODY = harness.match(/export const BODY = `([\s\S]*?)`;/)[1];
-const shell = fs.readFileSync(path.join(root, "src", "desktop", "electron-webview.ts"), "utf8");
+const shell = fs.readFileSync(path.join(root, "src", "desktop", "host", "electron-webview.ts"), "utf8");
 const PALETTE = shell.match(/:root \{[\s\S]*?\n\}/)[0];
 
 fs.mkdirSync(OUT, { recursive: true });

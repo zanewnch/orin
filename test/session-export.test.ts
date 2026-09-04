@@ -7,8 +7,8 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 // @ts-expect-error — plain JS module, no types
 import { exportSessionMarkdown, exportSessionFilename } from "../media/webview-helpers.js";
-import { buildPrompt, buildPromptWithImages } from "../src/prompt-builder";
-import { makeExplicitChip, makeImageChip } from "../src/chips";
+import { buildPrompt, buildPromptWithImages } from "../src/composer/prompt-builder";
+import { makeExplicitChip, makeImageChip } from "../src/composer/chips";
 
 const deps = {
   readFile: () => "",

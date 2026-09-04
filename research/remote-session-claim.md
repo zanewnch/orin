@@ -21,5 +21,5 @@ The desk is not a rival tab. A live pool member, including `this.focused`, is
 joined. A claim removes only the other tab's remote mapping.
 
 See `src/sidebar.ts` (`findRemoteResumeTarget`, `transferRemoteResume`),
-`src/remote-client-state.ts`, `src/protocol.ts` (`SESSION_SUPERSEDED_CODE`),
+`src/remote/remote-client-state.ts`, `src/protocol.ts` (`SESSION_SUPERSEDED_CODE`),
 and `media/chat.js` (`postResumeSession`).

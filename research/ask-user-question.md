@@ -9,7 +9,7 @@ question: missing field `outcome` at line 1 column 2
 ```
 
 `line 1 column 2` is the `}` of the bare `{}` the old catch-all
-([acp.ts](../src/acp.ts) `handleServerRequest`) replied with — it has no `outcome`
+([acp.ts](../src/acp/acp.ts) `handleServerRequest`) replied with — it has no `outcome`
 field, so Grok's serde deserializer rejects it. This is **not** in the published
 [Agent Client Protocol](https://agentclientprotocol.com) schema; it's an xAI
 extension, so the shape below was recovered directly rather than from docs.
@@ -104,9 +104,9 @@ fail to deserialize; single-select (the common case) is unaffected.
 
 ## Implementation
 
-- [src/acp-dispatch.ts](../src/acp-dispatch.ts) — `makeQuestionResponse`,
+- [src/acp/acp-dispatch.ts](../src/acp/acp-dispatch.ts) — `makeQuestionResponse`,
   `makeQuestionCancelledResponse` (pure).
-- [src/acp.ts](../src/acp.ts) — `x.ai/ask_user_question` handler emits
+- [src/acp/acp.ts](../src/acp/acp.ts) — `x.ai/ask_user_question` handler emits
   `questionRequest`; `respondQuestion` / `respondQuestionCancelled` write the reply.
 - [src/sidebar.ts](../src/sidebar.ts) — routes `questionRequest` to the webview
   (shown in every mode — a question is read-only and needs a human); handles

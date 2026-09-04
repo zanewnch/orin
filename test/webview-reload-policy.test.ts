@@ -20,7 +20,7 @@ import {
   rehydrateBusyChrome,
   Session,
   sessionReadyForPrompt,
-} from "../src/session";
+} from "../src/session/session";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -64,7 +64,7 @@ describe("formatRemoteInstallId", () => {
 
 describe("source gates — capability at the ownership boundary", () => {
   it("sidebar gates rehydrate on shouldRehydrateOnWebviewReady, not bare focused.client", () => {
-    const sidebar = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const sidebar = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     const start = sidebar.indexOf("private postInitialState()");
     expect(start).toBeGreaterThan(-1);
     const end = sidebar.indexOf("private rehydrateWebviewFromFocused", start);
@@ -91,7 +91,7 @@ describe("source gates — capability at the ownership boundary", () => {
   });
 
   it("Electron host declares rehydrate capability true and :desktop suffix", () => {
-    const src = readFileSync(path.join(root, "src", "desktop", "electron-host.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "desktop", "host", "electron-host.ts"), "utf8");
     expect(src).toMatch(/webviewReloadsUnderLiveSession:\s*true/);
     expect(src).toMatch(/remoteInstallIdSuffix:\s*":desktop"/);
     expect(src).toMatch(/canRelocateView:\s*false/);
@@ -106,7 +106,7 @@ describe("source gates — capability at the ownership boundary", () => {
   });
 
   it("link flow formats installId through the host suffix helper", () => {
-    const sidebar = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const sidebar = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     expect(sidebar).toContain("formatRemoteInstallId");
     expect(sidebar).toContain("remoteInstallIdSuffix");
     // Must not send bare installId() alone without the helper.
@@ -240,7 +240,7 @@ describe("rehydrate during priming does not lose a prompt", () => {
   });
 
   it("sidebar rehydrate uses rehydrateBusyChrome (not locked:false hardcode)", () => {
-    const sidebar = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const sidebar = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     const start = sidebar.indexOf("private rehydrateWebviewFromFocused");
     expect(start).toBeGreaterThan(-1);
     const end = sidebar.indexOf("\n  private ", start + 10);
@@ -256,7 +256,7 @@ describe("rehydrate during priming does not lose a prompt", () => {
     // shouldRehydrateOnWebviewReady afterwards misread that self-created
     // client as an incoming reload-rehydrate and skipped the catalog post.
     // Lock the ORDER, not just the presence of the call.
-    const sidebar = readFileSync(path.join(root, "src", "sidebar.ts"), "utf8");
+    const sidebar = readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     const caseStart = sidebar.indexOf('case "ready": {');
     expect(caseStart).toBeGreaterThan(-1);
     const caseEnd = sidebar.indexOf("break;", caseStart);

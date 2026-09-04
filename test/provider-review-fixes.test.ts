@@ -4,15 +4,23 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { GrokSidebar } from "../src/sidebar";
-import { RemoteClientState } from "../src/remote-client-state";
-import { Session } from "../src/session";
-import { sessionsDirFor, type SessionListEntry } from "../src/sessions";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { Session } from "../src/session/session";
+import { sessionsDirFor, type SessionListEntry } from "../src/session/sessions";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const sidebar = fs.readFileSync(path.join(root, "src", "sidebar.ts"), "utf8").replace(/\r\n/g, "\n");
-const desktopSources = fs.readdirSync(path.join(root, "src", "desktop"))
-  .filter((name) => name.endsWith(".ts"))
-  .map((name) => fs.readFileSync(path.join(root, "src", "desktop", name), "utf8"))
+const sidebar = fs.readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8").replace(/\r\n/g, "\n");
+function collectTs(dir: string): string[] {
+  const out: string[] = [];
+  for (const name of fs.readdirSync(dir)) {
+    const full = path.join(dir, name);
+    if (fs.statSync(full).isDirectory()) out.push(...collectTs(full));
+    else if (name.endsWith(".ts")) out.push(full);
+  }
+  return out;
+}
+const desktopSources = collectTs(path.join(root, "src", "desktop"))
+  .map((p) => fs.readFileSync(p, "utf8"))
   .join("\n");
 
 function methodBody(signature: string): string {

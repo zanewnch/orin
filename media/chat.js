@@ -294,8 +294,12 @@
   const remoteBtn = $("remote-btn");
   const repoBtn = $("repo-btn");
   const modeBtn = $("mode-btn");
+  const modelBtn = $("model-btn");
   const gearBtn = $("gear-btn");
   const addBtn = $("add-btn");
+  const contextFilesBtn = $("context-files-btn");
+  const reviewBtn = $("review-btn");
+  const composerContextBar = $("composer-context-bar");
   const chipsEl = $("chips");
   const attachmentsEl = $("attachments");
   const donutEl = $("donut");
@@ -317,10 +321,11 @@
   const GROK_ACTIVITY_VERB = "Grokking";
   const CODEX_ACTIVITY_VERB = "Opening AI";
   const CLAUDE_ACTIVITY_VERB = "Clauding";
+  const COMPOSER_PLACEHOLDER_TEXT = "Plan, Build, / for skills, @ for context";
   const COMPOSER_PLACEHOLDER = {
-    grok: "Ask Grok\u2026",
-    codex: "Ask GPT\u2026",
-    claude: "Ask Claude\u2026",
+    grok: COMPOSER_PLACEHOLDER_TEXT,
+    codex: COMPOSER_PLACEHOLDER_TEXT,
+    claude: COMPOSER_PLACEHOLDER_TEXT,
   };
   const EFFORT_TOOLTIPS = {
     none: "None — no extra reasoning",
@@ -848,6 +853,8 @@
     search: `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>`,
     clock: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
     plus: `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>`,
+    paperclip: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>`,
+    infinity: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16c5 0 5-8 10-8a4 4 0 0 1 0 8c-5 0-5-8-10-8a4 4 0 0 0 0 8"/></svg>`,
     x: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`,
     upload: `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>`,
     download: `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 10 5 5 5-5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>`,
@@ -885,18 +892,21 @@
 
   const MODE_META = {
     agent: {
-      icon: ICON.bot,
+      icon: ICON.infinity,
       label: "Agent mode",
+      shortLabel: "Agent",
       desc: "Grok acts directly, asking approval only for changes it judges sensitive",
     },
     plan: {
       icon: ICON.listTree,
       label: "Plan mode",
+      shortLabel: "Plan",
       desc: "Grok explores and proposes a plan; file writes and commands are blocked until you approve it",
     },
     yolo: {
       icon: ICON.zap,
       label: "Auto accept",
+      shortLabel: "Auto",
       desc: "Grok automatically approves all permission requests (YOLO)",
     },
   };
@@ -1115,13 +1125,33 @@
 
   function updateModeBtn(modeId) {
     const meta = MODE_META[modeId] || MODE_META.agent;
-    modeBtn.innerHTML = `${meta.icon}<span class="btn-label">${escapeHtml(meta.label)}</span>`;
+    modeBtn.innerHTML = `${meta.icon}<span class="btn-label">${escapeHtml(meta.shortLabel || meta.label)}</span>${ICON.chevronDown}`;
     modeBtn.classList.toggle("plan-active", modeId === "plan");
     modeBtn.classList.toggle("yolo-active", modeId === "yolo");
     modeBtn.title = modeButtonTitle(modeId);
   }
 
-  newBtn.innerHTML = ICON.squarePen;
+  function updateModelBtn() {
+    if (!modelBtn) return;
+    const ownModels = (state.availableModels || []).filter((model) => !model.provider || model.provider === state.activeProvider);
+    const anyUsableProvider = !state.providersKnown
+      || (state.providers || []).some((p) => p.connected && p.needsLogin !== true);
+    const modelLoaded = (state.availableModels || []).length > 0 && !!state.currentModelId;
+    const settingsLocked = state.busy || !anyUsableProvider;
+    const modelName = !anyUsableProvider
+      ? "Models unavailable"
+      : (modelLoaded ? (modelDisplayName(state.currentModelId, ownModels) || "Grok") : "Loading\u2026");
+    modelBtn.innerHTML = `<span class="btn-label">${escapeHtml(truncate(modelName, 16))}</span>${ICON.chevronDown}`;
+    modelBtn.disabled = settingsLocked || !modelLoaded;
+    modelBtn.classList.toggle("disabled", settingsLocked || !modelLoaded);
+    modelBtn.title = !anyUsableProvider
+      ? "Connect an agent to choose a model"
+      : (!modelLoaded
+        ? "Loading the session\u2026"
+        : (settingsLocked ? `${modelName} \u2014 available once the session is ready` : `${modelName} \u2014 click to change`));
+  }
+
+  newBtn.innerHTML = ICON.plus;
   historyBtn.innerHTML = ICON.clock;
   ensureVisibleNewSession();
   // "Continue remotely", one tap from the chat instead of buried in the gear
@@ -1134,13 +1164,14 @@
   }
   updateSendButton(); // spinner by default — session is starting up (busy+locked)
   gearBtn.innerHTML = ICON.gear;
-  addBtn.innerHTML = ICON.plus;
+  addBtn.innerHTML = ICON.paperclip;
   scrollBottomBtn.innerHTML = `${ICON.arrowDown}<span class="scroll-bottom-label">Scroll to bottom</span>`;
   updateModeBtn("agent");
 
   // ---------- markdown ----------
 
   const { formatWaitElapsed, looksLikeFileRef, formatRelativeTime, modelPickerLabel, modelDisplayName, nextMicState, trailingSendPhrase, versionedSiblingUrl, buildQuestionAnswers, isFreeTextOptionLabel, isSubagentToolCall, subagentLabel, cleanSubagentOutput, parseSubagentTaskResult, shouldStickToBottom, stickThresholdPx, splitMath, stripUnsupportedTex, toolFailureText, isMediaGenToolCall, mediaGenZeroRetentionHint, TOOL_LABEL_MAX, middleElide, isAdvertisedSkill, getSlashQuery, applySlashPick, filterCommands, appendHighlightedText, commandProgramLabel, commandTextPreview, extractToolResultOutput, commandOutputWasCancelled, commandOutputTruncationNote, computeLineDiff, parseAttachmentContext, parseSelectionBlocks, parseImageTags, isKnownHostMessage, composerHasSendIntent, explicitVisibleChips, normalizeQueuedSends, queuedSendsText, queuedSendsChips, contextOverheadTokens, nextContextBreakdown, contextBreakdownIsCurrent, createPendingOverlay, getMentionQuery, applyMentionPick, orderPermissionOptions, defaultPermissionIndex, shouldFocusPermissionCard, isTypeThroughKey, isInterjectionText, stripInterjectionEnvelope, spokenTextFromMarkdown, isRelaySendRejection, wireFullscreenSafeReclamp, distributeSidePanelWidths, chatZoomFactor, unzoomClientPx, exportSessionMarkdown, exportSessionFilename, isExportableSessionEvent, replayedUserBubbleVerdict, truncateExportEvents, flattenHistoryMessages, splitHistoryWindow, countHistoryReplayCounters, partitionHistoryCards } = globalThis.GrokWebviewHelpers;
+  updateModelBtn();
 
   function escapeAttr(s) {
     return String(s == null ? "" : s)
@@ -2315,7 +2346,7 @@
   }
 
   // Same `#Lstart-Lend` suffix parseFileRef accepts, kept local because the
-  // webview cannot import src/file-ref.ts. Anchored at the end so a `#` earlier
+  // webview cannot import src/composer/file-ref.ts. Anchored at the end so a `#` earlier
   // in the path (C#/F# folders) stays in the path.
   function previewFileRef(raw) {
     const s = String(raw || "").trim();
@@ -3508,6 +3539,18 @@
     addManageProvidersRow();
   }
 
+  function openModelPicker() {
+    if (!modelBtn) return;
+    if (!gearPopover.hidden && state.gearView === "model") {
+      closePopovers();
+      return;
+    }
+    closePopovers();
+    renderModelPicker();
+    positionPopover(gearPopover, modelBtn);
+    gearPopover.hidden = false;
+  }
+
   /** The trigger for the surface currently being rendered. */
   function activeGearButton() {
     if (state.gearSurface === "rail") return document.getElementById("rail-gear-btn") || gearBtn;
@@ -4171,6 +4214,7 @@
   function paintSessionSurfaces() {
     if (!historyPopover.hidden) renderSessionRows();
     renderSessionName();
+    renderSessionTabs();
     renderSessionHead();
     renderRail();
   }
@@ -6804,6 +6848,7 @@
     // Desktop rail hosts: overflow lives in the top-right cluster (after History).
     fillSessionHeadActions();
     renderSessionNameRepo();
+    renderSessionTabs();
     if ((!data && !pendingOpen) || state.sessionNameEditing?.surface === "local") return;
     const name = displayedSessionName(activeSessionRecord());
     label.textContent = name;
@@ -6818,6 +6863,42 @@
     editBtn.innerHTML = ICON.pencil;
     wireSessionNameLabel(label, editBtn, "local");
     editBtn.onclick = (e) => { e.stopPropagation(); beginSessionNameEdit("local", label, editBtn); };
+  }
+
+  function renderSessionTabs() {
+    const strip = $("session-tabs");
+    const chip = $("session-name-chip");
+    if (!strip || !chip || IS_REMOTE) return;
+    for (const el of [...strip.children]) {
+      if (el.classList && el.classList.contains("session-tab")) el.remove();
+    }
+    const activeId = state.activeSessionId;
+    const seen = new Set(activeId ? [activeId] : []);
+    const extra = [];
+    const take = (list) => {
+      for (const s of list || []) {
+        if (!s || !s.id || seen.has(s.id)) continue;
+        seen.add(s.id);
+        extra.push(s);
+        if (extra.length >= 6) break;
+      }
+    };
+    take(state.railSelectedRows);
+    if (extra.length < 6) take(state.sessions);
+    for (const s of extra) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "session-tab";
+      btn.setAttribute("role", "tab");
+      const name = sessionRowName(s);
+      btn.textContent = name;
+      btn.title = name;
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        postResumeSession(s.id, s.cwd, { claim: true });
+      };
+      strip.insertBefore(btn, chip);
+    }
   }
 
   /**
@@ -10035,6 +10116,74 @@
     return name && name.length < 30 ? `Running ${name}` : "Running tool";
   }
 
+  function isEditToolCall(call) {
+    if (!call) return false;
+    const name = toolName(call);
+    const kind = toolKind(call);
+    return kind === "edit" || kind === "write"
+      || /^(write_file|file_write|write|edit_file|search_replace|str_replace)$/.test(name);
+  }
+
+  function syncEditLiveStack(group) {
+    if (!group) return;
+    const calls = group._calls || [];
+    const live = group.classList.contains("in-progress")
+      && calls.length > 0
+      && calls.every(isEditToolCall);
+    group.classList.toggle("edit-live", live);
+    let stack = null;
+    for (const child of group.children) {
+      if (child.classList && child.classList.contains("tool-edit-live")) {
+        stack = child;
+        break;
+      }
+    }
+    if (!live) {
+      if (stack) stack.remove();
+      return;
+    }
+    if (!stack) {
+      stack = document.createElement("div");
+      stack.className = "tool-edit-live";
+      const hdr = group.querySelector(".tool-group-header");
+      if (hdr && hdr.nextSibling) group.insertBefore(stack, hdr.nextSibling);
+      else if (hdr) hdr.after(stack);
+      else group.insertBefore(stack, group.firstChild);
+    }
+    stack.innerHTML = "";
+    for (const call of calls) {
+      const row = document.createElement("div");
+      row.className = "tool-edit-live-row";
+      const verb = document.createElement("span");
+      verb.className = "tool-edit-verb";
+      verb.textContent = "Editing";
+      row.appendChild(verb);
+      const renamed = toolRenamePaths(call);
+      const path = renamed ? `${prettyPath(renamed.from)} → ${prettyPath(renamed.to)}` : toolFilePath(call);
+      if (path) {
+        const file = document.createElement("span");
+        file.className = "tool-edit-file";
+        file.textContent = renamed ? path : prettyPath(path);
+        row.appendChild(file);
+      }
+      const item = call.toolCallId && state.toolItemsByToolCallId.get(call.toolCallId);
+      const stat = item && item._diffStat;
+      if (stat) row.appendChild(makeDiffStat(stat.added, stat.removed));
+      stack.appendChild(row);
+    }
+    const last = calls[calls.length - 1];
+    if (toolFilePath(last) || toolRenamePaths(last)) {
+      const ghost = document.createElement("div");
+      ghost.className = "tool-edit-live-row pending";
+      ghost.setAttribute("aria-hidden", "true");
+      const verb = document.createElement("span");
+      verb.className = "tool-edit-verb";
+      verb.textContent = "Editing";
+      ghost.appendChild(verb);
+      stack.appendChild(ghost);
+    }
+  }
+
   function toolLabel(call, opts) {
     const name = toolName(call);
     const kind = toolKind(call);
@@ -10183,6 +10332,10 @@
     if (!state.activeToolGroupEl) return;
     const el = state.activeToolGroupEl;
     const calls = el._calls || [];
+    el.classList.remove("edit-live");
+    for (const child of [...el.children]) {
+      if (child.classList && child.classList.contains("tool-edit-live")) child.remove();
+    }
 
     // A lone edit/write is NOT flattened to a `.tool-flat` (icon + label only). The
     // edit's review surface (the `+A −R` stat + the expandable inline diff) is
@@ -10306,6 +10459,7 @@
     // whose diff already landed would lose its "· +A −R" the moment the NEXT tool in
     // the batch starts (and only get it back at batch close).
     paintGroupDiffTotals(el);
+    syncEditLiveStack(el);
     // A lone in-progress COMMAND is expandable immediately — its chevron shows
     // now (multi-tool groups keep theirs until the batch closes), and
     // expanding also opens the row's IN/OUT detail so one click reveals the
@@ -11010,6 +11164,7 @@
     if (prevStat) prevStat.replaceWith(stat);
     else item.appendChild(stat);
     recomputeGroupDiffTotals(item);
+    syncEditLiveStack(group);
 
     // On a repaint, REUSE the existing detail node: swapping in a new one would
     // leave wireCommandToggle's click listener bound to the detached node (and
@@ -12646,6 +12801,25 @@
     state.grokkingEl = null;
   }
 
+  function stampWorkedFor() {
+    if (state.replaying || !state.turnStartedAt) return;
+    const ms = Date.now() - state.turnStartedAt;
+    state.turnStartedAt = null;
+    if (ms < 1000) return;
+    const parent = messagesEl;
+    if (!parent) return;
+    const users = parent.querySelectorAll(".msg.user");
+    const lastUser = users[users.length - 1];
+    const label = document.createElement("div");
+    label.className = "turn-worked";
+    label.textContent = `Worked for ${formatWaitElapsed(ms)}`;
+    if (lastUser && lastUser.parentElement === parent) {
+      lastUser.insertAdjacentElement("afterend", label);
+    } else {
+      parent.appendChild(label);
+    }
+  }
+
   function activityVerb() {
     if (state.activeProvider === "codex") return CODEX_ACTIVITY_VERB;
     if (state.activeProvider === "claude") return CLAUDE_ACTIVITY_VERB;
@@ -13927,6 +14101,15 @@
       el.onclick = () => vscode.postMessage({ type: "toggleChip", id: chip.id });
       chipsEl.appendChild(el);
     }
+    updateContextFilesBar();
+  }
+
+  function updateContextFilesBar() {
+    if (!composerContextBar || !contextFilesBtn) return;
+    const files = (state.chips || []).filter((chip) => chip && !chip.hidden);
+    const n = files.length;
+    composerContextBar.hidden = n === 0;
+    contextFilesBtn.innerHTML = `${ICON.chevronRight}<span>${n === 1 ? "1 File" : `${n} Files`}</span>`;
   }
 
   // ---------- donut ----------
@@ -14012,7 +14195,7 @@
   // ---------- "@" file autocomplete ----------
   // Typing `@` (at the start of a word) opens a workspace-file picker fed by the
   // host: every keystroke posts the token (mentionQuery), the host answers from
-  // a TTL-cached findFiles index (mentionResults, ranked in src/mention.ts), and
+  // a TTL-cached findFiles index (mentionResults, ranked in src/composer/mention.ts), and
   // a pick rewrites the token to `@rel/path ` AND attaches the file as an
   // explicit chip (addMentionFile) — the same pipeline as drop / the + picker,
   // so the prompt carries both the prose reference and the attachment.
@@ -14134,6 +14317,8 @@
       sendBtn.classList.add("stop");
       sendBtn.disabled = false;
     }
+    sendBtn.hidden = false;
+    updateModelBtn();
   }
 
   // Queue whatever is staged for send-at-turn-end. Returns true if something was
@@ -16264,6 +16449,7 @@
         state.contextBreakdown = null;
         updateDonut(0);
         reportRemotePreferences();
+        updateModelBtn();
         break;
       }
       case "sessionName": {
@@ -16314,6 +16500,7 @@
         // donut keeps showing the wrong ceiling and an inflated percentage.
         const m = state.availableModels.find((x) => x.modelId === msg.modelId && (!x.provider || x.provider === state.activeProvider));
         if (m && m.totalContextTokens) { state.contextWindow = m.totalContextTokens; updateDonut(); }
+        updateModelBtn();
         break;
       }
       case "modeChanged":
@@ -16479,6 +16666,7 @@
         state.turnAgentActionsEl = null; // new turn → previous turn keeps its footer
         if (!state.replaying) state.turnRating = 0;
         state.ttsTurnText = "";
+        if (!state.replaying) state.turnStartedAt = Date.now();
         showGrokking();
         // Busy is event-sourced through the session buffer so a re-focus lands
         // on the true state: agentStart marks a turn in flight (a live send
@@ -17018,6 +17206,7 @@
         stopProcessingCue();
         hideGrokking(); // turn ended (defensive — content normally clears it first)
         hideThinkingIndicator();
+        stampWorkedFor();
         // A turn that ends with NO content (grok's [Plan cancelled] ack can be
         // empty) would otherwise orphan the dots forever — content-based
         // clearing never fires.
@@ -17660,7 +17849,7 @@
   //
   // Browse + open under the tab's selected repo; edit+save when the host also
   // advertises editProjectFiles. Host fence is repoScopeFor + resolveTreePath
-  // (see src/remote-files.ts). No create/delete/rename. Capability-gated (field
+  // (see src/remote/remote-files.ts). No create/delete/rename. Capability-gated (field
   // presence); local VS Code / desktop never mount it even when the host
   // advertises the flag.
 
@@ -17908,6 +18097,19 @@
   const welcomeAboutLink = $("welcome-about-link");
   if (welcomeAboutLink) welcomeAboutLink.onclick = (e) => { e.preventDefault(); e.stopPropagation(); openAboutPanel(); };
   addBtn.onclick = (e) => { e.stopPropagation(); openAddPopover(); };
+  if (modelBtn) modelBtn.onclick = (e) => { e.stopPropagation(); openModelPicker(); };
+  if (contextFilesBtn) {
+    contextFilesBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (contextPopover.hidden) openContextPopover(); else closePopovers();
+    };
+  }
+  if (reviewBtn) {
+    reviewBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (contextPopover.hidden) openContextPopover(); else closePopovers();
+    };
+  }
   historyBtn.onclick = (e) => { e.stopPropagation(); openHistoryPopover(); };
   repoBtn.onclick = (e) => {
     e.stopPropagation();

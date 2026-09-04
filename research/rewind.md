@@ -76,7 +76,7 @@ point. Current native verdicts create no primer or marker prompt. The latest
 bubble hides its Rewind button as a product split (the tip belongs to Edit), not
 because the tip is an invalid wire target.
 
-Pure helpers: `src/rewind.ts`. ACP: `AcpClient.listRewindPoints` / `executeRewind`.
+Pure helpers: `src/session/rewind.ts`. ACP: `AcpClient.listRewindPoints` / `executeRewind`.
 
 ## Notes
 
@@ -119,7 +119,7 @@ it will be discarded" — it previously promised the clicked message survived.
 | Tool | Kind | What it answers |
 |---|---|---|
 | `research/rewind-semantics-probe.cjs` | manual, throwaway session | Does `execute` keep or discard the target? Builds a 4-prompt session with known indices, rewinds to a known one, re-lists. `node … last` targets the tip instead of the second point. |
-| `research/rewind-mapping-probe.cjs` | manual, **read-only** | For a REAL session id, what does `/points` return and how does the shipped `out/rewind.js` map each user bubble onto it? Loads + lists only — executes nothing. The on-disk `rewind_points.jsonl` has no `prompt_preview`, so only the RPC can answer this. |
+| `research/rewind-mapping-probe.cjs` | manual, **read-only** | For a REAL session id, what does `/points` return and how does the shipped `out/session/rewind.js` map each user bubble onto it? Loads + lists only — executes nothing. The on-disk `rewind_points.jsonl` has no `prompt_preview`, so only the RPC can answer this. |
 | `plan-cancel-rewind` (live suite) | repeatable gate | Three no-op-plan-then-Cancel rounds using native `abandoned` outcomes, then rewind. Asserts those verdicts create no primer/marker prompt or phantom user point, that Edit targets the message itself, that the tip is a legal target, and that `execute` still DISCARDS its target. |
 
 The discard assertion is the one that matters: keep-semantics would not error, it would

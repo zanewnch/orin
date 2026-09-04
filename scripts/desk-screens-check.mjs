@@ -59,7 +59,7 @@ fs.mkdirSync(OUT, { recursive: true });
 // from the disk (`shouldUseLegacyRoot`), so ask the product rather than mirror
 // it — the same reason `qa-fixture.mjs` imports the real catalog encoder.
 const { projectRoot, shouldUseLegacyRoot, legacyProjectRootPath, displayPath } =
-  await import("../out/project-create.js");
+  await import("../out/projects/project-create.js");
 const home = os.homedir();
 const legacyRoot = legacyProjectRootPath(home);
 let legacyIsDirectory = false;

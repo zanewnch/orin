@@ -145,7 +145,7 @@ try {
   // relocate GROK_HOME (see above), so a real turn writes where the CLI always
   // writes. Scoped to the fixture project, so a busy machine's other history
   // cannot make this look like a pass.
-  const { resolveGrokHome, encodeSessionCatalogLeaf } = await import("../out/sessions.js");
+  const { resolveGrokHome, encodeSessionCatalogLeaf } = await import("../out/session/sessions.js");
   const store = path.join(resolveGrokHome(process.env), "sessions", encodeSessionCatalogLeaf(qa.project));
   const dirs = (fs.existsSync(store) ? fs.readdirSync(store) : [])
     .map((d) => path.join(store, d))

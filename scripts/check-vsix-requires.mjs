@@ -15,7 +15,7 @@
  *                .vscodeignore excluded (#101). Six dead releases; the report
  *                came from a user, not from us.
  *   2.x          a hand-rolled `vsce package --no-dependencies` dropped
- *                node_modules/ws, which out/remote-uplink.js requires. The
+ *                node_modules/ws, which out/remote/remote-uplink.js requires. The
  *                extension installed and did not load at all.
  *
  * Both are the same bug — packed code requiring unpacked files — so this checks

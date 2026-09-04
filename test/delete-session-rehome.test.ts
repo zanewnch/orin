@@ -6,10 +6,10 @@ import { readFileSync } from "node:fs";
  */
 import { describe, expect, it, vi } from "vitest";
 import { GrokSidebar } from "../src/sidebar";
-import { RemoteClientState } from "../src/remote-client-state";
-import { Session } from "../src/session";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { Session } from "../src/session/session";
 import type { HostMsg } from "../src/protocol";
-import type { SessionListEntry } from "../src/sessions";
+import type { SessionListEntry } from "../src/session/sessions";
 
 const cwd = "/work/accredia";
 
@@ -298,7 +298,7 @@ describe("minting a blank session reuses an unused empty one", () => {
 });
 
 describe("the cold-neighbour cases the first tests missed", () => {
-  const src = readFileSync("src/sidebar.ts", "utf8");
+  const src = readFileSync("src/sidebar/grok-sidebar.ts", "utf8");
 
   it("does not park the conversation it just deleted", () => {
     // Re-homing opens the neighbour, and a COLD neighbour falls through to
@@ -337,7 +337,7 @@ describe("the cold-neighbour cases the first tests missed", () => {
 });
 
 describe("what the reuse and neighbour rules refuse to assume", () => {
-  const src = readFileSync("src/sidebar.ts", "utf8");
+  const src = readFileSync("src/sidebar/grok-sidebar.ts", "utf8");
 
   it("never adopts a conversation it only saw in a list", () => {
     // `numMessages` is HARDCODED to 0 for every Codex and Claude row

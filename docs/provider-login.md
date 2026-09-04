@@ -32,7 +32,7 @@ finishes on its own. The credential still lands on the computer running the
 extension — nothing is stored in the browser, and the relay never sees it.
 
 Signing in is classified `"full"` in
-[`src/remote-policy.ts`](../src/remote-policy.ts). It was `host-local` until remote
+[`src/remote/remote-policy.ts`](../src/remote/remote-policy.ts). It was `host-local` until remote
 sign-in shipped, and what changed was the implementation rather than the policy:
 a remote request no longer opens a terminal on your desk. It can only *add* a credential
 that you obtain yourself, in your own browser, from the vendor.

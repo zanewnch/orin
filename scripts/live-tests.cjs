@@ -18,7 +18,7 @@
  * So it's a manual gate: run `npm run test:live` before a release-to-main.
  *
  * It validates the REAL extension logic, not a re-implementation: it requires
- * the compiled `out/acp-dispatch.js` + `out/plan-gate.js` and the shipped
+ * the compiled `out/acp/acp-dispatch.js` + `out/acp/plan-gate.js` and the shipped
  * `media/webview-helpers.js`, and feeds genuine grok wire output through
  * `isMediaGenToolCall` / `extractGeneratedMediaPaths` / `isSubagentToolCall` /
  * `shouldBlockWrite` exactly as the extension does.
@@ -44,10 +44,10 @@ const fs = require("node:fs");
 const REPO = path.resolve(__dirname, "..");
 let dispatch, planGate, helpers, acpMod;
 try {
-  dispatch = require(path.join(REPO, "out", "acp-dispatch.js"));
-  planGate = require(path.join(REPO, "out", "plan-gate.js"));
+  dispatch = require(path.join(REPO, "out", "acp", "acp-dispatch.js"));
+  planGate = require(path.join(REPO, "out", "acp", "plan-gate.js"));
   helpers = require(path.join(REPO, "media", "webview-helpers.js"));
-  acpMod = require(path.join(REPO, "out", "acp.js"));
+  acpMod = require(path.join(REPO, "out", "acp", "acp.js"));
 } catch (e) {
   console.error("Could not load compiled modules — run `npm run compile` (or `tsc -p .`) first.\n" + e.message);
   process.exit(2);
@@ -289,7 +289,7 @@ function assert(cond, msg) { if (!cond) throw new Error(msg); }
 
 // #46: agent shell host. The extension — not grok — runs every terminal/* call,
 // so which shell it uses is our choice. This is the one entry that doesn't spawn
-// grok: it drives the REAL compiled `out/terminal-manager.js` the extension ships
+// grok: it drives the REAL compiled `out/providers/terminal-manager.js` the extension ships
 // against the actual OS shell, proving on Windows that a grok-issued command runs
 // under PowerShell (pwsh → powershell), where a PowerShell-only pipeline + cmdlet
 // succeed that cmd.exe would have failed. On POSIX it confirms $SHELL (or
@@ -297,9 +297,9 @@ function assert(cond, msg) { if (!cond) throw new Error(msg); }
 async function testTerminalShell() {
   let TerminalManager, resolveTerminalShell, posixShellFromEnv;
   try {
-    ({ TerminalManager, resolveTerminalShell, posixShellFromEnv } = require(path.join(REPO, "out", "terminal-manager.js")));
+    ({ TerminalManager, resolveTerminalShell, posixShellFromEnv } = require(path.join(REPO, "out", "providers", "terminal-manager.js")));
   } catch (e) {
-    throw new Skip("out/terminal-manager.js not built — run `npm run compile` (" + e.message + ")");
+    throw new Skip("out/providers/terminal-manager.js not built — run `npm run compile` (" + e.message + ")");
   }
   const which = (name) => {
     if (process.platform !== "win32") return undefined;
@@ -560,11 +560,11 @@ async function testSessionFork() {
 // against real grok — create an isolated git worktree via the unadvertised
 // `_x.ai/git/worktree/create`, confirm it via `list`, merge it back via `apply`,
 // and clean it up via `remove` (then confirm it's gone). Reuses the SHIPPED pure
-// parsers (out/worktree.js), so it tests the wire→parser path the extension runs,
+// parsers (out/projects/worktree.js), so it tests the wire→parser path the extension runs,
 // not a re-implementation. SKIPs on -32601 — a pre-worktree CLI, where the
 // extension degrades to "unsupported" rather than erroring.
 async function testWorktree() {
-  const wt = require(path.join(REPO, "out", "worktree.js"));
+  const wt = require(path.join(REPO, "out", "projects", "worktree.js"));
   const execFileSync = require("node:child_process").execFileSync;
   const cwd = mkTmp("wt");
   const acp = new Acp(cwd);
@@ -631,10 +631,10 @@ async function testWorktree() {
 // Rewind (P2-9): the gear/Rewind flow end-to-end against real grok — list the
 // rewind points, dry-run an execute (the CLI's confirmation gate: success:false,
 // no mutation), then a real `conversation_only` + force rewind (truncates chat,
-// touches NO files on disk). Reuses the SHIPPED parsers (out/rewind.js). SKIPs on
+// touches NO files on disk). Reuses the SHIPPED parsers (out/session/rewind.js). SKIPs on
 // -32601 — a pre-rewind CLI, where the extension degrades to "unsupported".
 async function testRewind() {
-  const rw = require(path.join(REPO, "out", "rewind.js"));
+  const rw = require(path.join(REPO, "out", "session", "rewind.js"));
   const cwd = mkTmp("rewind");
   const acp = new Acp(cwd);
   try {
@@ -679,7 +679,7 @@ async function testRewind() {
 // Disposable temp git repo. SKIPs if grok doesn't take the file-edit path
 // (non-deterministic) or the CLI lacks rewind (-32601).
 async function testRewindFiles() {
-  const rw = require(path.join(REPO, "out", "rewind.js"));
+  const rw = require(path.join(REPO, "out", "session", "rewind.js"));
   const execFileSync = require("node:child_process").execFileSync;
   const cwd = mkTmp("rewindfiles");
   const acp = new Acp(cwd);
@@ -930,9 +930,9 @@ async function testEditDiffRestore() {
 //   2. the tip is a legal target (so the newest message is editable at all);
 //   3. hidden plumbing points never consume a bubble slot.
 //
-// Runs against the SHIPPED out/rewind.js, so CLI drift fails the gate here.
+// Runs against the SHIPPED out/session/rewind.js, so CLI drift fails the gate here.
 async function testPlanCancelRewind() {
-  const rw = require(path.join(REPO, "out", "rewind.js"));
+  const rw = require(path.join(REPO, "out", "session", "rewind.js"));
   const cwd = mkTmp("plancancel");
   const acp = new Acp(cwd, {
     onWrite: () => "ack", // plan mode: never touch disk

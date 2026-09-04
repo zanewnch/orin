@@ -63,7 +63,7 @@ const SESSIONS = [
  * fixture it never saw. Requires `npm run compile`, which every caller already
  * does.
  */
-const { encodeSessionCatalogLeaf } = await import("../out/sessions.js");
+const { encodeSessionCatalogLeaf } = await import("../out/session/sessions.js");
 
 function write(file, body, at) {
   fs.mkdirSync(path.dirname(file), { recursive: true });

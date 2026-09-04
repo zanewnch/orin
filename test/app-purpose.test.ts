@@ -12,8 +12,8 @@ import {
   shouldOfferToolDetailControls,
   shouldOfferWorktrees,
 } from "../src/app-purpose";
-import { DISK_KEYS, PersistedState, type MementoLike, type StateFs } from "../src/persisted-state";
-import { INBOUND_DISPOSITION, OUTBOUND_DISPOSITION } from "../src/remote-policy";
+import { DISK_KEYS, PersistedState, type MementoLike, type StateFs } from "../src/session/persisted-state";
+import { INBOUND_DISPOSITION, OUTBOUND_DISPOSITION } from "../src/remote/remote-policy";
 
 describe("parseAppPurpose", () => {
   it("defaults absent/invalid to knowledge work", () => {

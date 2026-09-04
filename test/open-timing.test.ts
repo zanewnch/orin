@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("../src/acp", async (importOriginal) => {
+vi.mock("../src/acp/acp", async (importOriginal) => {
   const { EventEmitter } = await import("node:events");
-  const actual = await importOriginal<typeof import("../src/acp")>();
+  const actual = await importOriginal<typeof import("../src/acp/acp")>();
   class FakeAcpClient extends EventEmitter {
     provider = "grok" as const;
     usesClientPlanGate = false;
@@ -41,8 +41,8 @@ vi.mock("../src/acp", async (importOriginal) => {
 
 import { OpenClock, formatMs, formatOpenTimings } from "../src/open-timing";
 import { GrokSidebar } from "../src/sidebar";
-import { RemoteClientState } from "../src/remote-client-state";
-import { Session } from "../src/session";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { Session } from "../src/session/session";
 import type { HostMsg } from "../src/protocol";
 
 describe("formatMs", () => {

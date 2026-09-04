@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 import { GrokSidebar } from "../src/sidebar";
-import { Session } from "../src/session";
-import { RemoteClientState } from "../src/remote-client-state";
-import { normalizeRepoPath } from "../src/sessions";
+import { Session } from "../src/session/session";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { normalizeRepoPath } from "../src/session/sessions";
 
 function stubVoiceSidebar(opts: { focusedCwd?: string } = {}) {
   const sidebar = Object.create(GrokSidebar.prototype) as any;
@@ -106,7 +106,7 @@ describe("postVoiceConfigured dedupes identical frames", () => {
 
 describe("voiceConfigured cache dies with the renderer", () => {
   it("resolveWebviewView and postInitialState drop the local entry; remote release drops the tab", () => {
-    const src = readFileSync(new URL("../src/sidebar.ts", import.meta.url), "utf8");
+    const src = readFileSync(new URL("../src/sidebar/grok-sidebar.ts", import.meta.url), "utf8");
     const resolveStart = src.indexOf("resolveWebviewView(");
     const resolveEnd = src.indexOf("resolveProjectsRailView(", resolveStart);
     const resolveBody = src.slice(resolveStart, resolveEnd);

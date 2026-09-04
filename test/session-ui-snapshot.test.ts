@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Session, sessionUiSnapshot } from "../src/session";
+import { Session, sessionUiSnapshot } from "../src/session/session";
 
 describe("sessionUiSnapshot", () => {
   it("restores the focused session's own chips and queued composer state", () => {
@@ -16,6 +16,13 @@ describe("sessionUiSnapshot", () => {
       { type: "modeChanged", modeId: "plan" },
       { type: "planModeAvailability", available: true, reason: undefined, recheckable: false },
       { type: "feedbackAvailability", available: false },
+      {
+        type: "commandsUpdate",
+        commands: [{
+          name: "plan",
+          description: "Switch to Plan mode; extra text is sent as the task",
+        }],
+      },
       { type: "chips", chips: session.chips },
       { type: "queuedSends", items: ["queued for B"], queued: [{ text: "queued for B" }] },
     ]);

@@ -1096,32 +1096,64 @@ a:hover {
      it (that is the chip's own two-row grid, not this alignment). */
   align-items: center;
   justify-content: flex-end;
-  padding: 2px 4px;
-  border-bottom: 1px solid var(--vscode-editorWidget-border);
+  padding: 0 4px;
+  min-height: 36px;
+  border-bottom: 1px solid color-mix(in oklab, var(--vscode-foreground) 8%, transparent);
   flex-shrink: 0;
   position: relative;
+  gap: 2px;
 }
 .top-bar > .icon-btn { flex: none; }
+.session-tabs {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  gap: 0;
+  margin-right: auto;
+}
+.session-tabs::-webkit-scrollbar { display: none; }
+.session-tab {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 36px;
+  padding: 0 10px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--vscode-descriptionForeground);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.session-tab:hover { color: var(--vscode-foreground); }
+.session-tab.active {
+  color: var(--vscode-foreground);
+  border-bottom-color: var(--vscode-foreground);
+}
 /* Two rows: the conversation's name, and under it the project it belongs to.
    A grid rather than a wrapping flex row so the project line sits beneath the
    NAME and not beneath the rename pencil, and so it holds its place while the
    name is being edited. */
 .session-name-chip {
   min-width: 0;
-  max-width: min(52%, 280px);
+  max-width: 180px;
   flex: 0 1 auto;
-  /* Owns leftover flex so History / ⋯ stay right-aligned (the export button
-     used to do this). Hidden chips are display:none, so they drop out and
-     justify-content:flex-end keeps the remaining icons on the right. */
-  margin-right: auto;
   display: grid;
   grid-template-columns: minmax(0, auto) auto;
   align-items: center;
-  /* 4px, the value every other control group uses. Was 2px, which the owner
-     read as no gap at all beside the file panel's 4. */
   gap: 0 4px;
-  padding: 1px 2px 1px 6px;
-  border-radius: 5px;
+  padding: 0 8px;
+  height: 36px;
+  border-radius: 0;
+  border-bottom: 2px solid var(--vscode-foreground);
 }
 /* Both cells are placed EXPLICITLY. Auto-placement puts the project line on
    row 2 (it spans both columns), which moves the placement cursor past row 1 —
@@ -1135,8 +1167,8 @@ a:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding: 3px 2px;
-  color: var(--vscode-descriptionForeground);
+  padding: 0;
+  color: var(--vscode-foreground);
   background: transparent;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -1896,19 +1928,19 @@ a.onb-action.onb-secondary:hover {
   word-wrap: break-word;
 }
 .msg.user {
-  align-self: flex-end;
-  max-width: 77%;
+  align-self: stretch;
+  max-width: 100%;
   background: transparent;
   border: none;
-  padding: 0;
+  padding: 4px 12px 0;
   white-space: normal;
 }
 .msg.user .msg-bubble {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 8px 12px;
-  border-radius: var(--chat-radius-message);
+  padding: 10px 14px;
+  border-radius: 12px;
   background: var(--chat-surface-user);
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -2011,8 +2043,8 @@ body.turn-busy .queued-steer:hover {
   transition: opacity 0.12s;
 }
 .msg.user .msg-actions {
-  justify-content: flex-end;
-  padding: 0 10px;
+  justify-content: flex-start;
+  padding: 0 2px;
 }
 .msg.user:hover .msg-actions,
 .msg.agent:hover .msg-actions,
@@ -2559,6 +2591,50 @@ body.thinking-hidden .msg.thinking { display: none; }
 /* A running group stays muted like the Grokking / Thinking indicators ÔÇö the
    blinking dots convey activity, not a brighter text color. */
 .tool-group-label { color: inherit; }
+
+/* In-progress edits: Cursor-style stacked "Editing file +N −M" lines.
+   The real group header stays in the DOM for tests / a11y roll-up, but the
+   live stack is what you read. */
+.tool-group.edit-live { position: relative; }
+.tool-group.edit-live > .tool-group-header {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.tool-edit-live {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 12px 8px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.tool-edit-live-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tool-edit-verb {
+  color: var(--vscode-descriptionForeground);
+  flex: none;
+}
+.tool-edit-file {
+  color: var(--vscode-foreground);
+  min-width: 0;
+}
+.tool-edit-live-row .diff-stat {
+  margin-left: 0;
+}
+.tool-edit-live-row.pending .tool-edit-verb {
+  opacity: 0.32;
+}
 .tool-dots { display: none; }
 .tool-group.in-progress .tool-dots {
   display: inline-flex;
@@ -2915,6 +2991,11 @@ body.vscode-light {
 
 .msg.agent .body,
 .desk-ft-md, .files-browse-md { white-space: normal; line-height: 1.55; }
+.turn-worked {
+  padding: 6px 14px 2px;
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+}
 .msg.agent .body h1,
 .msg.agent .body h2,
 .msg.agent .body h3,
@@ -2924,6 +3005,7 @@ body.vscode-light {
   margin: 16px 0 8px;
   font-weight: 600;
   line-height: 1.3;
+  color: color-mix(in oklab, var(--vscode-charts-orange, #ce9178) 72%, var(--vscode-foreground) 28%);
 }
 .msg.agent .body h1, .desk-ft-md h1, .files-browse-md h1 { font-size: 1.4em; }
 .msg.agent .body h2, .desk-ft-md h2, .files-browse-md h2 { font-size: 1.25em; }
@@ -3087,18 +3169,52 @@ body.vscode-light {
 /* One unified card owns the border, fill, and focus ring for the whole input
    area ÔÇö attachments row, textarea, and the bottom toolbar live INSIDE it, so
    they read as one control instead of three stacked strips. */
+.composer-context-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 4px 8px;
+}
+.composer-context-bar[hidden] { display: none; }
+.context-files-btn,
+.review-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--vscode-descriptionForeground);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.review-btn {
+  background: color-mix(in oklab, var(--vscode-foreground) 8%, transparent);
+  color: var(--vscode-foreground);
+}
+.context-files-btn svg { width: 12px; height: 12px; }
+.context-files-btn:hover,
+.review-btn:hover {
+  background: color-mix(in oklab, var(--vscode-foreground) 12%, transparent);
+}
+body:not(.desk-with-ft) #review-btn { display: none; }
+
 .composer-card {
   display: flex;
   flex-direction: column;
-  background: var(--vscode-input-background);
-  border: 1px solid var(--vscode-input-border, var(--vscode-editorWidget-border));
-  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--vscode-editorWidget-background, var(--vscode-input-background)) 92%, var(--vscode-foreground) 8%);
+  border: 1px solid color-mix(in oklab, var(--vscode-foreground) 12%, transparent);
+  border-radius: 16px;
   /* The toolbar responds to the card, not the viewport. The card contains no
      position:fixed descendants; the toolbar popovers are siblings in .composer. */
   container: composer-card / inline-size;
 }
 .composer-card:focus-within {
-  border-color: var(--vscode-focusBorder);
+  border-color: color-mix(in oklab, var(--vscode-foreground) 22%, transparent);
 }
 
 /* Floating "Scroll to bottom" (#28). Anchored to the composer (the chat input
@@ -3164,8 +3280,7 @@ body.vscode-light {
 textarea#input,
 .input-highlight {
   margin: 0;
-  /* extra right padding leaves room for the mic button in the top-right corner */
-  padding: 6px 34px 6px 8px;
+  padding: 10px 14px 4px;
   border: 0;
   /* UI font, not the editor's monospace ÔÇö typed text should look like the
      user message it becomes (textareas default to monospace otherwise). */
@@ -3178,6 +3293,7 @@ textarea#input,
 textarea#input {
   display: block;
   width: 100%;
+  min-height: 44px;
   resize: none;
   background: transparent;
   color: var(--vscode-input-foreground);
@@ -3185,6 +3301,11 @@ textarea#input {
   outline: none;
   position: relative;
   z-index: 1;
+}
+textarea#input::placeholder {
+  color: var(--vscode-descriptionForeground);
+  font-style: italic;
+  opacity: 0.85;
 }
 .input-highlight {
   position: absolute;
@@ -3222,27 +3343,22 @@ textarea#input {
 /* ---- mic / voice-input button (top-right corner of the textbox) ---- */
 
 .mic-btn {
-  /* Anchored inside .composer-input-wrap (position:relative) so it tracks the
-     textarea's top-right corner ÔÇö not the composer, which grows when the
-     attachments row appears above the input (that made the mic "jump"). */
-  position: absolute;
-  top: 5px;
-  right: 6px;
-  /* Above the textarea (z-index:1) so its top-right padding doesn't swallow the
-     hover/click ÔÇö the textarea was lifted for the highlight overlay. */
+  position: static;
   z-index: 2;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   border: none;
-  border-radius: 50%;
+  border-radius: 8px;
   background: transparent;
   color: var(--vscode-descriptionForeground, var(--vscode-foreground));
   cursor: pointer;
-  opacity: 0.75;
+  opacity: 0.85;
   transition: background 0.12s, color 0.12s, opacity 0.12s;
 }
 .mic-btn:hover { opacity: 1; background: var(--vscode-toolbar-hoverBackground); }
@@ -3307,9 +3423,10 @@ textarea#input {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  min-height: 28px;
+  min-height: 32px;
+  position: relative;
   /* Bottom row inside .composer-card ÔÇö inset from the card edges. */
-  padding: 0 5px 5px;
+  padding: 2px 8px 8px;
 }
 .toolbar-left {
   display: flex;
@@ -3325,12 +3442,33 @@ textarea#input {
   gap: 6px;
   flex-shrink: 0;
 }
-#mode-btn {
+#mode-btn,
+#model-btn {
   flex-shrink: 1;
   min-width: 0;
   overflow: hidden;
-  max-width: 120px;
+  max-width: 140px;
+  color: var(--vscode-descriptionForeground);
 }
+#mode-btn svg:last-of-type,
+#model-btn svg:last-of-type {
+  width: 12px;
+  height: 12px;
+  opacity: 0.7;
+}
+.composer-toolbar #gear-btn {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.composer-toolbar #chips { display: none; }
+.context-donut #donut-label { display: none; }
 /* Same 28px hit-target + 8px radius as .icon-btn so the mode button's icon
    size and highlight height match the gear/history/new buttons exactly. */
 .toolbar-btn {
@@ -3410,7 +3548,6 @@ textarea#input {
    distinct mode glyph and context arc while reclaiming the label widths before
    the existing flex ellipsis can abbreviate them. */
 @container composer-card (max-width: 360px) {
-  #mode-btn .btn-label,
   .context-donut #donut-label {
     display: none;
   }
@@ -3784,13 +3921,14 @@ textarea#input {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
+  background: var(--vscode-foreground);
+  color: var(--vscode-editor-background, var(--vscode-sideBar-background));
   border: none;
-  border-radius: 5px;
+  border-radius: 50%;
   cursor: pointer;
 }
-.send:hover { background: var(--vscode-button-hoverBackground); }
+.send[hidden] { display: none; }
+.send:hover { opacity: 0.88; }
 .send:disabled { opacity: 0.4; cursor: default; }
 /* Stop mode: same button position, different look. Subtle so it doesn't shout. */
 .send.stop {

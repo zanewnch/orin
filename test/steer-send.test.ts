@@ -7,10 +7,10 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import * as path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { makeImageChip } from "../src/chips";
+import { makeImageChip } from "../src/composer/chips";
 import type { HostMsg } from "../src/protocol";
-import { enqueueQueuedSend } from "../src/queued-send";
-import { Session } from "../src/session";
+import { enqueueQueuedSend } from "../src/session/queued-send";
+import { Session } from "../src/session/session";
 import { GrokSidebar } from "../src/sidebar";
 
 const PNG = Buffer.from(

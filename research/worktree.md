@@ -63,4 +63,4 @@ The immediate create RPC already returns `worktreePath`; the status rail is for 
 | *Remove worktree* | dispose sessions on that path → `remove` → new workspace session |
 | History | merge indexes across workspace + worktree cwds; `worktreeLabel` on rows |
 
-Pure helpers: `src/worktree.ts`. ACP methods: `AcpClient.createWorktree` / `listWorktrees` / `applyWorktree` / `removeWorktree`.
+Pure helpers: `src/projects/worktree.ts`. ACP methods: `AcpClient.createWorktree` / `listWorktrees` / `applyWorktree` / `removeWorktree`.

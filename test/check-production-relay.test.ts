@@ -143,9 +143,9 @@ describe("wiring — the guard is what actually runs", () => {
   const install = fs.readFileSync(path.join(root, "scripts", "install.ps1"), "utf8");
   const releasePs1 = fs.readFileSync(path.join(root, "scripts", "release.ps1"), "utf8");
   const releaseSh = fs.readFileSync(path.join(root, "scripts", "release.sh"), "utf8");
-  const frames = fs.readFileSync(path.join(root, "src", "remote-frames.ts"), "utf8");
+  const frames = fs.readFileSync(path.join(root, "src", "remote", "remote-frames.ts"), "utf8");
 
-  it("accepts the real src/remote-frames.ts", () => {
+  it("accepts the real src/remote/remote-frames.ts", () => {
     expect(evaluateRelayPackageGuard(frames, {}).ok).toBe(true);
     expect(parseRelayConsts(frames)).toMatchObject({
       remoteForm: "ident",

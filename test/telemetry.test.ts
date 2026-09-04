@@ -18,11 +18,11 @@ import {
   type SessionStartPropKey,
   type SessionStartProps,
 } from "../src/telemetry";
-import { DESKTOP_APP_SHORT_NAME } from "../src/desktop/host-dialogs";
+import { DESKTOP_APP_SHORT_NAME } from "../src/desktop/host/host-dialogs";
 import { GrokSidebar } from "../src/sidebar";
-import { Session } from "../src/session";
-import { RemoteClientState } from "../src/remote-client-state";
-import { normalizeRepoPath } from "../src/sessions";
+import { Session } from "../src/session/session";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { normalizeRepoPath } from "../src/session/sessions";
 
 const REQUIRED: SessionStartProps = {
   installId: "i",
@@ -579,7 +579,7 @@ describe("sanitizeSessionStartProps — allowlist, no paths, no free text", () =
   });
 });
 
-const SIDEBAR_SRC = readFileSync(new URL("../src/sidebar.ts", import.meta.url), "utf8").replace(/\r\n/g, "\n");
+const SIDEBAR_SRC = readFileSync(new URL("../src/sidebar/grok-sidebar.ts", import.meta.url), "utf8").replace(/\r\n/g, "\n");
 
 function sidebarMethodBody(signature: string): string {
   const start = SIDEBAR_SRC.indexOf(signature);

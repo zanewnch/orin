@@ -11,7 +11,7 @@ const path = require("node:path");
 const env = { ...process.env };
 delete env.ELECTRON_RUN_AS_NODE;
 
-const REMOTE_FRAMES = path.join(__dirname, "..", "out", "remote-frames.js");
+const REMOTE_FRAMES = path.join(__dirname, "..", "out", "remote", "remote-frames.js");
 
 /** GROK_RELAY_URL from the gitignored .env, when the environment has none. */
 function relayUrlFromEnvFile() {

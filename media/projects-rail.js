@@ -32,11 +32,11 @@
   };
 
   // The host fetches the expanded depth once; rendering starts at three rows.
-  // Keep both values in lockstep with src/projects-rail.ts.
+  // Keep both values in lockstep with src/projects/projects-rail.ts.
   const RAIL_PREVIEW = 3;
   const RAIL_EXPANDED = 20;
   // Cross-project RECENT is a shorter shortcut list than RAIL_EXPANDED.
-  // Keep in lockstep with RAIL_RECENT_CAP in src/projects-rail.ts.
+  // Keep in lockstep with RAIL_RECENT_CAP in src/projects/projects-rail.ts.
   const RECENT_CAP = 10;
   const RAIL_RECENT_KEY = "__recent__";
   // The same age rule the desktop/browser rail applies (media/chat.js). Without
@@ -121,7 +121,7 @@
 
   /**
    * Identity key for a project cwd. Mirrors `cwdKey` in media/chat.js and
-   * `railRepoKey` in src/projects-rail.ts — this file had it wrong.
+   * `railRepoKey` in src/projects/projects-rail.ts — this file had it wrong.
    *
    * An absolute POSIX path keeps its case and its characters. `/work/App` and
    * `/work/app` are two directories on Linux, and a backslash is a legal
@@ -661,7 +661,7 @@
 
   /**
    * Most-recent conversations across every loaded project + pinned rows.
-   * Mirrors collectRecentSessions in src/projects-rail.ts (RECENT_CAP).
+   * Mirrors collectRecentSessions in src/projects/projects-rail.ts (RECENT_CAP).
    * Duplication with PINNED / project lists is intentional — a shortcut.
    */
   function recentRows() {

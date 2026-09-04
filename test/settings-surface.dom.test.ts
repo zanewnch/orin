@@ -4,7 +4,7 @@ import { Window } from "happy-dom";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { TIER1_CONNECTORS } from "../src/mcp-connectors";
+import { TIER1_CONNECTORS } from "../src/mcp/mcp-connectors";
 import { bootWebview, click, dispatch } from "./webview-harness";
 
 const settingsSrc = readFileSync(
@@ -1612,7 +1612,7 @@ describe("review lows (settings / telemetry / voice write scope)", () => {
 
   it("broadcasts telemetryEnabled to every remote tab", () => {
     const src = readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     const start = src.indexOf("private static readonly DEVICE_GLOBAL_REMOTE_TYPES");
@@ -1628,7 +1628,7 @@ describe("review lows (settings / telemetry / voice write scope)", () => {
 
   it("posts the stored global MCP view device-wide", () => {
     const src = readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     const start = src.indexOf("private postMcpServers");
@@ -1644,7 +1644,7 @@ describe("review lows (settings / telemetry / voice write scope)", () => {
 
   it("voice send-phrase and keyterms write the winning inspect scope", () => {
     const src = readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     const start = src.indexOf('case "setVoiceSendPhrase"');
@@ -1710,7 +1710,7 @@ describe("settings About section", () => {
 describe("settings editor tab dispose (sidebar.ts)", () => {
   it("installs the dispose listener before awaiting the device token", () => {
     const src = readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
       "utf8",
     );
     const start = src.indexOf("async openSettingsEditor(");

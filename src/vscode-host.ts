@@ -13,7 +13,7 @@ import {
   GLOBAL_CONFIG_STUB,
   projectConfigPath,
   PROJECT_CONFIG_STUB,
-} from "./grok-config";
+} from "./providers/grok-config";
 import type {
   ConfigInspect,
   ConfigTarget,

@@ -7,9 +7,9 @@
  */
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("../src/acp", async (importOriginal) => {
+vi.mock("../src/acp/acp", async (importOriginal) => {
   const { EventEmitter } = await import("node:events");
-  const actual = await importOriginal<typeof import("../src/acp")>();
+  const actual = await importOriginal<typeof import("../src/acp/acp")>();
   class FakeAcpClient extends EventEmitter {
     provider = "grok" as const;
     usesClientPlanGate = false;
@@ -46,9 +46,9 @@ vi.mock("../src/acp", async (importOriginal) => {
 });
 
 import { GrokSidebar } from "../src/sidebar";
-import { RemoteClientState } from "../src/remote-client-state";
-import { Session } from "../src/session";
-import { AUTO_NAME_MAX_CHARS, capAutoName } from "../src/sessions";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { Session } from "../src/session/session";
+import { AUTO_NAME_MAX_CHARS, capAutoName } from "../src/session/sessions";
 import type { HostMsg } from "../src/protocol";
 
 const SESSION_META_KEY = "grok.sessionMeta";

@@ -12,8 +12,8 @@
 // tried it from a browser yet.
 import { describe, expect, it, vi } from "vitest";
 import { GrokSidebar } from "../src/sidebar";
-import { RemoteClientState } from "../src/remote-client-state";
-import { Session } from "../src/session";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { Session } from "../src/session/session";
 
 function makeSidebar(): any {
   const sidebar = Object.create(GrokSidebar.prototype) as any;
@@ -141,7 +141,7 @@ describe("both ways of adding a project enter it", () => {
   it("clone and create both bind the requester before reporting done", async () => {
     const { readFileSync } = await import("node:fs");
     const { fileURLToPath } = await import("node:url");
-    const src = readFileSync(fileURLToPath(new URL("../src/sidebar.ts", import.meta.url)), "utf8");
+    const src = readFileSync(fileURLToPath(new URL("../src/sidebar/grok-sidebar.ts", import.meta.url)), "utf8");
 
     // Look only BETWEEN each `addProjectFolder(dest)` and the `done: true` that
     // follows it. Splitting on `done: true` alone passes trivially, because the

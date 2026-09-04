@@ -250,7 +250,7 @@ describe("rail resize handle (DOM)", () => {
 describe("desktop boot rail width (computed layout)", () => {
   function firstFrameLayoutCss(): string {
     const sidebar = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "html.ts"),
       "utf8",
     );
     const start = sidebar.indexOf("const firstFrameLayout");

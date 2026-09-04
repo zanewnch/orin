@@ -48,7 +48,7 @@ Do **not** use the GitHub provider. Point `electron-updater` at:
 | macOS (`darwin`) | `https://afkpilot.com/update/mac/` | `https://afkpilot.com/update/mac/latest-mac.yml` |
 
 Those paths are `desktopUpdateFeedBase` / `desktopUpdateFeedConfig` in
-`src/desktop/app-update.ts`. Linux has no feed; the client stays on the
+`src/desktop/config/app-update.ts`. Linux has no feed; the client stays on the
 phase-1 notice.
 
 `allowPrerelease` is irrelevant: the relay chooses which release's yml to

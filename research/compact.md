@@ -32,7 +32,7 @@ That's the fix shape the extension uses (`buildPrompt`/`buildPromptWithImages`
 with `slashCommand: true` flip to `<text>\n\n<context>`): the pre-fix builder
 put the envelope FIRST, so with the implicit active-editor chip present, every
 typed slash command (`/compact`, `/help`, custom skill commands…) silently
-degraded into an ordinary LLM turn. `matchSlashCommand` (src/slash-filter.ts)
+degraded into an ordinary LLM turn. `matchSlashCommand` (src/composer/slash-filter.ts)
 is the gate: token shape `^\/([A-Za-z0-9][\w.:-]*)(?:\s|$)` (rejects Unix paths
 like `/tmp/foo` — no boundary after `tmp`) checked against the CLI's advertised
 `availableCommands` (shape-only before the list arrives).

@@ -7,8 +7,8 @@ import {
   type FsLike,
   type RepoArchives,
   type RepoPins,
-} from "../src/sessions";
-import { worktreeCwdsForRepo } from "../src/worktree";
+} from "../src/session/sessions";
+import { worktreeCwdsForRepo } from "../src/projects/worktree";
 
 function fakeFs(entries: Record<string, { dir: boolean; mtime?: number }>): FsLike {
   return {

@@ -134,7 +134,7 @@ node -e "require('fs').appendFileSync('app.js','\nfunction subtract(a,b){return 
 Nothing was written only because our probe ACKs terminals without executing them — a client that
 actually runs the agent's commands (the whole point of `terminal/*` delegation) would have mutated
 the workspace during "planning", contradicting the CLI's own rule above. Our client-side
-`terminal/create` allowlist (`src/plan-gate.ts`) is currently the **only** barrier.
+`terminal/create` allowlist (`src/acp/plan-gate.ts`) is currently the **only** barrier.
 
 The workaround therefore remains in place: the client-side gate at the mandatory
 `fs/write_text_file` / `terminal/create` choke points, plus a hidden **primer** message carrying

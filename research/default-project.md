@@ -5,7 +5,7 @@ project question is not asked.
 
 ## Provision (`provisionDefaultProjectDir`)
 
-`ensureWorkspaceRoot` in `src/desktop/electron-host.ts` runs **before**
+`ensureWorkspaceRoot` in `src/desktop/host/electron-host.ts` runs **before**
 `GrokSidebar` is constructed (`src/desktop/main.ts`).
 
 1. Forced `--workspace=` / already-open prefs: leave them, mark seed complete.

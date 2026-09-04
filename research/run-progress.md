@@ -41,7 +41,7 @@ From CLI binary symbols (0.2.111) + session_notification family:
 
 | Layer | Role |
 |---|---|
-| `src/run-progress.ts` | Pure `isRunProgressUpdate` / `parseRunProgressUpdate` / `workflowControlCommand` |
+| `src/session/run-progress.ts` | Pure `isRunProgressUpdate` / `parseRunProgressUpdate` / `workflowControlCommand` |
 | `sidebar.ts` xaiNotification | Emit `{ type: "runProgress", update }` |
 | `media/chat.js` | Upsert teal progress cards; Pause/Resume/Stop → `workflowControl` → `/workflow …` |
 

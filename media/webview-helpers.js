@@ -281,7 +281,7 @@
     if (!s || s.length > 200) return false;
     if (s.includes("://")) return false; // URLs are never file refs
     // Strip only a TRAILING line ref (`:12`, `:12-34`, `:12:5`, `#L12[-L34]`) —
-    // the shapes parseFileRef (src/file-ref.ts) can open. Stripping from the
+    // the shapes parseFileRef (src/composer/file-ref.ts) can open. Stripping from the
     // FIRST `:`/`#` collapsed `C:\work\file.ts` to `C` (the drive colon), so
     // absolute Windows paths never linkified.
     const core = s.replace(/(?::\d+(?:-\d+|:\d+)?|#L\d+(?:-L?\d+)?)$/i, "");
@@ -374,7 +374,7 @@
   // trailing punctuation, mirroring the host's parseVoiceCommand. Returns the
   // {index, length} of the match, or null. An empty phrase disables it.
   // One phrase word, tolerating the "send" ⇄ "sent" STT confusion (kept in sync
-  // with phraseWordPattern in src/voice.ts).
+  // with phraseWordPattern in src/voice/voice.ts).
   function phraseWordPattern(word) {
     const lower = word.toLowerCase();
     if (lower === "send" || lower === "sent") return "sen[dt]";
@@ -655,7 +655,7 @@
     return "Tool call failed.";
   }
 
-  // MIRROR of `isMediaGenToolCall` in src/acp-dispatch.ts — media-gen titles /
+  // MIRROR of `isMediaGenToolCall` in src/acp/acp-dispatch.ts — media-gen titles /
   // variants for /imagine, /imagine-video, image_edit, reference_to_video. Kept
   // in the webview so tool-result rendering (incl. remote) can gate failure
   // hints without a host rewrite or a new message type.
@@ -703,7 +703,7 @@
     return s.slice(0, head) + "…" + s.slice(s.length - tail);
   }
 
-  // KEEP IN STEP with src/slash-filter.ts isAdvertisedSkill: grok advertises
+  // KEEP IN STEP with src/composer/slash-filter.ts isAdvertisedSkill: grok advertises
   // skills with `_meta.scope` + `_meta.path`; builtins omit those keys.
   function isAdvertisedSkill(cmd) {
     if (!cmd || typeof cmd !== "object") return false;
@@ -718,7 +718,7 @@
     return ch === " " || ch === "\t" || ch === "\n" || ch === "\r" || ch === "\f" || ch === "\v";
   }
 
-  // KEEP IN STEP with src/slash-filter.ts getSlashQuery. Skills load anywhere
+  // KEEP IN STEP with src/composer/slash-filter.ts getSlashQuery. Skills load anywhere
   // (`atStart: false` after whitespace); commands dispatch only at position 0.
   function getSlashQuery(text, caret) {
     const src = text == null ? "" : String(text);
@@ -731,7 +731,7 @@
     return { query: m[1], atStart: slashIndex === 0 };
   }
 
-  // KEEP IN STEP with src/slash-filter.ts applySlashPick.
+  // KEEP IN STEP with src/composer/slash-filter.ts applySlashPick.
   function applySlashPick(text, caret, name) {
     const src = text == null ? "" : String(text);
     const pos = Math.max(0, Math.min(Number(caret) || 0, src.length));
@@ -746,7 +746,7 @@
     return { text: newBefore + after, caret: newBefore.length };
   }
 
-  // KEEP IN STEP with src/slash-filter.ts filterCommands: name prefix, then
+  // KEEP IN STEP with src/composer/slash-filter.ts filterCommands: name prefix, then
   // mid-name, then description-only; advertised order inside each tier (#110).
   function filterCommands(commands, query) {
     const list = Array.isArray(commands) ? commands : [];
@@ -962,7 +962,7 @@
   // file-path context (attached files + the open-editor file). On session restore
   // grok replays the full prompt text; pulling the block back out lets us re-render
   // filename-only chips + the user's own text, instead of showing raw paths inline.
-  // Must stay in sync with buildPrompt's format (src/prompt-builder.ts). Returns
+  // Must stay in sync with buildPrompt's format (src/composer/prompt-builder.ts). Returns
   // { files: string[], body: string } — body is the prompt minus the block. When
   // there's no block (a plain message) files is empty and body is the input.
   function parseAttachmentContext(text) {
@@ -981,7 +981,7 @@
     return { files, body };
   }
 
-  // Parse the leading fenced selection snippets buildPrompt (src/prompt-builder.ts)
+  // Parse the leading fenced selection snippets buildPrompt (src/composer/prompt-builder.ts)
   // emits for chips carrying a selection range, so restore re-renders them as
   // ranged chips (`a.ts:2-4`) instead of inline code blocks — matching the live
   // bubble. Must stay in sync with buildPrompt's block format:
@@ -1026,7 +1026,7 @@
     return { body: rest.trim(), selections };
   }
 
-  // Parse the `[Image #N]` tags that buildPromptWithImages (src/prompt-builder.ts)
+  // Parse the `[Image #N]` tags that buildPromptWithImages (src/composer/prompt-builder.ts)
   // puts in the prompt text back out of a replayed body, so restore re-renders
   // image chips instead of raw tags. Must stay in sync with that format.
   // Current wire shape: one tag per TRAILING line, whose parenthetical carries a
@@ -2665,7 +2665,7 @@
    * How long the waiting indicator has been on screen, for its label.
    *
    * A turn has no deadline the user can see. `session/prompt` tolerates 30
-   * minutes of CLI silence before it gives up (`src/acp-timeout.ts`), and until
+   * minutes of CLI silence before it gives up (`src/acp/acp-timeout.ts`), and until
    * then the only thing on screen is a spinner — so "working" and "wedged" look
    * identical, and users reasonably report the second one as broken (#126). A
    * running count is the cheapest honest signal: it does not claim to know

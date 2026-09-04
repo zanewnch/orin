@@ -8,13 +8,13 @@ import {
   isSafeRelativePlanReviewLink,
   isTrustedPlanReviewPath,
   planReviewSessionDirectoryName,
-} from "../src/plan-review";
+} from "../src/acp/plan-review";
 import {
   authorizeDesktopWebviewMsg,
   authorizeOpenFile,
   desktopAuthRoots,
   resolveAuthorizedFileForOpen,
-} from "../src/desktop/desktop-policy";
+} from "../src/desktop/policy/desktop-policy";
 
 describe("plan-review path fence", () => {
   it("accepts only a session segment and one Markdown file", () => {
@@ -222,7 +222,7 @@ describe("plan-review path fence", () => {
   it("wires the focused review root lazily from the sidebar", () => {
     const repoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
     const main = fs.readFileSync(path.join(repoRoot, "src", "desktop", "main.ts"), "utf8");
-    const sidebar = fs.readFileSync(path.join(repoRoot, "src", "sidebar.ts"), "utf8");
+    const sidebar = fs.readFileSync(path.join(repoRoot, "src", "sidebar", "grok-sidebar.ts"), "utf8");
     expect(main).toContain("get planReviewSessionRoot()");
     expect(main).toContain("sidebar!.desktopPlanReviewSessionRoot()");
     expect(main).not.toContain('planReviewsRoot: path.join(globalStorageDir, "plan-reviews")');

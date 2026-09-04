@@ -428,7 +428,7 @@ describe("the three surfaces this page has to reach", () => {
   // catalog; the ROUTING registration was not, and each of these three is a
   // separate list that has to name the message or the surface goes dark.
   const sidebarSrc = readFileSync(
-    fileURLToPath(new URL("../src/sidebar.ts", import.meta.url)),
+    fileURLToPath(new URL("../src/sidebar/grok-sidebar.ts", import.meta.url)),
     "utf8",
   );
 

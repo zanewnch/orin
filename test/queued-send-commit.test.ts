@@ -3,9 +3,9 @@ import {
   Session,
   beginQueuedSendCommit,
   finishQueuedSendCommit,
-} from "../src/session";
-import { enqueueQueuedSend } from "../src/queued-send";
-import { makeImageChip } from "../src/chips";
+} from "../src/session/session";
+import { enqueueQueuedSend } from "../src/session/queued-send";
+import { makeImageChip } from "../src/composer/chips";
 
 const item = (text: string, chips: Session["queuedSends"][number]["chips"] = []) => ({ text, chips });
 

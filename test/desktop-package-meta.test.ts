@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extensionIdFromPackageMeta, isCloudBuildFromPackageMeta, PACKAGED_EXTENSION_NAME_FIELD } from "../src/desktop/package-meta";
+import { extensionIdFromPackageMeta, isCloudBuildFromPackageMeta, PACKAGED_EXTENSION_NAME_FIELD } from "../src/desktop/config/package-meta";
 import { OFFICIAL_EXTENSION_ID } from "../src/telemetry";
 
 describe("extensionIdFromPackageMeta", () => {

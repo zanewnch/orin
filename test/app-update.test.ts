@@ -28,11 +28,11 @@ import {
   shouldSkipUpdateCheck,
   type DesktopAutoUpdater,
   type GithubReleaseLike,
-} from "../src/desktop/app-update";
+} from "../src/desktop/config/app-update";
 import {
   INBOUND_DISPOSITION,
   OUTBOUND_DISPOSITION,
-} from "../src/remote-policy";
+} from "../src/remote/remote-policy";
 
 describe("parseSemver / compareSemver", () => {
   it("parses plain and v-prefixed versions", () => {
@@ -629,7 +629,7 @@ describe("app-update source gates", () => {
   const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
   it("does not assign the no-op runtime verifyUpdateCodeSignature", () => {
-    const src = fs.readFileSync(path.join(root, "src", "desktop", "app-update.ts"), "utf8");
+    const src = fs.readFileSync(path.join(root, "src", "desktop", "config", "app-update.ts"), "utf8");
     expect(src).not.toMatch(/verifyUpdateCodeSignature/);
     expect(src).toMatch(/quitAndInstall\(true, true\)/);
   });

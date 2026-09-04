@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   mediaContentTypeForPath,
   parseByteRange,
-} from "../src/desktop/app-resource-policy";
+} from "../src/desktop/resources/app-resource-policy";
 
 describe("app-resource byte-range policy", () => {
   it("accepts open-ended and explicit ranges", () => {

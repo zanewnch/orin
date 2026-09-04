@@ -17,8 +17,8 @@ import {
   CLOUD_ENVIRONMENT_ENV,
   isCloudEnvironment,
   relayClientMeta,
-} from "../src/remote-frames";
-import { deviceLoginPreflight, deviceLoginUnavailable } from "../src/device-login";
+} from "../src/remote/remote-frames";
+import { deviceLoginPreflight, deviceLoginUnavailable } from "../src/auth/device-login";
 import { nextWakeAt, type Routine } from "../src/routines";
 
 const desk = {

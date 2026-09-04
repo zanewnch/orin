@@ -132,13 +132,13 @@ swallowed into the path (lookahead on the extension). `isMediaGenToolCall` match
   `imagine:` / `image_to_video` / `image-to-video:` / `reference_to_video`) or
   `rawInput.variant` (`ImageGen` / `ImageToVideo` / `ReferenceToVideo`). The host
   remembers the `toolCallId` so the **completed** update (null title) is still
-  recognized. (`src/acp-dispatch.ts`)
+  recognized. (`src/acp/acp-dispatch.ts`)
 - `extractGeneratedMediaPaths(payload)` — parses each `text` content block as JSON
   and returns any `.path` with a known image **or** video extension, tagged
-  `media: "image" | "video"`. (`src/acp-dispatch.ts`)
+  `media: "image" | "video"`. (`src/acp/acp-dispatch.ts`)
 - `AcpClient.emitToolMedia` — on every tool call/update, emits `mediaContent`
   for ACP-standard image blocks (`collectToolImages`, forward-compat fallback)
-  plus the flagged media-gen path. (`src/acp.ts`)
+  plus the flagged media-gen path. (`src/acp/acp.ts`)
 - `GrokSidebar.postGeneratedMedia` — when the file lives under a
   `localResourceRoot` (the grok home), serves it to the webview via
   `webview.asWebviewUri` so the webview streams the bytes straight from disk

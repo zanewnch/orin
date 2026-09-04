@@ -12,8 +12,8 @@ import {
   isTrustedGeneratedMediaPath,
   resolveChatOpenFilePath,
   resolveSessionGeneratedMediaPath,
-} from "../src/media-serve";
-import { keepsCanonicalDirectChildIdentity } from "../src/sessions";
+} from "../src/composer/media-serve";
+import { keepsCanonicalDirectChildIdentity } from "../src/session/sessions";
 
 function sessionLayout(grokHome: string, sessionId = "sess-1") {
   // Host path module so Windows CI gets drive/separator-correct absolutes.
@@ -508,7 +508,7 @@ describe("chat open path is rooted at the session", () => {
     // below counts on "\n  }\n" meaning end-of-method.
     const src = fs
       .readFileSync(
-        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
         "utf8",
       )
       .replace(/\r\n/g, "\n");

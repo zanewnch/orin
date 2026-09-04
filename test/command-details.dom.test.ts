@@ -9,8 +9,8 @@
 // [Error] marker + error tint; a kill is [Cancelled], not an error.
 import { describe, it, expect } from "vitest";
 import { bootWebview, dispatch, click } from "./webview-harness";
-import { normalizeCodexUpdate } from "../src/codex-backend";
-import { commandOutputForToolCall } from "../src/acp-dispatch";
+import { normalizeCodexUpdate } from "../src/acp/codex-backend";
+import { commandOutputForToolCall } from "../src/acp/acp-dispatch";
 
 const exec = (id: string, command: string, title?: string) => ({
   type: "toolCall",

@@ -11,7 +11,7 @@ import {
   isSubagentLifecycleUpdate,
   parseAcpLine,
   routeSessionUpdate,
-} from "../src/acp-dispatch";
+} from "../src/acp/acp-dispatch";
 
 const PARENT = "019fff34-47e9-78e0-b75e-e22f7ecf8aab";
 const CHILD_A = "019fff34-5c66-7111-91b6-e7e75f5e645a";

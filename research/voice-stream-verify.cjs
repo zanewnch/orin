@@ -1,10 +1,10 @@
-// End-to-end check of the SHIPPED VoiceStreamer class (out/voice-streamer.js):
+// End-to-end check of the SHIPPED VoiceStreamer class (out/voice/voice-streamer.js):
 // open the live STT WebSocket, capture the real mic via ffmpeg for 3s, finalize.
 // Silence (empty transcript) is fine — this confirms connect → pipe → stop with
 // no errors. Run: node research/voice-stream-verify.cjs
 const fs = require("node:fs");
 const path = require("node:path");
-const { VoiceStreamer } = require("../out/voice-streamer.js");
+const { VoiceStreamer } = require("../out/voice/voice-streamer.js");
 
 const env = fs.readFileSync(path.join(__dirname, "..", ".env"), "utf8");
 const key = (env.match(/(?:GROK_VOICE_API_KEY|XAI_API_KEY)\s*=\s*(.+)/) || [])[1].trim();

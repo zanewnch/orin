@@ -9,8 +9,8 @@
 //   3. Reasoning traces "no longer expandable" -> header click toggles the body
 import { describe, it, expect, vi } from "vitest";
 import { bootWebview, dispatch, click, Posted } from "./webview-harness";
-import { countsAsUserBubble } from "../src/plan-restore";
-import { bracketRemoteSnapshot } from "../src/remote-policy";
+import { countsAsUserBubble } from "../src/acp/plan-restore";
+import { bracketRemoteSnapshot } from "../src/remote/remote-policy";
 import type { HostMsg } from "../src/protocol";
 
 const $ = (doc: Document, id: string) => doc.getElementById(id) as HTMLElement;
@@ -1645,17 +1645,17 @@ describe("Grokking… indicator (waiting placeholder)", () => {
   it("uses the active provider's composer placeholder and updates it live on an empty session", () => {
     const h = bootWebview();
     const input = h.doc.getElementById("input") as HTMLTextAreaElement;
-    expect(input.placeholder).toBe("Ask Grok…");
+    expect(input.placeholder).toBe("Plan, Build, / for skills, @ for context");
 
     dispatch(h.window, {
       type: "session", sessionId: "c1", models: [], currentModelId: "gpt-5.6-sol", provider: "codex",
     });
-    expect(input.placeholder).toBe("Ask GPT…");
+    expect(input.placeholder).toBe("Plan, Build, / for skills, @ for context");
 
     dispatch(h.window, {
       type: "session", sessionId: "g1", models: [], currentModelId: "grok-build", provider: "grok",
     });
-    expect(input.placeholder).toBe("Ask Grok…");
+    expect(input.placeholder).toBe("Plan, Build, / for skills, @ for context");
   });
 
   it("uses Opening AI for Codex while keeping the shared live-turn indicator", () => {
@@ -1670,13 +1670,13 @@ describe("Grokking… indicator (waiting placeholder)", () => {
     expect(el.querySelector(".grokking-icon svg")).not.toBeNull();
   });
 
-  it("uses Clauding for Claude and Ask Claude in the composer", () => {
+  it("uses Clauding for Claude and the shared composer placeholder", () => {
     const h = bootWebview();
     const input = h.doc.getElementById("input") as HTMLTextAreaElement;
     dispatch(h.window, {
       type: "session", sessionId: "cl1", models: [], currentModelId: "claude-sonnet-4-5", provider: "claude",
     });
-    expect(input.placeholder).toBe("Ask Claude…");
+    expect(input.placeholder).toBe("Plan, Build, / for skills, @ for context");
     dispatch(h.window, { type: "agentStart" });
     const el = grokking(h.doc)!;
     expect(el.querySelector(".grokking-label")?.textContent).toBe("Clauding");

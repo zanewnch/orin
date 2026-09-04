@@ -13,8 +13,8 @@
 // anything it likes, and the host must still say no.
 import { describe, expect, it, vi } from "vitest";
 import { GrokSidebar } from "../src/sidebar";
-import { RemoteClientState } from "../src/remote-client-state";
-import { Session } from "../src/session";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { Session } from "../src/session/session";
 
 function makeSidebar(): any {
   const sidebar = Object.create(GrokSidebar.prototype) as any;

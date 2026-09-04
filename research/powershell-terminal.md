@@ -7,13 +7,13 @@ Windows (was cmd.exe), and the empirical evidence behind the trade-offs.
 
 In ACP mode grok **does not run shell commands itself** — it sends
 `terminal/create` with a command string and the *client* runs it
-(`src/acp.ts` → `TerminalManager.create`). The old code spawned with
+(`src/acp/acp.ts` → `TerminalManager.create`). The old code spawned with
 `shell: true`, and on Windows Node resolves that to `%ComSpec%` = **cmd.exe**.
 Standalone `grok.exe` runs its own PowerShell session and never goes through
 ACP, so the two hosts diverged: PowerShell profile functions and pipelines
 (`… | Format-List`) failed under cmd, forcing the agent into retry/re-wrap
 loops. The shell is the host's choice, not a CLI flag — so this is fixed
-entirely in `resolveTerminalShell` (`src/terminal-manager.ts`).
+entirely in `resolveTerminalShell` (`src/providers/terminal-manager.ts`).
 
 ## Fix
 
@@ -70,7 +70,7 @@ Faithful replication of Node's spawn path (`shell: "powershell.exe"`), probes in
 
 ## Plan-gate interaction
 
-`shouldBlockTerminal` (`src/plan-gate.ts`) classifies the command *string* and
+`shouldBlockTerminal` (`src/acp/plan-gate.ts`) classifies the command *string* and
 is shell-agnostic, so switching the host shell doesn't change verdicts — and the
 read-only allowlist already contains PowerShell cmdlets/aliases
 (`get-childitem`/`gci`/`get-content`/…), which only became meaningful once

@@ -186,7 +186,8 @@ node_modules/<hoisted adapter transitives>    # zod, vscode-jsonrpc, open's help
 `media/chat.js` at:
 
 1. `path.resolve(moduleDir, "..", "..")` — works for the compile tree **and**
-   the packaged asar layout (`…/app.asar/out/desktop` → `…/app.asar`)
+   the packaged asar layout (`…/app.asar/out/desktop` → `…/app.asar`).
+   `resolveExtensionRoot()` passes `out/desktop` (parent of `config/paths.js`).
 2. `app.getAppPath()` if needed
 3. `process.resourcesPath` / `…/app` if media were ever shipped as extraResources
 

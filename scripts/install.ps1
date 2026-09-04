@@ -13,7 +13,7 @@
 # RELAY: this script exists only to put a build on THIS machine for testing, so
 # it builds against the STAGING relay by default. A published extension always
 # runs in production mode, which is why the GROK_RELAY_URL override that serves
-# the desktop app cannot help here - the constant in src\remote-frames.ts has to
+# the desktop app cannot help here - the constant in src\remote\remote-frames.ts has to
 # be swapped for the build and swapped back afterwards.
 #
 # The swap-back is in a finally block, and the script verifies the file is byte
@@ -39,7 +39,7 @@ $knownClis = @("code", "code-insiders", "cursor", "antigravity-ide", "antigravit
 if (-not $Cli -and $env:CODE_CLI) { $Cli = $env:CODE_CLI }
 if ($All -and $Cli) { throw "-All and -Cli are mutually exclusive." }
 
-$framesPath = Join-Path $repoRoot "src\remote-frames.ts"
+$framesPath = Join-Path $repoRoot "src\remote\remote-frames.ts"
 $prodRelayLine = 'export const REMOTE_RELAY_URL = PRODUCTION_RELAY_URL;'
 # Must match scripts/check-production-relay.mjs. A tripwire in
 # test/check-production-relay.test.ts fails if either side drifts.
@@ -52,7 +52,7 @@ function Get-DevRelayUrl {
     $line = Get-Content $envFile | Where-Object { $_ -match '^\s*GROK_RELAY_URL\s*=' } | Select-Object -First 1
     if (-not $line) { return $null }
     $value = ($line -replace '^\s*GROK_RELAY_URL\s*=\s*', '').Trim().Trim('"').Trim("'")
-    # Same rule as resolveRelayUrl in src\remote-frames.ts: ws(s), an authority,
+    # Same rule as resolveRelayUrl in src\remote\remote-frames.ts: ws(s), an authority,
     # an optional base path (a relay may live behind a prefix), and no query,
     # fragment or credentials. These two must agree, or desktop-dev would accept
     # a URL that a staging .vsix build silently refuses.
@@ -91,7 +91,7 @@ Fix the line, or build against production explicitly:
         }
         $current = Read-TextFile $framesPath
         if (-not $current.Contains($prodRelayLine)) {
-            throw "src\remote-frames.ts does not contain the expected production relay line - refusing to swap. Restore it first."
+            throw "src\remote\remote-frames.ts does not contain the expected production relay line - refusing to swap. Restore it first."
         }
         # ONE LINE swapped, and one line swapped back - never a whole-file
         # snapshot restored over the top. A snapshot would silently discard
@@ -161,7 +161,7 @@ Fix the line, or build against production explicitly:
             # against the file rather than against our own copy of it.
             if ((Read-TextFile $framesPath).Contains($devUrl)) {
                 Write-Host ""
-                Write-Host "  !! src\remote-frames.ts still names the staging relay." -ForegroundColor Red
+                Write-Host "  !! src\remote\remote-frames.ts still names the staging relay." -ForegroundColor Red
                 Write-Host "     Restore it before committing: $prodRelayLine" -ForegroundColor Red
                 Write-Host ""
             }

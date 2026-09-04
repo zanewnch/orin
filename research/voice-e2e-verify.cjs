@@ -6,8 +6,8 @@
 // Run:  node research/voice-e2e-verify.cjs
 const path = require("node:path");
 const fs = require("node:fs");
-const { VoiceRecorder, transcribeAudio } = require("../out/voice-recorder.js");
-const { parseDshowAudioDevices, buildListDevicesArgs } = require("../out/voice.js");
+const { VoiceRecorder, transcribeAudio } = require("../out/voice/voice-recorder.js");
+const { parseDshowAudioDevices, buildListDevicesArgs } = require("../out/voice/voice.js");
 const { spawnSync } = require("node:child_process");
 
 function loadKey() {

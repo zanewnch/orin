@@ -13,7 +13,7 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it, vi } from "vitest";
 import { GrokSidebar } from "../src/sidebar";
-import { INBOUND_DISPOSITION, allowFromRemote } from "../src/remote-policy";
+import { INBOUND_DISPOSITION, allowFromRemote } from "../src/remote/remote-policy";
 
 type AnySidebar = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -186,7 +186,7 @@ describe("Settings → Providers refresh", () => {
  */
 describe("Grok credential probe does not leave a project-catalog shell", () => {
   const src = readFileSync(
-    path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar.ts"),
+    path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "sidebar", "grok-sidebar.ts"),
     "utf8",
   );
 

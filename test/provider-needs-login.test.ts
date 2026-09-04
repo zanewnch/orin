@@ -10,19 +10,19 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GrokSidebar } from "../src/sidebar";
-import { RemoteClientState } from "../src/remote-client-state";
-import { Session } from "../src/session";
-import { projectProviderKey } from "../src/provider-ui";
-import { warmCodexModelCache } from "../src/codex-model-cache";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { Session } from "../src/session/session";
+import { projectProviderKey } from "../src/providers/provider-ui";
+import { warmCodexModelCache } from "../src/providers/codex-model-cache";
 
 const probe = vi.hoisted(() => ({ error: new Error("Sign in required") }));
 
-vi.mock("../src/codex-model-cache", () => ({
+vi.mock("../src/providers/codex-model-cache", () => ({
   warmCodexModelCache: vi.fn(async () => { throw probe.error; }),
 }));
 
-vi.mock("../src/acp", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("../src/acp")>();
+vi.mock("../src/acp/acp", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../src/acp/acp")>();
   class ListRefusingAcpClient {
     constructor(readonly options: unknown) {}
     async start(): Promise<void> {}

@@ -22,7 +22,7 @@
  *  17.  A routine created in the future yields nothing due
  */
 import { describe, it, expect } from "vitest";
-import { AUTO_NAME_MAX_CHARS } from "../src/sessions";
+import { AUTO_NAME_MAX_CHARS } from "../src/session/sessions";
 import {
   ROUTINE_MIN_INTERVAL_MS,
   ROUTINE_RUN_HISTORY_LIMIT,

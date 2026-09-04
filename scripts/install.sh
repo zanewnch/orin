@@ -13,7 +13,7 @@
 # it builds against the STAGING relay by default — the twin of install.ps1's
 # behaviour. A published extension always runs in production mode, which is why
 # the GROK_RELAY_URL override that serves the desktop app cannot help here: the
-# constant in src/remote-frames.ts has to be swapped for the build and swapped
+# constant in src/remote/remote-frames.ts has to be swapped for the build and swapped
 # back afterwards.
 #
 # The swap-back runs from a trap, and the script then proves the staging URL is
@@ -110,7 +110,7 @@ hint_other_clis() {
     fi
 }
 
-frames_path="$repo_root/src/remote-frames.ts"
+frames_path="$repo_root/src/remote/remote-frames.ts"
 prod_relay_line='export const REMOTE_RELAY_URL = PRODUCTION_RELAY_URL;'
 # Must match scripts/check-production-relay.mjs; test/check-production-relay.test.ts
 # fails if either side drifts.
@@ -136,7 +136,7 @@ file_contains() {  # path needle
     ' "$1" "$2"
 }
 
-# Same rule as resolveRelayUrl in src/remote-frames.ts: ws(s), an authority, an
+# Same rule as resolveRelayUrl in src/remote/remote-frames.ts: ws(s), an authority, an
 # optional base path (a relay may live behind a prefix), and no query, fragment
 # or credentials. These two must agree, or desktop-dev would accept a URL a
 # staging .vsix build silently refuses.
@@ -169,7 +169,7 @@ restore_relay_line() {
     # exists to prevent.
     if file_contains "$frames_path" "$dev_url"; then
         echo "" >&2
-        echo "  !! src/remote-frames.ts still names the staging relay." >&2
+        echo "  !! src/remote/remote-frames.ts still names the staging relay." >&2
         echo "     Restore it before committing: $prod_relay_line" >&2
         echo "" >&2
     fi
@@ -202,7 +202,7 @@ NOENV
             exit 1
         }
         file_contains "$frames_path" "$prod_relay_line" || {
-            echo "src/remote-frames.ts does not contain the expected production relay line — refusing to swap. Restore it first." >&2
+            echo "src/remote/remote-frames.ts does not contain the expected production relay line — refusing to swap. Restore it first." >&2
             exit 1
         }
         dev_relay_line="export const REMOTE_RELAY_URL = \"$dev_url\";"

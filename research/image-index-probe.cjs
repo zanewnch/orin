@@ -3,7 +3,7 @@
  * What does the grok CLI count when it resolves an `[Image #N]` reference?
  *
  * ANSWERED — this probe drove the 2026-08-12 fix. Numbering is now PER-MESSAGE
- * (`withPerMessageImageIndices`, src/chips.ts). Kept because it is the only
+ * (`withPerMessageImageIndices`, src/composer/chips.ts). Kept because it is the only
  * thing that can re-check the CLI's side of the contract when grok updates.
  *
  * WHY (at the time). Our index was SESSION-scoped (`++session.imageCounter`,
@@ -171,7 +171,7 @@ const tag = (n) => `[Image #${n}] (attached inline — already visible to you; d
       "which is why it tells the agent to ask for a re-attach.\n\n" +
       "Our tag has matched that since 2026-08-12: it is the image's position among\n" +
       "the visible image chips of the message it rides on (withPerMessageImageIndices,\n" +
-      "src/chips.ts). If a future CLI build changes the answer above, that function\n" +
+      "src/composer/chips.ts). If a future CLI build changes the answer above, that function\n" +
       "is the one place to change.\n\n" +
       "Note the wording differs from the owner's report ('does not match any\n" +
       "attached image. Available: [Image #1].'), so the message is not stable\n" +

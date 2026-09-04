@@ -59,13 +59,13 @@ change their semantics.
 When the agent finishes planning, the CLI sends an `x.ai/exit_plan_mode` request to the
 client and waits for a verdict. We handle it correctly:
 
-- Receive the request and surface it — `src/acp.ts:382-391` (`x.ai/exit_plan_mode` /
+- Receive the request and surface it — `src/acp/acp.ts:382-391` (`x.ai/exit_plan_mode` /
   `_x.ai/exit_plan_mode` → emit `exitPlanRequest`).
 - User picks a verdict in a chat card → `exitPlanAnswer` → `respondExitPlan`
-  (`src/sidebar.ts:424-425`, `src/acp.ts:246-249`).
+  (`src/sidebar.ts:424-425`, `src/acp/acp.ts:246-249`).
 - We even use the protocol-correct shape for "no": **approved** goes back as a JSON-RPC
   *result*; **rejected/abandoned** go back as JSON-RPC *errors* —
-  `src/acp-dispatch.ts:99-110`:
+  `src/acp/acp-dispatch.ts:99-110`:
 
   ```ts
   // Reject and Abandon must be sent as JSON-RPC errors — the CLI treats any
@@ -177,12 +177,12 @@ the broken one. Reasonable as a guard until A or B lands.
 
 | What | Location |
 |---|---|
-| `exit_plan_mode` request received → `exitPlanRequest` | `src/acp.ts:382-391` |
-| Verdict sent back to CLI (`respondExitPlan`) | `src/acp.ts:246-249` |
-| Verdict wire shape (approve=result, reject/abandon=error) | `src/acp-dispatch.ts:99-110` |
-| `current_mode_update` → `modeChanged` (route) | `src/acp-dispatch.ts:61-62` |
-| `modeChanged` emit + `currentModeId` (client) | `src/acp.ts:309-311` |
-| `setMode` over ACP (`plan`/`agent`) | `src/acp.ts:211-216` |
+| `exit_plan_mode` request received → `exitPlanRequest` | `src/acp/acp.ts:382-391` |
+| Verdict sent back to CLI (`respondExitPlan`) | `src/acp/acp.ts:246-249` |
+| Verdict wire shape (approve=result, reject/abandon=error) | `src/acp/acp-dispatch.ts:99-110` |
+| `current_mode_update` → `modeChanged` (route) | `src/acp/acp-dispatch.ts:61-62` |
+| `modeChanged` emit + `currentModeId` (client) | `src/acp/acp.ts:309-311` |
+| `setMode` over ACP (`plan`/`agent`) | `src/acp/acp.ts:211-216` |
 | `setMode` (yolo client-side; plan/agent → CLI) | `src/sidebar.ts:140-152` |
 | `modeChanged` forwarded to webview — **no guard** | `src/sidebar.ts:253-255` |
 | `exitPlanAnswer` → `respondExitPlan` | `src/sidebar.ts:424-425` |
@@ -241,7 +241,7 @@ a plan-mode turn and logged every server→client call without writing anything 
 | Effect | auto-allow every permission | block workspace writes + mutating commands |
 | Enforced at | `session/request_permission` | `fs/write_text_file` + `terminal/create` |
 
-- **Policy is a pure module** — `src/plan-gate.ts`, 38 unit tests in
+- **Policy is a pure module** — `src/acp/plan-gate.ts`, 38 unit tests in
   `test/plan-gate.test.ts` covering Windows long-path prefixes, case-insensitive
   containment, sibling-prefix false positives, `..` traversal, the read-only command
   allowlist (git/npm subcommands, interpreter `--version` only), chaining/redirection
@@ -249,7 +249,7 @@ a plan-mode turn and logged every server→client call without writing anything 
   carve-out.
 - **The gate is the extension-owned enforcement pillar.** Native
   `exit_plan_mode` outcomes align the CLI's behavior; the extension no longer sends a
-  hidden primer or bracket-marker prompt. `src/grok-primer.ts` deliberately remains as
+  hidden primer or bracket-marker prompt. `src/providers/grok-primer.ts` deliberately remains as
   a legacy reader so old sessions replay, restore, title, and rewind correctly. See
   [research/understanding-plan-mode.md](understanding-plan-mode.md).
 - **acp.ts** gates the two handlers and emits `mutationBlocked` / `planFileContent`.
@@ -272,7 +272,7 @@ extension shipped at that time, not just the original single-turn observation:
   "Don't implement yet — revise…" feedback prompt → observe a second turn. ACKs
   everything (raw behavior).
 - `research/plan-gated-probe.cjs` — same flow but wires in the **shipped policy**
-  (`out/plan-gate.js`) and returns the real `PLAN_BLOCKED_CODE` error when the gate
+  (`out/acp/plan-gate.js`) and returns the real `PLAN_BLOCKED_CODE` error when the gate
   blocks, so we see what the *user* would actually experience.
 
 Findings (consistent across runs):

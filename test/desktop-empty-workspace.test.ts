@@ -4,8 +4,8 @@
  * default is a busy spinner, so the panel never left loading (#116).
  */
 import { describe, expect, it, vi } from "vitest";
-import { RemoteClientState } from "../src/remote-client-state";
-import { Session } from "../src/session";
+import { RemoteClientState } from "../src/remote/remote-client-state";
+import { Session } from "../src/session/session";
 import type { HostMsg } from "../src/protocol";
 import { GrokSidebar } from "../src/sidebar";
 

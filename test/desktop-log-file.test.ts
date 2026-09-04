@@ -20,7 +20,7 @@ import {
   prepareLogFile,
   rotatedLogPath,
   type LogFileIo,
-} from "../src/desktop/log-file";
+} from "../src/desktop/config/log-file";
 
 function io(over: Partial<LogFileIo> = {}) {
   const calls: string[] = [];

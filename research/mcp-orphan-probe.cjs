@@ -1,7 +1,7 @@
 /**
  * Does `proc.kill()` actually stop the mcp-remote the extension spawned?
  *
- * src/mcp-connector-auth.ts spawns `npx.cmd` with `shell: true` on Windows,
+ * src/mcp/mcp-connector-auth.ts spawns `npx.cmd` with `shell: true` on Windows,
  * so the child is `cmd.exe`, and its own children are npx -> node mcp-remote.
  * `kill()` targets the handle it holds. This measures what survives.
  *

@@ -23,7 +23,7 @@ import {
   provisionDefaultProjectDir,
   resolveDesktopProfileDir,
   resolveExtensionRootFrom,
-} from "../src/desktop/paths";
+} from "../src/desktop/config/paths";
 
 describe("resolveExtensionRootFrom", () => {
   let tmp: string;

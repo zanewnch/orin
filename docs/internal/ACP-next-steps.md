@@ -43,7 +43,7 @@ the same generic suppression mechanism even though priming no longer does.
 **Keep the client-side gate.** This is not "trust native plan mode." `terminal/create` still escapes
 the CLI's plan gate — re-confirmed live on 0.2.112 for the third consecutive build (4 `terminal/create`
 calls passed through during one plan turn while the edit tool was correctly refused). So
-`src/plan-gate.ts` stays exactly as-is. The clean split:
+`src/acp/plan-gate.ts` stays exactly as-is. The clean split:
 
 - **CLI owns** mode state, plan review, verdict semantics.
 - **We remain** defense-in-depth for delegated mutation.

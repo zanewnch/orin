@@ -12,14 +12,16 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const sidebarSrc = path.join(root, "src", "sidebar.ts");
 
 describe("sidebar is portable (no vscode module)", () => {
   it("does not import or require the vscode module", () => {
-    const src = readFileSync(sidebarSrc, "utf8");
-    expect(src).not.toMatch(/\bfrom\s+["']vscode["']/);
-    expect(src).not.toMatch(/\brequire\s*\(\s*["']vscode["']\s*\)/);
-    expect(src).not.toMatch(/\bimport\s*\(\s*["']vscode["']\s*\)/);
+    const dir = path.join(root, "src", "sidebar");
+    for (const name of ["grok-sidebar.ts", "html.ts", "helpers.ts", "diff.ts", "keys.ts", "index.ts"]) {
+      const src = readFileSync(path.join(dir, name), "utf8");
+      expect(src, name).not.toMatch(/\bfrom\s+["']vscode["']/);
+      expect(src, name).not.toMatch(/\brequire\s*\(\s*["']vscode["']\s*\)/);
+      expect(src, name).not.toMatch(/\bimport\s*\(\s*["']vscode["']\s*\)/);
+    }
   });
 
   it("loads freshly compiled sidebar.js when resolving vscode throws", () => {
@@ -38,7 +40,7 @@ describe("sidebar is portable (no vscode module)", () => {
         `sidebar portable gate: compile failed (status ${tsc.status}):\n${tsc.stdout}\n${tsc.stderr}`,
       );
     }
-    const loadPath = path.join(tempOut, "sidebar.js");
+const loadPath = path.join(tempOut, "sidebar", "index.js");
     if (!existsSync(loadPath)) {
       throw new Error(`sidebar portable gate: expected ${loadPath} after compile`);
     }
