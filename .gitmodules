@@ -1,0 +1,8 @@
+[submodule "opencode"]
+	path = opencode
+	url = https://github.com/zanewnch/opencode.git
+	branch = feature/wip
+[submodule "kilocode"]
+	path = kilocode
+	url = https://github.com/zanewnch/kilocode.git
+	branch = feature/wip
