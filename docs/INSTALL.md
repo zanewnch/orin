@@ -2,7 +2,7 @@
 
 The quickest path is in the [README](../README.md#install): install the extension from the Extensions view, then let the sidebar's onboarding install the `grok` CLI and sign you in. This file covers the manual, build-from-source, and multi-IDE paths.
 
-For the **standalone Grok Build Desktop** app (installers, code-signing and SmartScreen notes, packaging commands), see **[desktop.md](desktop.md)**.
+For the **standalone Orin Desktop** app (installers, code-signing and SmartScreen notes, packaging commands), see **[desktop.md](desktop.md)**.
 
 ## Install the CLI yourself (optional)
 
@@ -27,14 +27,14 @@ grok login
 ## Install the extension from the command line
 
 ```bash
-code --install-extension PawelHuryn.grok-vscode-phuryn
+code --install-extension zanewnch.orin
 ```
 
 ## Build from source
 
 ```bash
-git clone https://github.com/phuryn/grok-build-vscode.git
-cd grok-build-vscode
+git clone https://github.com/zanewnch/orin.git
+cd orin
 npm install
 ./scripts/install.sh        # Windows: pwsh scripts\install.ps1
 ```
@@ -47,7 +47,7 @@ Remove it from the Extensions view, or:
 
 ```bash
 ./scripts/uninstall.sh [cli]          # Windows: pwsh scripts\uninstall.ps1 [-Cli name]
-code --uninstall-extension PawelHuryn.grok-vscode-phuryn
+code --uninstall-extension zanewnch.orin
 ```
 
 The uninstall scripts take the same optional CLI argument as install.

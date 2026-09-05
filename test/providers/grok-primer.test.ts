@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isPrimerText, isPrimerSummary } from "../../src/providers/grok-primer";
+import { isPrimerText, isPrimerSummary } from "../../src/providers/grok/grok-primer";
 
 describe("isPrimerSummary (legacy empty-session/title cleanup)", () => {
   it("matches grok's primer-derived summaries/titles", () => {

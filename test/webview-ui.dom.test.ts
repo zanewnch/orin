@@ -929,6 +929,17 @@ describe("mode picker (the plan-gate entry path)", () => {
     expect((pop as any).hidden).toBe(true);
   });
 
+  it("closes the model picker before opening the mode popover", () => {
+    const { window, doc } = bootWebview();
+    const modelPopover = $(doc, "gear-popover");
+    modelPopover.hidden = false;
+
+    click(window, $(doc, "mode-btn"));
+
+    expect((modelPopover as any).hidden).toBe(true);
+    expect(($(doc, "mode-popover") as any).hidden).toBe(false);
+  });
+
   // Regression: switching mode during session start called setMode before the
   // session existed → "Couldn't switch mode: no session". The button is disabled
   // only during the startup window (busyLocked); it stays live during a running
@@ -1194,13 +1205,13 @@ describe("gear settings lock (model + effort disabled while busy / priming)", ()
     expect(types(posted)).not.toContain("setModel");
   });
 
-  it("while busy, clicking an effort dot does not post setEffort", () => {
+  it("while busy, clicking the effort row does not post setEffort", () => {
     const { window, posted, doc } = bootWithModels({ value: true });
     click(window, $(doc, "gear-btn"));
-    const dot = doc.querySelector(".effort-dot") as HTMLElement;
+    const row = doc.querySelector(".effort-row-btn") as HTMLButtonElement;
 
-    expect(dot.className).toContain("disabled");
-    click(window, dot);
+    expect(row.disabled).toBe(true);
+    click(window, row);
     expect(types(posted)).not.toContain("setEffort");
   });
 
@@ -1572,9 +1583,10 @@ describe("gear menu — AFK Pilot onboarding", () => {
 });
 
 describe("effort picker uses the model's advertised levels (not a hardcoded set)", () => {
-  const openEffortDots = (h: any) => {
+  const openEffortItems = (h: any) => {
     click(h.window, $(h.doc, "gear-btn"));
-    return [...h.doc.querySelectorAll(".effort-dot")] as HTMLElement[];
+    click(h.window, h.doc.querySelector(".effort-row-btn") as HTMLElement);
+    return [...h.doc.querySelectorAll(".effort-pick-item")] as HTMLElement[];
   };
 
   it("shows exactly the current model's advertised efforts, ordered low→high", () => {
@@ -1583,9 +1595,9 @@ describe("effort picker uses the model's advertised levels (not a hardcoded set)
       type: "session", sessionId: "s1", currentModelId: "grok-build",
       models: [{ modelId: "grok-build", name: "Grok Build", reasoningEfforts: ["high", "medium", "low"] }],
     });
-    const dots = openEffortDots(h);
-    expect(dots).toHaveLength(3); // low/medium/high — not the 6-level ladder
-    expect(dots.map((d) => d.title)).toEqual([
+    const items = openEffortItems(h);
+    expect(items).toHaveLength(3); // low/medium/high — not the 6-level ladder
+    expect(items.map((d) => d.title)).toEqual([
       "Low — fast, lightweight reasoning",
       "Medium — balanced",
       "High — deeper reasoning",
@@ -1598,17 +1610,17 @@ describe("effort picker uses the model's advertised levels (not a hardcoded set)
       type: "session", sessionId: "s1", currentModelId: "grok-build",
       models: [{ modelId: "grok-build", name: "Grok Build" }], // no reasoningEfforts
     });
-    expect(openEffortDots(h)).toHaveLength(6);
+    expect(openEffortItems(h)).toHaveLength(6);
   });
 
-  it("shows a Loading… model + 5 neutral placeholder dots before the session's model info arrives", () => {
+  it("shows a Loading… model and a locked effort row before the session's model info arrives", () => {
     const h = bootWebview();
-    // no `session` message yet → no model / effort menu known
-    const dots = openEffortDots(h);
-    const nameBtn = h.doc.querySelector("#gear-popover .model-name-btn") as HTMLElement;
+    click(h.window, $(h.doc, "gear-btn"));
+    const nameBtn = h.doc.querySelector("#gear-popover .model-name-btn") as HTMLButtonElement;
+    const effortBtn = h.doc.querySelector("#gear-popover .effort-row-btn") as HTMLButtonElement;
     expect(nameBtn.textContent).toContain("Loading");
-    expect(dots).toHaveLength(5);
-    expect(dots.every((d) => d.classList.contains("loading"))).toBe(true);
+    expect(effortBtn.disabled).toBe(true);
+    expect(h.doc.querySelectorAll(".effort-pick-item")).toHaveLength(0);
   });
 });
 
@@ -3047,6 +3059,23 @@ describe("composer input focus (caret ready on open)", () => {
   it("focuses the input on boot, so typing works without a first click", () => {
     const { doc } = bootWebview();
     expect(doc.activeElement).toBe($(doc, "input"));
+  });
+
+  it("returns focus to the composer on Ctrl+L", () => {
+    const { window, doc } = bootWebview();
+    const input = $(doc, "input") as HTMLTextAreaElement;
+    ($(doc, "history-btn") as HTMLButtonElement).focus();
+
+    const event = new (window as any).KeyboardEvent("keydown", {
+      key: "l",
+      ctrlKey: true,
+      bubbles: true,
+      cancelable: true,
+    });
+    window.dispatchEvent(event);
+
+    expect(doc.activeElement).toBe(input);
+    expect(event.defaultPrevented).toBe(true);
   });
 
   it("forwards window focus that landed on <body> to the input", () => {

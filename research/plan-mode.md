@@ -249,7 +249,7 @@ a plan-mode turn and logged every server→client call without writing anything 
   carve-out.
 - **The gate is the extension-owned enforcement pillar.** Native
   `exit_plan_mode` outcomes align the CLI's behavior; the extension no longer sends a
-  hidden primer or bracket-marker prompt. `src/providers/grok-primer.ts` deliberately remains as
+  hidden primer or bracket-marker prompt. `src/providers/grok/grok-primer.ts` deliberately remains as
   a legacy reader so old sessions replay, restore, title, and rewind correctly. See
   [research/understanding-plan-mode.md](understanding-plan-mode.md).
 - **acp.ts** gates the two handlers and emits `mutationBlocked` / `planFileContent`.

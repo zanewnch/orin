@@ -16,7 +16,7 @@ import {
   providerLoginState,
   versionIsOlder,
   type ProviderHistoryCursor,
-} from "../../src/providers/provider-ui";
+} from "../../src/providers/shared/provider-ui";
 import type { SessionListEntry } from "../../src/session/sessions";
 
 describe("provider UI pure policy", () => {

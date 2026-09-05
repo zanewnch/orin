@@ -239,6 +239,8 @@ export interface HostFileSystem {
  * its own.
  */
 export interface Host {
+  /** Surface identity used by shared UI logic for host-specific affordances. */
+  readonly hostKind?: "extension" | "desktop";
   // ── Notifications ──────────────────────────────────────────────────────
   showInformationMessage(message: string, ...items: string[]): Thenable<string | undefined>;
   showWarningMessage(

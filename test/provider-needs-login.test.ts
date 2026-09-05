@@ -12,12 +12,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GrokSidebar } from "../src/sidebar";
 import { RemoteClientState } from "../src/remote/remote-client-state";
 import { Session } from "../src/session/session";
-import { projectProviderKey } from "../src/providers/provider-ui";
-import { warmCodexModelCache } from "../src/providers/codex-model-cache";
+import { projectProviderKey } from "../src/providers/shared/provider-ui";
+import { warmCodexModelCache } from "../src/providers/codex/codex-model-cache";
 
 const probe = vi.hoisted(() => ({ error: new Error("Sign in required") }));
 
-vi.mock("../src/providers/codex-model-cache", () => ({
+vi.mock("../src/providers/codex/codex-model-cache", () => ({
   warmCodexModelCache: vi.fn(async () => { throw probe.error; }),
 }));
 

@@ -36,7 +36,7 @@ find_code_cli() {
 }
 
 code=$(find_code_cli)
-echo "Uninstalling PawelHuryn.grok-vscode-phuryn via $code"
-"$code" --uninstall-extension PawelHuryn.grok-vscode-phuryn
+echo "Uninstalling zanewnch.orin via $code"
+"$code" --uninstall-extension zanewnch.orin
 echo
 echo "Done. Reload the IDE window to drop the sidebar."

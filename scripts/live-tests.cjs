@@ -289,7 +289,7 @@ function assert(cond, msg) { if (!cond) throw new Error(msg); }
 
 // #46: agent shell host. The extension — not grok — runs every terminal/* call,
 // so which shell it uses is our choice. This is the one entry that doesn't spawn
-// grok: it drives the REAL compiled `out/providers/terminal-manager.js` the extension ships
+// grok: it drives the REAL compiled `out/providers/shared/terminal-manager.js` the extension ships
 // against the actual OS shell, proving on Windows that a grok-issued command runs
 // under PowerShell (pwsh → powershell), where a PowerShell-only pipeline + cmdlet
 // succeed that cmd.exe would have failed. On POSIX it confirms $SHELL (or
@@ -299,7 +299,7 @@ async function testTerminalShell() {
   try {
     ({ TerminalManager, resolveTerminalShell, posixShellFromEnv } = require(path.join(REPO, "out", "providers", "terminal-manager.js")));
   } catch (e) {
-    throw new Skip("out/providers/terminal-manager.js not built — run `npm run compile` (" + e.message + ")");
+    throw new Skip("out/providers/shared/terminal-manager.js not built — run `npm run compile` (" + e.message + ")");
   }
   const which = (name) => {
     if (process.platform !== "win32") return undefined;

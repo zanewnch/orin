@@ -355,6 +355,57 @@
     return [...known, ...extra];
   }
 
+  function sessionSettingsLock() {
+    const anyUsableProvider = !state.providersKnown
+      || (state.providers || []).some((p) => p.connected && p.needsLogin !== true);
+    const settingsLocked = state.busy || !anyUsableProvider;
+    const modelLoaded = (state.availableModels || []).length > 0 && !!state.currentModelId;
+    return { anyUsableProvider, settingsLocked, modelLoaded };
+  }
+
+  function currentEffortLabel() {
+    const { anyUsableProvider, modelLoaded } = sessionSettingsLock();
+    if (!anyUsableProvider) return "—";
+    if (!modelLoaded) return "…";
+    return state.effort ? capitalize(state.effort) : "Default";
+  }
+
+  function currentModelLabel() {
+    const { anyUsableProvider, modelLoaded } = sessionSettingsLock();
+    if (!anyUsableProvider) return "—";
+    if (!modelLoaded) return "…";
+    const models = (state.availableModels || []).filter((m) =>
+      !m.provider || m.provider === state.activeProvider
+    );
+    const name = modelDisplayName(state.currentModelId, models) || state.currentModelId || "Model";
+    const effort = state.effort ? capitalize(state.effort) : "Default";
+    return `${name} · ${effort}`;
+  }
+
+  function modelEffortSubtitle(m) {
+    const active = m.modelId === state.currentModelId && (!m.provider || m.provider === state.activeProvider);
+    if (active && state.effort) return capitalize(state.effort);
+    const adv = Array.isArray(m.reasoningEfforts) ? m.reasoningEfforts.find((v) => typeof v === "string" && v) : "";
+    return adv ? capitalize(adv) : "";
+  }
+
+  function applyEffort(id) {
+    const { settingsLocked, modelLoaded } = sessionSettingsLock();
+    if (settingsLocked || !modelLoaded) return;
+    state.effort = id;
+    vscode.postMessage({ type: "setEffort", level: state.effort });
+    updateModelBtn();
+  }
+
+  function cycleEffort() {
+    const { settingsLocked, modelLoaded } = sessionSettingsLock();
+    if (settingsLocked || !modelLoaded) return;
+    const levels = effortLevelsForModel();
+    if (!levels.length) return;
+    const idx = levels.indexOf(state.effort);
+    applyEffort(levels[(idx + 1) % levels.length]);
+  }
+
   const storedRemoteTts = IS_REMOTE && storedBool(REMOTE_TTS_KEY, false);
   const storedRemoteTtsSummary = storedRemoteTts && storedBool(REMOTE_TTS_SUMMARY_KEY, true);
   if (IS_REMOTE && !storedRemoteTts) storeRemotePref(REMOTE_TTS_SUMMARY_KEY, false);
@@ -1133,22 +1184,18 @@
 
   function updateModelBtn() {
     if (!modelBtn) return;
-    const ownModels = (state.availableModels || []).filter((model) => !model.provider || model.provider === state.activeProvider);
-    const anyUsableProvider = !state.providersKnown
-      || (state.providers || []).some((p) => p.connected && p.needsLogin !== true);
-    const modelLoaded = (state.availableModels || []).length > 0 && !!state.currentModelId;
-    const settingsLocked = state.busy || !anyUsableProvider;
-    const modelName = !anyUsableProvider
-      ? "Models unavailable"
-      : (modelLoaded ? (modelDisplayName(state.currentModelId, ownModels) || "Grok") : "Loading\u2026");
-    modelBtn.innerHTML = `<span class="btn-label">${escapeHtml(truncate(modelName, 16))}</span>${ICON.chevronDown}`;
+    const { anyUsableProvider, settingsLocked, modelLoaded } = sessionSettingsLock();
+    const label = currentModelLabel();
+    modelBtn.innerHTML = `<span class="btn-label">${escapeHtml(label)}</span>${ICON.chevronDown}`;
     modelBtn.disabled = settingsLocked || !modelLoaded;
     modelBtn.classList.toggle("disabled", settingsLocked || !modelLoaded);
     modelBtn.title = !anyUsableProvider
       ? "Connect an agent to choose a model"
       : (!modelLoaded
         ? "Loading the session\u2026"
-        : (settingsLocked ? `${modelName} \u2014 available once the session is ready` : `${modelName} \u2014 click to change`));
+        : (settingsLocked
+          ? `${label} — available once the session is ready`
+          : "Switch model · Cycle effort (Ctrl+Shift+/)"));
   }
 
   newBtn.innerHTML = ICON.plus;
@@ -1888,10 +1935,14 @@
   function closePopovers() {
     modePopover.hidden = true;
     gearPopover.hidden = true;
+    gearPopover.classList.remove("model-picker-menu");
+    gearPopover.classList.remove("popover-centered");
     addPopover.hidden = true;
     historyPopover.hidden = true;
     repoPopover.hidden = true;
     contextPopover.hidden = true;
+    modeBtn?.setAttribute("aria-expanded", "false");
+    modelBtn?.setAttribute("aria-expanded", "false");
   }
 
   // Context details on demand (donut click): what's in the window, what the turns
@@ -3117,6 +3168,7 @@
     state.gearView = "main";
     gearPopover.innerHTML = "";
     gearPopover.classList.remove("popover-centered");
+    gearPopover.classList.remove("model-picker-menu");
 
     // Two surfaces, one popover. With a rail gear the composer holds what is
     // about THIS CONVERSATION (model, effort, where it continues) and the rail
@@ -3134,89 +3186,60 @@
     }
   }
 
+  function addSettingRow(opts) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "cursor-setting-row" + (opts.className ? " " + opts.className : "") + (opts.disabled ? " disabled" : "") + (opts.active ? " active" : "");
+    btn.disabled = !!opts.disabled;
+    btn.title = opts.title || "";
+    btn.innerHTML =
+      `<span class="cursor-setting-label">${escapeHtml(opts.label)}</span>` +
+      `<span class="cursor-setting-value">${escapeHtml(opts.value)} ${ICON.chevronRight}</span>`;
+    if (!opts.disabled && opts.onclick) btn.onclick = (e) => { e.stopPropagation(); opts.onclick(); };
+    gearPopover.appendChild(btn);
+    return btn;
+  }
+
   /** Model + effort, plus worktree controls that have no header-menu home. */
   function renderGearConversation() {
-    // ── Model + effort header ─────────────────────────────────────────────
+    const { anyUsableProvider, settingsLocked, modelLoaded } = sessionSettingsLock();
+    const ownModels = state.availableModels.filter((model) => !model.provider || model.provider === state.activeProvider);
+    const modelName = !anyUsableProvider
+      ? "Models unavailable"
+      : (modelLoaded ? (modelDisplayName(state.currentModelId, ownModels) || "Grok Build") : "Loading…");
+    const effortName = !anyUsableProvider
+      ? "—"
+      : (!modelLoaded ? "…" : (state.effort ? capitalize(state.effort) : "Default"));
+
     const modelEffortSection = document.createElement("div");
-    // When Text size leads, Model and Effort is no longer the first row — keep
-    // the section rule so a separator appears under the slider.
     modelEffortSection.className = "popover-section" +
       (CLIENT_OWNS_FONT_SCALE ? "" : " popover-section-first");
     modelEffortSection.textContent = "Model and Effort";
     gearPopover.appendChild(modelEffortSection);
 
-    // ── Model + effort row ────────────────────────────────────────────────
-    const row = document.createElement("div");
-    row.className = "model-effort-row";
-
-    // Model + effort both restart or race the session, so they are locked while
-    // a turn or session startup is in flight (the same busy signal as Send).
-    //
-    // Also locked when NOTHING can answer: with no usable agent there is no
-    // model to choose between, and an enabled picker offering a list you cannot
-    // act on is worse than one that plainly says not yet. Connect an agent and
-    // it unlocks with that agent's own default selected (owner, 2026-08-17).
-    const anyUsableProvider = !state.providersKnown
-      || (state.providers || []).some((p) => p.connected && p.needsLogin !== true);
-    const settingsLocked = state.busy || !anyUsableProvider;
-
-    // Until the session's model info arrives (its name + advertised effort menu),
-    // don't show a guessed model or a stale effort ladder — show a Loading state.
-    const modelLoaded = state.availableModels.length > 0 && !!state.currentModelId;
-
-    const nameBtn = document.createElement("button");
-    nameBtn.className = "toolbar-btn model-name-btn" + (settingsLocked || !modelLoaded ? " disabled" : "");
-    const ownModels = state.availableModels.filter((model) => !model.provider || model.provider === state.activeProvider);
-    // With no agent able to answer, show that rather than the last model a
-    // session happened to remember. "GPT-5.6 Sol" sitting under the composer
-    // reads as a working selection when nothing can run at all.
-    const modelName = !anyUsableProvider
-      ? "Models unavailable"
-      : (modelLoaded ? (modelDisplayName(state.currentModelId, ownModels) || "Grok Build") : "Loading…");
-    nameBtn.innerHTML = `<span class="btn-label">${escapeHtml(truncate(modelName, 18))}</span>`;
-    nameBtn.disabled = settingsLocked || !modelLoaded;
-    nameBtn.title = !anyUsableProvider
-      ? "Connect an agent to choose a model"
-      : (!modelLoaded
-        ? "Loading the session…"
-        : (settingsLocked ? `${modelName} — available once the session is ready` : `${modelName} — click to change`));
-    if (!settingsLocked && modelLoaded) nameBtn.onclick = (e) => { e.stopPropagation(); renderModelPicker(); };
-    row.appendChild(nameBtn);
-
-    const dotsEl = document.createElement("span");
-    dotsEl.className = "effort-dots" + (settingsLocked || !modelLoaded ? " disabled" : "");
-    if (!modelLoaded) {
-      // Loading: neutral placeholder dots — we don't know the model's menu yet,
-      // so show a fixed skeleton rather than the (stale) fallback ladder.
-      for (let i = 0; i < 5; i++) {
-        const dot = document.createElement("span");
-        dot.className = "effort-dot loading disabled";
-        dot.title = "Loading the session…";
-        dotsEl.appendChild(dot);
-      }
-    } else {
-      const effortLevels = effortLevelsForModel();
-      const currentIdx = effortLevels.indexOf(state.effort);
-      effortLevels.forEach((id, i) => {
-        const dot = document.createElement("span");
-        dot.className = "effort-dot" + (i <= currentIdx ? " active" : "") + (settingsLocked ? " disabled" : "");
-        // Render the dot as a CSS-shaped span (see chat.css). Avoids the classic
-        // ● vs ○ Unicode size mismatch where the empty glyph is visibly larger.
-        dot.title = settingsLocked
-          ? "Available once the session is ready"
-          : (EFFORT_TOOLTIPS[id] || capitalize(id));
-        if (!settingsLocked) dot.onclick = (e) => {
-          e.stopPropagation();
-          state.effort = state.effort === id ? "" : id;
-          vscode.postMessage({ type: "setEffort", level: state.effort });
-          renderGearMain();
-          gearPopover.hidden = false;
-        };
-        dotsEl.appendChild(dot);
-      });
-    }
-    row.appendChild(dotsEl);
-    gearPopover.appendChild(row);
+    addSettingRow({
+      label: "Effort",
+      value: effortName,
+      className: "effort-row-btn",
+      disabled: settingsLocked || !modelLoaded,
+      title: settingsLocked ? "Available once the session is ready" : "Pick reasoning effort",
+      onclick: () => renderEffortPicker(),
+    });
+    addSettingRow({
+      label: "Model",
+      value: truncate(modelName, 22),
+      className: "model-name-btn",
+      disabled: settingsLocked || !modelLoaded,
+      title: !anyUsableProvider
+        ? "Connect an agent to choose a model"
+        : (!modelLoaded
+          ? "Loading the session…"
+          : (settingsLocked ? `${modelName} — available once the session is ready` : `${modelName} — click to change`)),
+      onclick: () => {
+        state.modelPickerStandalone = false;
+        renderModelPicker();
+      },
+    });
 
     // ── Session ───────────────────────────────────────────────────────────
     // Conversation-wide actions live in the header's overflow on every
@@ -3452,10 +3475,60 @@
     });
   }
 
-  function renderModelPicker() {
+  function renderEffortPicker() {
+    state.gearView = "effort";
+    gearPopover.classList.remove("model-picker-menu");
+    gearPopover.innerHTML = "";
+    addGearItem('<span class="popover-back">← Effort</span>', renderGearMain);
+    const { settingsLocked, modelLoaded } = sessionSettingsLock();
+    if (!modelLoaded) return;
+    for (const id of effortLevelsForModel()) {
+      const el = document.createElement("div");
+      el.className = "toolbar-popover-item effort-pick-item" + (state.effort === id ? " active" : "");
+      el.title = settingsLocked
+        ? "Available once the session is ready"
+        : (EFFORT_TOOLTIPS[id] || capitalize(id));
+      el.innerHTML =
+        `<span>${escapeHtml(capitalize(id))}</span>` +
+        (state.effort === id ? '<span class="popover-check">✓</span>' : "");
+      if (!settingsLocked) {
+        el.onclick = (e) => {
+          e.stopPropagation();
+          applyEffort(id);
+          renderGearMain();
+          gearPopover.hidden = false;
+        };
+      }
+      gearPopover.appendChild(el);
+    }
+  }
+
+  function renderModelPicker(query) {
     state.gearView = "model";
     gearPopover.innerHTML = "";
-    addGearItem('<span class="popover-back">← Model</span>', renderGearMain);
+    gearPopover.classList.add("model-picker-menu");
+    if (!state.modelPickerStandalone) {
+      addGearItem('<span class="popover-back">← Model</span>', () => {
+        gearPopover.classList.remove("model-picker-menu");
+        renderGearMain();
+      });
+    }
+    const searchWrap = document.createElement("div");
+    searchWrap.className = "model-picker-search-wrap";
+    const search = document.createElement("input");
+    search.type = "search";
+    search.className = "model-picker-search";
+    search.placeholder = "Search models…";
+    search.setAttribute("aria-label", "Search models");
+    search.value = query || "";
+    search.setAttribute("autocomplete", "off");
+    search.oninput = () => renderModelPicker(search.value);
+    search.onclick = (e) => e.stopPropagation();
+    searchWrap.appendChild(search);
+    gearPopover.appendChild(searchWrap);
+    if (query == null) {
+      requestAnimationFrame(() => { try { search.focus(); } catch { /* */ } });
+    }
     let models = state.availableModels.length
       ? state.availableModels
       : [{ modelId: state.currentModelId || "grok-build", name: state.currentModelId || "grok-build" }];
@@ -3469,6 +3542,13 @@
     // rows are replaced by the one action that can actually help.
     const signInProviders = ["grok", "codex", "claude"].filter(providerNeedsLogin);
     models = models.filter((model) => !signInProviders.includes(model.provider || state.activeProvider));
+    const q = String(query || "").trim().toLowerCase();
+    if (q) {
+      models = models.filter((m) => {
+        const label = (modelPickerLabel(m) || m.modelId || "").toLowerCase();
+        return label.includes(q) || String(m.modelId || "").toLowerCase().includes(q);
+      });
+    }
     if (grouped) {
       models = ["grok", "codex", "claude"].flatMap((provider) => models.filter((model) =>
         (model.provider || state.activeProvider) === provider));
@@ -3494,15 +3574,22 @@
       const el = document.createElement("div");
       const active = m.modelId === state.currentModelId && (!m.provider || m.provider === state.activeProvider);
       const label = modelPickerLabel(m) || m.modelId;
+      const effortSub = modelEffortSubtitle(m);
       const glyphId = providerLogoId(modelProvider);
       el.className = "toolbar-popover-item model-picker-row";
       if (active) el.classList.add("active");
+      el.setAttribute("role", "option");
+      el.setAttribute("aria-selected", String(active));
+      el.tabIndex = 0;
       el.innerHTML =
         `<span class="gear-lead">` +
           `<span class="provider-glyph provider-${glyphId}">${providerLogoMarkup(glyphId)}</span>` +
-          `<span class="model-picker-name">${escapeHtml(truncate(label, 28))}</span>` +
+          `<span class="model-picker-copy">` +
+            `<span class="model-picker-name">${escapeHtml(truncate(label, 28))}</span>` +
+            (effortSub ? `<span class="model-picker-effort">${escapeHtml(effortSub)}</span>` : "") +
+          `</span>` +
         `</span>` +
-        (active ? '<span class="popover-check">✓</span>' : "");
+        (active ? `<span class="popover-check">${ICON.check}</span>` : "");
       el.title = m.modelId;
       el.onclick = (e) => {
         e.stopPropagation();
@@ -3510,6 +3597,12 @@
         if (state.providersKnown && m.provider) message.provider = m.provider;
         vscode.postMessage(message);
         closePopovers();
+      };
+      el.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          el.click();
+        }
       };
       gearPopover.appendChild(el);
     };
@@ -3541,13 +3634,15 @@
 
   function openModelPicker() {
     if (!modelBtn) return;
-    if (!gearPopover.hidden && state.gearView === "model") {
+    if (!gearPopover.hidden && (state.gearView === "model" || state.gearView === "effort")) {
       closePopovers();
       return;
     }
     closePopovers();
+    state.modelPickerStandalone = true;
     renderModelPicker();
     positionPopover(gearPopover, modelBtn);
+    modelBtn.setAttribute("aria-expanded", "true");
     gearPopover.hidden = false;
   }
 
@@ -3999,6 +4094,10 @@
 
   function openModePopover() {
     if (!modePopover.hidden) { closePopovers(); return; }
+    // Composer popovers are mutually exclusive. In particular, switching from
+    // the model picker to Auto must replace the existing menu rather than
+    // leaving two floating layers stacked over the composer.
+    closePopovers();
     modePopover.innerHTML = "";
     for (const [id, meta] of Object.entries(MODE_META)) {
       // Plan is Grok's extension-owned plan gate. Codex owns its own plan
@@ -4016,6 +4115,9 @@
       el.className = "toolbar-popover-item mode-popover-item" +
         (active ? " active" : "") +
         (disabled ? " disabled" : "");
+      el.setAttribute("role", "menuitemradio");
+      el.setAttribute("aria-checked", String(active));
+      if (!disabled) el.tabIndex = 0;
       el.innerHTML =
         `<span class="mode-item-icon">${meta.icon}</span>` +
         `<span class="mode-item-body">` +
@@ -4030,10 +4132,17 @@
         vscode.postMessage({ type: "setMode", modeId: id });
         closePopovers();
       };
+      el.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          el.click();
+        }
+      };
       modePopover.appendChild(el);
     }
     positionPopover(modePopover, modeBtn);
     modePopover.hidden = false;
+    modeBtn.setAttribute("aria-expanded", "true");
   }
 
   function openAddPopover() {
@@ -4652,12 +4761,21 @@
       delBtn.title = "Delete";
       delBtn.onclick = (e) => {
         e.stopPropagation();
+        row.classList.add("is-removing");
+        delBtn.disabled = true;
         uiConfirm({
           title: s.displayName ? `Delete "${s.displayName}"?` : "Delete this session?",
           body: deleteSessionWarning(active),
           confirmLabel: "Delete",
           danger: true,
-        }).then((ok) => { if (ok) vscode.postMessage({ type: "deleteSession", id: s.id, name: s.displayName }); });
+        }).then((ok) => {
+          if (ok) {
+            vscode.postMessage({ type: "deleteSession", id: s.id, name: s.displayName });
+          } else {
+            row.classList.remove("is-removing");
+            delBtn.disabled = false;
+          }
+        });
       };
       actions.appendChild(delBtn);
       }
@@ -4744,6 +4862,310 @@
     return document.getElementById("projects-rail");
   }
 
+  // Cursor's activity strip is a compact way to jump between workspace
+  // surfaces without changing the selected conversation. Keep the buttons
+  // backed by the existing controls so keyboard and persistence semantics stay
+  // identical to their full-size counterparts.
+  function wireDesktopActivityBar() {
+    if (!desktopLargeLayout() || document.body.dataset.activityBarWired) return;
+    const bar = document.getElementById("desk-activity-bar");
+    if (!bar) return;
+    document.body.dataset.activityBarWired = "1";
+    const activityButtons = Array.from(bar.querySelectorAll(".desk-activity-btn"));
+    const activate = (button) => {
+      activityButtons.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle("active", active);
+        item.setAttribute("aria-selected", String(active));
+        item.setAttribute("aria-pressed", String(active));
+        item.tabIndex = active ? 0 : -1;
+      });
+    };
+    activityButtons.forEach((button) => button.addEventListener("click", () => activate(button)));
+    bar.addEventListener("keydown", (event) => {
+      if (!activityButtons.includes(event.target)) return;
+      const horizontal = event.key === "ArrowLeft" || event.key === "ArrowRight";
+      const vertical = event.key === "ArrowUp" || event.key === "ArrowDown";
+      if (!horizontal && !vertical && event.key !== "Home" && event.key !== "End") return;
+      event.preventDefault();
+      const current = Math.max(0, activityButtons.indexOf(event.target));
+      const direction = event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 1;
+      const next = event.key === "Home" ? 0 : event.key === "End" ? activityButtons.length - 1 : (current + direction + activityButtons.length) % activityButtons.length;
+      const button = activityButtons[next];
+      activate(button);
+      button.focus();
+    });
+    activate(activityButtons.find((button) => button.classList.contains("active")) || activityButtons[0]);
+    const openCommandPalette = (quickOpen = false) => {
+      let overlay = document.getElementById("desk-command-palette");
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "desk-command-palette";
+        overlay.className = "desk-command-palette-backdrop";
+        overlay.innerHTML = `<div class="desk-command-palette" role="dialog" aria-modal="true" aria-label="Command Palette">
+          <div class="desk-command-search-wrap"><span aria-hidden="true">⌕</span><input id="desk-command-search" type="search" autocomplete="off" spellcheck="false" placeholder="Type a command to search..." aria-label="Search commands" /></div>
+          <div id="desk-command-list" class="desk-command-list" role="listbox"></div>
+          <div class="desk-command-hint">↑↓ Navigate&nbsp;&nbsp; Enter Run&nbsp;&nbsp; Esc Close</div>
+        </div>`;
+        document.body.appendChild(overlay);
+        overlay.addEventListener("mousedown", (event) => { if (event.target === overlay) overlay.hidden = true; });
+      }
+      const input = overlay.querySelector("#desk-command-search");
+      const list = overlay.querySelector("#desk-command-list");
+      const toggleRail = () => (document.body.classList.contains("desk-rail-collapsed") ? document.getElementById("desk-rail-open-btn") : document.getElementById("desk-rail-toggle"))?.click();
+    const toggleFiles = () => {
+      document.getElementById(["desk", "ft", "top-toggle"].join("-"))?.click();
+      requestAnimationFrame(() => {
+        const panel = document.getElementById(["desk", "ft", "panel"].join("-"));
+        const button = document.getElementById("desk-workbench-panel");
+        if (panel && button) {
+          const open = !panel.hidden;
+          button.setAttribute("aria-checked", String(open));
+          button.setAttribute("aria-pressed", String(open));
+        }
+      });
+    };
+      const commands = [
+        ["New Session", () => document.getElementById("new-btn")?.click()],
+        ["Toggle Primary Sidebar", toggleRail],
+        ["Toggle Workspace Files", toggleFiles],
+        ["Search Projects", () => document.getElementById("rail-search")?.focus({ preventScroll: true })],
+        ["Open Settings", () => (document.getElementById("rail-gear-btn") || document.getElementById("gear-btn"))?.click()],
+      ];
+      if (quickOpen) {
+        const fileRoot = document.getElementById(["desk", "ft", "body"].join("-"));
+        const fileButtons = Array.from(fileRoot?.querySelectorAll("button,[role=button]") || []);
+        commands.unshift(...fileButtons.map((button) => [String(button.textContent || "").trim(), () => button.click()]).filter(([label]) => label));
+      }
+      let selected = 0;
+      const render = () => {
+        const query = String(input.value || "").trim().toLowerCase();
+        const visible = commands.filter(([label]) => !query || label.toLowerCase().includes(query));
+        selected = Math.max(0, Math.min(selected, visible.length - 1));
+        list.innerHTML = visible.map(([label], index) => `<button class="desk-command-item${index === selected ? " selected" : ""}" role="option" aria-selected="${index === selected}">${label}</button>`).join("");
+        list.querySelectorAll(".desk-command-item").forEach((button, index) => button.addEventListener("click", () => { visible[index][1](); overlay.hidden = true; }));
+      };
+      input.oninput = () => { selected = 0; render(); };
+      input.onkeydown = (event) => {
+        const items = list.querySelectorAll(".desk-command-item");
+        if (event.key === "ArrowDown") { event.preventDefault(); selected = Math.min(selected + 1, items.length - 1); render(); }
+        else if (event.key === "ArrowUp") { event.preventDefault(); selected = Math.max(selected - 1, 0); render(); }
+        else if (event.key === "Enter") { event.preventDefault(); items[selected]?.click(); }
+        else if (event.key === "Escape") { event.preventDefault(); overlay.hidden = true; }
+      };
+      overlay.querySelector("#desk-command-search").placeholder = quickOpen ? "Search files by name..." : "Type a command to search...";
+      overlay.querySelector("#desk-command-search").setAttribute("aria-label", quickOpen ? "Search files" : "Search commands");
+      overlay.hidden = false;
+      input.value = "";
+      selected = 0;
+      render();
+      requestAnimationFrame(() => input.focus());
+    };
+    window.addEventListener("keydown", (e) => {
+      if (e.altKey || !(e.ctrlKey || e.metaKey) || String(e.key).toLowerCase() !== "p") return;
+      e.preventDefault();
+      openCommandPalette(e.shiftKey === false);
+    });
+    document.getElementById("desk-activity-more")?.addEventListener("click", () => openCommandPalette(false));
+    document.getElementById("desk-workbench-sidebar")?.addEventListener("click", () => {
+      const button = document.body.classList.contains("desk-rail-collapsed")
+        ? document.getElementById("desk-rail-open-btn")
+        : document.getElementById("desk-rail-toggle");
+      button?.click();
+    });
+    document.getElementById("desk-workbench-project")?.addEventListener("click", () => {
+      const rail = document.getElementById("projects-rail");
+      if (rail?.classList.contains("collapsed")) document.getElementById("desk-rail-open-btn")?.click();
+      document.getElementById("rail-search")?.focus({ preventScroll: true });
+    });
+    document.getElementById("desk-workbench-workspace")?.addEventListener("click", () => {
+      document.getElementById(["desk", "ft", "top-toggle"].join("-"))?.click();
+    });
+    document.getElementById("desk-workbench-back")?.addEventListener("click", () => document.getElementById("history-btn")?.click());
+    document.getElementById("desk-workbench-panel")?.addEventListener("click", toggleFiles);
+    const agents = document.getElementById("desk-workbench-agents");
+    agents?.addEventListener("click", () => {
+      const active = agents.getAttribute("aria-pressed") !== "true";
+      agents.setAttribute("aria-pressed", String(active));
+      document.body.classList.toggle("desk-agent-focus", active);
+      document.getElementById("input")?.focus({ preventScroll: true });
+    });
+    document.getElementById("desk-workbench-settings")?.addEventListener("click", () => {
+      (document.getElementById("rail-gear-btn") || document.getElementById("gear-btn"))?.click();
+    });
+    document.getElementById("desk-workbench-agents-window")?.addEventListener("click", () => {
+      const agentButton = document.getElementById("desk-workbench-agents");
+      if (agentButton?.getAttribute("aria-pressed") !== "true") agentButton?.click();
+      document.getElementById("input")?.focus({ preventScroll: true });
+    });
+    const workspaceTitle = () => document.getElementById(["desk", "ft", "title"].join("-"));
+    const syncWorkspaceLabel = () => {
+      const workspaceLabel = document.querySelector(".desk-workbench-workspace-name");
+      const repoCwd = state.activeRepoCwd || state.selectedRepoCwd || state.cwd || "";
+      const selectedRepo = state.repos.find((repo) => sameCwd(repo.cwd, repoCwd)) || state.repos[0];
+      const panelName = String(workspaceTitle()?.querySelector(".gfp-title-label")?.textContent || "").trim();
+      const name = panelName || selectedRepo?.label || (repoCwd ? cwdLeaf(repoCwd) : String(workspaceTitle()?.textContent || "").trim());
+      if (workspaceLabel && name && workspaceLabel.textContent !== name) workspaceLabel.textContent = name;
+    };
+    window.__grokSyncWorkspaceLabel = syncWorkspaceLabel;
+    syncWorkspaceLabel();
+    const workspaceTitleNode = workspaceTitle();
+    if (workspaceTitleNode && typeof MutationObserver === "function") {
+      new MutationObserver(syncWorkspaceLabel).observe(workspaceTitleNode, { childList: true, subtree: true, characterData: true });
+    }
+    const workspacePanel = document.getElementById(["desk", "ft", "panel"].join("-"));
+    if (workspacePanel && typeof MutationObserver === "function") {
+      new MutationObserver(syncWorkspaceLabel).observe(workspacePanel, { childList: true, subtree: true, characterData: true, attributes: true });
+    }
+    if (typeof MutationObserver === "function") {
+      new MutationObserver(syncWorkspaceLabel).observe(document.body, { childList: true, subtree: true });
+    }
+    const composerInput = document.getElementById("input");
+    const statusPosition = document.getElementById("desk-status-position");
+    const syncCaretPosition = () => {
+      if (!composerInput || !statusPosition) return;
+      const caret = composerInput.selectionStart ?? 0;
+      const prefix = composerInput.value.slice(0, caret);
+      const lines = prefix.split("\n");
+      statusPosition.textContent = `Ln ${lines.length}, Col ${(lines[lines.length - 1] || "").length + 1}`;
+    };
+    ["input", "click", "keyup", "select"].forEach((eventName) => composerInput?.addEventListener(eventName, syncCaretPosition));
+    syncCaretPosition();
+    // The file panel can be mounted after the first rail frame. A short,
+    // bounded retry catches that asynchronous title without leaving a timer
+    // alive for the lifetime of the workbench.
+    let workspaceSyncAttempts = 0;
+    const workspaceSyncTimer = window.setInterval(() => {
+      syncWorkspaceLabel();
+      if (++workspaceSyncAttempts >= 40 || (workspaceLabel?.textContent || "").trim() !== "Workspace files") {
+        window.clearInterval(workspaceSyncTimer);
+      }
+    }, 250);
+    const projects = document.getElementById("desk-activity-projects");
+    projects?.addEventListener("click", () => {
+      document.getElementById("rail-search")?.focus({ preventScroll: true });
+    });
+    const search = document.getElementById("desk-activity-search");
+    search?.addEventListener("click", () => {
+      document.getElementById("rail-search")?.focus({ preventScroll: true });
+    });
+    const scm = document.getElementById("desk-activity-scm");
+    scm?.addEventListener("click", () => {
+      document.getElementById(["desk", "ft", "top-toggle"].join("-"))?.click();
+    });
+    const extensions = document.getElementById("desk-activity-extensions");
+    extensions?.addEventListener("click", () => {
+      (document.getElementById("rail-gear-btn") || document.getElementById("gear-btn"))?.click();
+    });
+    const history = document.getElementById("desk-activity-history");
+    history?.addEventListener("click", () => document.getElementById("history-btn")?.click());
+    const claude = document.getElementById("desk-activity-claude");
+    claude?.addEventListener("click", () => {
+      const agentsButton = document.getElementById("desk-workbench-agents");
+      if (agentsButton?.getAttribute("aria-pressed") !== "true") agentsButton?.click();
+      document.getElementById("input")?.focus({ preventScroll: true });
+    });
+    const service = document.getElementById("desk-activity-service");
+    service?.addEventListener("click", () => {
+      if (typeof openSettingsCategory === "function") openSettingsCategory("providers");
+      else (document.getElementById("rail-gear-btn") || document.getElementById("gear-btn"))?.click();
+    });
+    const settings = document.getElementById("desk-activity-settings");
+      settings?.addEventListener("click", () => {
+        (document.getElementById("rail-gear-btn") || document.getElementById("gear-btn"))?.click();
+      });
+      // Match Cursor's primary-sidebar shortcut so the projects rail behaves
+      // like the workbench sidebar even when focus is in the composer.
+      window.addEventListener("keydown", (e) => {
+        if (e.altKey || !(e.ctrlKey || e.metaKey) || String(e.key).toLowerCase() !== "b") return;
+        e.preventDefault();
+        const button = document.body.classList.contains("desk-rail-collapsed")
+          ? document.getElementById("desk-rail-open-btn")
+          : document.getElementById("desk-rail-toggle");
+        button?.click();
+      });
+      // Cursor's Explorer command is Ctrl/Cmd+Shift+E. Reuse the desktop
+      // panel toggle so the shortcut preserves its existing persisted state.
+      window.addEventListener("keydown", (e) => {
+        if (!e.shiftKey || e.altKey || !(e.ctrlKey || e.metaKey) || String(e.key).toLowerCase() !== "e") return;
+        e.preventDefault();
+        document.getElementById(["desk", "ft", "top-toggle"].join("-"))?.click();
+      });
+      // Cursor Explorer and Search view shortcuts. They target the same
+      // persistent desktop surfaces as the activity buttons, so no duplicate
+      // state or alternate rendering path is introduced.
+      window.addEventListener("keydown", (e) => {
+        if (e.ctrlKey || e.metaKey || !e.altKey || e.shiftKey || String(e.key).toLowerCase() !== "q") return;
+        e.preventDefault();
+        document.getElementById(["desk", "ft", "top-toggle"].join("-"))?.click();
+      });
+      window.addEventListener("keydown", (e) => {
+        if (!e.shiftKey || e.altKey || !(e.ctrlKey || e.metaKey) || String(e.key).toLowerCase() !== "f") return;
+        e.preventDefault();
+        document.getElementById("rail-search")?.focus({ preventScroll: true });
+      });
+      // Source Control (Ctrl/Cmd+Shift+G) and Extensions (Ctrl/Cmd+Shift+X)
+      // mirror Cursor's fixed activity views using the desktop's existing
+      // workspace/files and provider-settings surfaces.
+      window.addEventListener("keydown", (e) => {
+        if (!e.shiftKey || e.altKey || !(e.ctrlKey || e.metaKey)) return;
+        const key = String(e.key).toLowerCase();
+        if (key === "g") {
+          e.preventDefault();
+          document.getElementById("desk-activity-scm")?.click();
+        } else if (key === "x") {
+          e.preventDefault();
+          document.getElementById("desk-activity-extensions")?.click();
+        }
+      });
+      // Cycle open conversation tabs like Cursor's editor tab switcher.
+      window.addEventListener("keydown", (e) => {
+        if (e.altKey || !(e.ctrlKey || e.metaKey) || e.key !== "Tab") return;
+        const tabs = Array.from(document.querySelectorAll("#session-tabs .session-tab"));
+        if (!tabs.length) return;
+        e.preventDefault();
+        const active = document.querySelector("#session-tabs .session-tab.active");
+        const current = Math.max(0, tabs.indexOf(active));
+        const next = (current + (e.shiftKey ? tabs.length - 1 : 1)) % tabs.length;
+        tabs[next]?.click();
+      });
+      window.addEventListener("keydown", (e) => {
+        if (!e.shiftKey || e.altKey || !(e.ctrlKey || e.metaKey) || String(e.key).toLowerCase() !== "z") return;
+        e.preventDefault();
+        document.getElementById("desk-workbench-back")?.click();
+      });
+      let settingsChordArmed = false;
+      let settingsChordTimer = null;
+      window.addEventListener("keydown", (e) => {
+        if (e.altKey || !(e.ctrlKey || e.metaKey)) return;
+        const key = String(e.key).toLowerCase();
+        if (key === "k" && !e.shiftKey) {
+          settingsChordArmed = true;
+          if (settingsChordTimer) clearTimeout(settingsChordTimer);
+          settingsChordTimer = window.setTimeout(() => { settingsChordArmed = false; }, 1000);
+          return;
+        }
+        if (settingsChordArmed && key === "s") {
+          e.preventDefault();
+          settingsChordArmed = false;
+          if (settingsChordTimer) clearTimeout(settingsChordTimer);
+          document.getElementById("desk-workbench-settings")?.click();
+        }
+      });
+      // Cursor's panel toggle is Ctrl/Cmd+J. The desktop workbench has one
+      // persistent auxiliary panel, so use the same shortcut for it.
+      window.addEventListener("keydown", (e) => {
+        if (e.shiftKey || e.altKey || !(e.ctrlKey || e.metaKey) || String(e.key).toLowerCase() !== "j") return;
+        e.preventDefault();
+        document.getElementById(["desk", "ft", "top-toggle"].join("-"))?.click();
+      });
+      window.addEventListener("keydown", (e) => {
+        if (!e.altKey || e.shiftKey || !(e.ctrlKey || e.metaKey) || String(e.key).toLowerCase() !== "j") return;
+        e.preventDefault();
+        agents?.click();
+      });
+    }
+
   /**
    * Desktop large layout: the host baked `body.desk` and shipped the rail
    * mount. VS Code also uses body.desk but never mounts the rail. Remote
@@ -4792,6 +5214,7 @@
       railEl = panel
         ? (document.getElementById("rail-scroll") || panel)
         : null;
+      wireDesktopActivityBar();
       // Once, before anything reads the fold state — renderRail() resolves the
       // mount before it renders a row, so this always lands first.
       if (railEl) loadRailShape();
@@ -5919,6 +6342,14 @@
   function renderRail() {
     const root = rail();
     if (!root) return;
+    const workspaceLabel = document.querySelector(".desk-workbench-workspace-name");
+    const repoCwd = state.activeRepoCwd || state.selectedRepoCwd || state.cwd || "";
+    if (workspaceLabel && repoCwd) {
+      const panelName = String(document.getElementById(["desk", "ft", "title"].join("-"))?.querySelector(".gfp-title-label")?.textContent || "").trim();
+      const repo = state.repos.find((entry) => sameCwd(entry.cwd, repoCwd));
+      const repoName = panelName || repo?.label || cwdLeaf(repoCwd);
+      if (repoName && workspaceLabel.textContent !== repoName) workspaceLabel.textContent = repoName;
+    }
     railFollowLiveRepo();
     // Mount + `repos` frame (+ non-empty catalog). A host that never sends
     // `repos` keeps the plain single-column chat; no mount (VS Code) never
@@ -12093,9 +12524,17 @@
           BLINK_DOTS +
           `<span class="run-progress-phase"></span>` +
         `</div>` +
-        `<div class="run-progress-sub" hidden></div>` +
-        `<div class="run-progress-detail" hidden></div>` +
-        `<div class="run-progress-actions" hidden></div>`;
+        `<div class="run-progress-body">` +
+          `<div class="run-progress-sub" hidden></div>` +
+          `<div class="run-progress-detail" hidden></div>` +
+          `<div class="run-progress-actions" hidden></div>` +
+        `</div>`;
+      el.dataset.progressInitialized = "1";
+      el.setAttribute("role", "group");
+      el.querySelector(".run-progress-row").onclick = () => {
+        const collapsed = el.classList.toggle("run-progress-collapsed");
+        el.setAttribute("aria-expanded", String(!collapsed));
+      };
       state.runProgressCards.set(id, el);
       appendTranscriptChild(el);
     }
@@ -12178,6 +12617,15 @@
     } else {
       actions.hidden = true;
       actions.innerHTML = "";
+    }
+
+    const body = el.querySelector(".run-progress-body");
+    const hasBody = !!(update.subtitle || update.detail || actions.childElementCount);
+    if (body) {
+      body.classList.toggle("run-progress-empty", !hasBody);
+      if (!el.classList.contains("run-progress-collapsed")) {
+        el.setAttribute("aria-expanded", "true");
+      }
     }
 
     scrollToBottom();
@@ -13768,7 +14216,14 @@
     toggle.className = "plan-toggle";
     const setToggle = () => { toggle.textContent = body.hidden ? "Show plan" : "Hide plan"; };
     setToggle();
-    toggle.onclick = () => { body.hidden = !body.hidden; setToggle(); };
+    toggle.setAttribute("aria-expanded", String(!body.hidden));
+    body.id = body.id || `plan-body-${Math.random().toString(36).slice(2, 9)}`;
+    toggle.setAttribute("aria-controls", body.id);
+    toggle.onclick = () => {
+      body.hidden = !body.hidden;
+      setToggle();
+      toggle.setAttribute("aria-expanded", String(!body.hidden));
+    };
     return toggle;
   }
 
@@ -17691,6 +18146,16 @@
         const wasSelected = state.selectedRepoCwd;
         state.selectedRepoCwd = msg.selectedCwd || "";
         state.activeRepoCwd = msg.activeCwd || "";
+        window.__grokSyncWorkspaceLabel?.();
+        // Paint the title from the host catalog even when the file panel's
+        // mutation observer mounted after this first repos frame.
+        const workspaceLabel = document.querySelector(".desk-workbench-workspace-name");
+        if (workspaceLabel) {
+          const targetCwd = state.activeRepoCwd || state.selectedRepoCwd || "";
+          const targetRepo = state.repos.find((repo) => sameCwd(repo.cwd, targetCwd)) || state.repos[0];
+          const targetName = targetRepo?.label || (targetCwd ? cwdLeaf(targetCwd) : "");
+          if (targetName) workspaceLabel.textContent = targetName;
+        }
         // The folder the EDITOR has open — not the selection. The header names
         // the conversation's project only when it differs from this one.
         state.workspaceRepoCwd = msg.workspaceCwd || "";
@@ -18459,6 +18924,15 @@
     composerPreferredColumn = null;
     if (!IS_REMOTE) vscode.postMessage({ type: "composerFocus", focused: false });
   });
+  // Cursor's primary chat shortcut: Ctrl/Cmd+L always returns focus to the
+  // composer from the editor, rail, or a popover. Browsers reserve Ctrl+L for
+  // the address bar, so keep this desktop/extension affordance out of the
+  // remote web client.
+  window.addEventListener("keydown", (e) => {
+    if (IS_REMOTE || e.altKey || !(e.ctrlKey || e.metaKey) || String(e.key).toLowerCase() !== "l") return;
+    e.preventDefault();
+    input.focus({ preventScroll: true });
+  });
   input.addEventListener("pointerdown", () => { composerPreferredColumn = null; });
   input.addEventListener("input", () => {
     composerPreferredColumn = null;
@@ -18537,6 +19011,10 @@
         return;
       }
       sendOrStop();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.code === "Slash" || e.key === "?" || e.key === "/")) {
+      e.preventDefault();
+      cycleEffort();
     }
   });
 

@@ -12,7 +12,7 @@ npm run test:integration  # real VS Code Extension Host smoke (also required by 
 npm run test:desktop      # real Electron window + fake CLI (desktop host)
 npm run e2e:screens       # real Electron, real layout — leaves frames in .screens/
 npm run e2e:lifecycle-host  # long-lived real desktop host for the relay lifecycle e2e
-npm run package           # → grok-vscode-phuryn-<version>.vsix (marketplace README only;
+npm run package           # → orin-<version>.vsix (marketplace README only;
                           #    refuses a non-production REMOTE_RELAY_URL)
 npm run desktop           # run Desktop from the compile tree
 npm run dist:win          # Windows x64 installer → dist-desktop/

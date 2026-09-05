@@ -117,7 +117,7 @@ Other machine-dependent inputs on the same path:
 - `defaultMode: "dontAsk"` produces the *opposite* failure (auto-deny instead of prompt,
   `manager.rs:1476-1484`).
 
-**Implement:** extend `src/providers/grok-config.ts` to read the Claude-settings chain (+
+**Implement:** extend `src/providers/grok/grok-config.ts` to read the Claude-settings chain (+
 `permission.toml`, `[claude_compat].imported`) and (a) show an honest mode label
 ("Auto accept — from ~/.claude/settings.json") like we already do for `[ui] permission_mode`,
 (b) explain *why* no permission cards appear, with the remedy. Then answer #49 with the root

@@ -103,6 +103,27 @@ describe("a live turn always shows progress (#26 guarantee)", () => {
   });
 });
 
+describe("goal progress disclosure", () => {
+  it("keeps the goal summary visible and folds secondary detail", () => {
+    const { window, doc } = bootWebview();
+    dispatch(window, {
+      type: "runProgress",
+      update: { id: "goal-1", kind: "goal", title: "Ship the chat polish", phase: "running", subtitle: "Reviewing the interaction states" },
+    });
+    const card = doc.querySelector(".run-progress-card") as HTMLElement;
+    const row = card.querySelector(".run-progress-row") as HTMLElement;
+    const body = card.querySelector(".run-progress-body") as HTMLElement;
+    expect(card.getAttribute("aria-expanded")).toBe("true");
+    expect(body.textContent).toContain("Reviewing the interaction states");
+    row.click();
+    expect(card.classList.contains("run-progress-collapsed")).toBe(true);
+    expect(card.getAttribute("aria-expanded")).toBe("false");
+    row.click();
+    expect(card.classList.contains("run-progress-collapsed")).toBe(false);
+    expect(card.getAttribute("aria-expanded")).toBe("true");
+  });
+});
+
 // The footer is hidden with the `hidden` property, but `.msg-actions` sets an
 // author `display: flex` — which beats the UA `[hidden] { display: none }`. So
 // the property was set and the CSS ignored it: the footer still reserved layout

@@ -15,7 +15,7 @@ import {
   parseTarHeader,
   tarRegularFileMode,
   type CodexDownload,
-} from "../../src/providers/codex-managed-installer";
+} from "../../src/providers/codex/codex-managed-installer";
 
 const temporaryRoots: string[] = [];
 

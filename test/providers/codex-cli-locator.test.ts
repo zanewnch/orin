@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as path from "node:path";
-import { locateCodexCli, resolveCodexHome, type CodexLocatorFs } from "../../src/providers/codex-cli-locator";
+import { locateCodexCli, resolveCodexHome, type CodexLocatorFs } from "../../src/providers/codex/codex-cli-locator";
 
 function fakeFs(files: string[], dirs: Record<string, string[]> = {}): CodexLocatorFs {
   const set = new Set(files);

@@ -18,7 +18,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const version = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8")).version;
-const vsix = path.join(root, `grok-vscode-phuryn-${version}.vsix`);
+const vsix = path.join(root, `orin-${version}.vsix`);
 
 if (!existsSync(vsix)) {
   console.error(`No ${path.basename(vsix)} — run \`npm run package\` first.`);

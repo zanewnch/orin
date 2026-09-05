@@ -35,12 +35,12 @@ import {
   shouldBlockWrite,
 } from "./plan-gate";
 import { resolveGrokHome } from "../session/sessions";
-import { resolveCodexHome } from "../providers/codex-cli-locator";
+import { resolveCodexHome } from "../providers/codex/codex-cli-locator";
 import { inferCodexGeneratedImagePath } from "../composer/media-serve";
 import { filterAdvertisedCommands } from "../composer/slash-filter";
-import { grokCliNeedsShell } from "../providers/cli-process";
-import { compareVersionTuple, parseGrokVersion } from "../providers/cli-locator";
-import { resolvedTerminalShellDialect } from "../providers/terminal-manager";
+import { grokCliNeedsShell } from "../providers/shared/cli-process";
+import { compareVersionTuple, parseGrokVersion } from "../providers/shared/cli-locator";
+import { resolvedTerminalShellDialect } from "../providers/shared/terminal-manager";
 import type { AcpBackend, AcpProvider, BackendSessionListResult } from "./acp-backend";
 import { buildGrokAgentArgs, grokBackend } from "./grok-backend";
 import {

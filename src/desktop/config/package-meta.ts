@@ -49,7 +49,7 @@ export function isCloudBuildFromPackageMeta(pkg: { grokCloudBuild?: unknown }): 
 }
 
 const FALLBACK_PUBLISHER = "PawelHuryn";
-const FALLBACK_NAME = "grok-vscode-phuryn";
+const FALLBACK_NAME = "orin";
 
 function str(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;

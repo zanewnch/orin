@@ -444,6 +444,23 @@
     refreshBtn.setAttribute("aria-label", "Refresh file tree");
     refreshBtn.addEventListener("click", () => void refreshTree());
 
+    // Cursor's Explorer keeps a one-click way to return to the repository
+    // root.  Keep it next to refresh so the action is available without a
+    // context menu and works for both desktop and browser mounts.
+    const collapseBtn = doc.createElement("button");
+    collapseBtn.type = "button";
+    collapseBtn.className = "gfp-icon-button gfp-collapse desk-ft-collapse";
+    collapseBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 9 4 4 4-4"/><path d="M4 4h16v16H4z"/></svg>';
+    collapseBtn.title = "Collapse folders in Explorer";
+    collapseBtn.setAttribute("aria-label", "Collapse folders in Explorer");
+    collapseBtn.addEventListener("click", () => {
+      for (const node of tree.querySelectorAll(".gfp-node.gfp-expanded")) {
+        node.classList.remove("gfp-expanded", "desk-ft-open");
+        const lead = node.querySelector(":scope > .gfp-row > .gfp-lead");
+        if (lead) lead.innerHTML = ICON.chevronRight;
+      }
+    });
+
     // Content-area maximize. The mount opts in (desktop and the wide browser);
     // the phone overlay already goes full-viewport at the 899 dock breakpoint,
     // so applyPresentation hides the control there rather than fighting that
@@ -456,9 +473,9 @@
       maximizeBtn.type = "button";
       maximizeBtn.className = "gfp-icon-button gfp-maximize desk-ft-maximize";
       maximizeBtn.setAttribute("aria-pressed", "false");
-      header.append(title, tabsEl, refreshBtn, maximizeBtn, closePanel);
+      header.append(title, tabsEl, refreshBtn, collapseBtn, maximizeBtn, closePanel);
     } else {
-      header.append(title, tabsEl, refreshBtn, closePanel);
+      header.append(title, tabsEl, refreshBtn, collapseBtn, closePanel);
     }
 
     const filter = doc.createElement("input");
@@ -600,6 +617,7 @@
     function paintRefresh() {
       const wasHidden = refreshBtn.hidden;
       refreshBtn.hidden = !treeMode;
+      collapseBtn.hidden = !treeMode;
       // In flight covers both loads: pressing refresh during the first listing
       // would ask for the same thing twice.
       refreshBtn.disabled = !currentState || !!currentState.rootLoad;
@@ -650,6 +668,11 @@
       name.className = "gfp-title-label";
       name.textContent = label;
       title.append(icon, name);
+      const workbenchName = doc.querySelector(".desk-workbench-workspace-name");
+      if (workbenchName) workbenchName.textContent = label;
+      // Keep the desktop workbench switcher in lockstep with the file panel's
+      // authoritative scope label (the panel can mount after chat.js boots).
+      try { globalThis.__grokSyncWorkspaceLabel?.(); } catch (_) { /* noop */ }
     }
 
     function applyStripShrink() {

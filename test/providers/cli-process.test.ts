@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { grokCliNeedsShell } from "../../src/providers/cli-process";
+import { grokCliNeedsShell } from "../../src/providers/shared/cli-process";
 
 describe("grok CLI process invocation", () => {
   it("uses a shell only for Windows command shims", () => {

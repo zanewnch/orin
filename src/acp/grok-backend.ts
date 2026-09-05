@@ -1,7 +1,7 @@
 import { isCredentialError } from "./acp-dispatch";
 import type { AcpBackend, BackendConfigState, BackendSessionListResult, BackendSpawnOptions } from "./acp-backend";
 import type { EffortLevel } from "./acp";
-import { grokCliNeedsShell } from "../providers/cli-process";
+import { grokCliNeedsShell } from "../providers/shared/cli-process";
 
 export function buildGrokAgentArgs(effort?: EffortLevel): string[] {
   return effort ? ["agent", "--reasoning-effort", effort, "stdio"] : ["agent", "stdio"];

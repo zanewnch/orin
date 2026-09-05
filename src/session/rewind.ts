@@ -16,7 +16,7 @@
  * the Nth visible user bubble aligns with the Nth user-facing point.
  */
 
-import { isPrimerText } from "../providers/grok-primer";
+import { isPrimerText } from "../providers/grok/grok-primer";
 import type { HostMsg } from "../protocol";
 import { unwrapExtResult } from "../projects/worktree";
 

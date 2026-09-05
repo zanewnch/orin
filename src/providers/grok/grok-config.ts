@@ -16,7 +16,7 @@
  */
 import * as nodeFs from "node:fs";
 import * as path from "node:path";
-import { resolveGrokHome } from "../session/sessions";
+import { resolveGrokHome } from "../../session/sessions";
 
 /** Stub written when global config is missing (matches prior sidebar behavior). */
 export const GLOBAL_CONFIG_STUB = "# Grok global configuration\n";

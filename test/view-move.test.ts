@@ -146,7 +146,7 @@ describe("both routes to the host picker retire the hint BEFORE moving", () => {
   };
 
   it("the palette command retires the hint, then opens the picker", () => {
-    const src = readFileSync(path.join(root, "src", "extension.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "vscode-extension", "extension.ts"), "utf8");
     expect(
       before(src, "sidebar.retireMoveViewHint()", "workbench.action.moveFocusedView"),
     ).toBe(true);
@@ -161,7 +161,7 @@ describe("both routes to the host picker retire the hint BEFORE moving", () => {
     // `activate` starts the correction without awaiting it, so the palette
     // command can run during its probe. Re-reading the flag right before the
     // move is what stops a correction landing on top of a choice just made.
-    const src = readFileSync(path.join(root, "src", "extension.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "vscode-extension", "extension.ts"), "utf8");
     expect(before(src, "MOVE_VIEW_HINT_USED_KEY) === true", "await applyPlacement(")).toBe(true);
   });
 

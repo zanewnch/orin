@@ -25,7 +25,7 @@ import {
   GROK_STDIO_DOWNGRADE_TARGET,
   type CliBinaryIdentity,
   type CliVersionCache,
-} from "../../src/providers/cli-locator";
+} from "../../src/providers/shared/cli-locator";
 
 const IS_WIN = process.platform === "win32";
 const PATH_SEP = IS_WIN ? ";" : ":";

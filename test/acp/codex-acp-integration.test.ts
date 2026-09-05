@@ -4,7 +4,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import { AcpClient } from "../../src/acp/acp";
 import { CodexBackend } from "../../src/acp/codex-backend";
-import { warmCodexModelCache } from "../../src/providers/codex-model-cache";
+import { warmCodexModelCache } from "../../src/providers/codex/codex-model-cache";
 
 function waitFor<T>(client: AcpClient, event: string, timeoutMs = 3000): Promise<T> {
   return new Promise((resolve, reject) => {

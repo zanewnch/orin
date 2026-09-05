@@ -1,21 +1,21 @@
 {
-  "name": "grok-vscode-phuryn",
-  "displayName": "Grok Build for VS Code (Community)",
-  "description": "GUI for Grok Build CLI (incl. Grok 4.6). Remote Control from your phone, voice control, multiple sessions, images and videos, Mermaid diagrams, and LaTeX. Works with SuperGrok, X Premium+, and xAI API key. Fair Source (FSL-1.1-MIT). Not affiliated with or endorsed by SpaceXAI (formerly xAI).",
+  "name": "orin",
+  "displayName": "Orin",
+  "description": "A multi-agent workspace for VS Code and Cursor, with remote control, voice input, resumable sessions, images, video, Mermaid diagrams, and LaTeX. Compatible with Grok Build, OpenAI Codex, and Claude Code through ACP. Derived from phuryn/grok-build-vscode under FSL-1.1-MIT.",
   "version": "4.1.5",
-  "publisher": "PawelHuryn",
+  "publisher": "zanewnch",
   "author": {
     "name": "Paweł Huryn",
     "url": "https://www.productcompass.pm"
   },
   "license": "FSL-1.1-MIT",
-  "homepage": "https://github.com/phuryn/grok-build-vscode",
+  "homepage": "https://github.com/zanewnch/orin",
   "bugs": {
-    "url": "https://github.com/phuryn/grok-build-vscode/issues"
+    "url": "https://github.com/zanewnch/orin/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/phuryn/grok-build-vscode"
+    "url": "https://github.com/zanewnch/orin"
   },
   "engines": {
     "vscode": "^1.106.0"
@@ -40,7 +40,7 @@
     "sidebar"
   ],
   "icon": "resources/grok-icon.png",
-  "main": "./out/extension.js",
+  "main": "./out/vscode-extension/extension.js",
   "activationEvents": [
     "onStartupFinished"
   ],
@@ -49,26 +49,26 @@
       "secondarySidebar": [
         {
           "id": "grokSidebar",
-          "title": "Grok",
+          "title": "Orin",
           "icon": "resources/grok-icon.svg"
         }
       ],
       "activitybar": [
         {
           "id": "grokPrimary",
-          "title": "Grok",
+          "title": "Orin",
           "icon": "resources/grok-icon.svg"
         },
         {
           "id": "grokProjects",
-          "title": "Grok",
+          "title": "Orin",
           "icon": "resources/grok-icon.svg"
         }
       ],
       "panel": [
         {
           "id": "grokPanel",
-          "title": "Grok",
+          "title": "Orin",
           "icon": "resources/grok-icon.svg"
         }
       ]
@@ -78,7 +78,7 @@
         {
           "type": "webview",
           "id": "grok.chat",
-          "name": "Grok"
+          "name": "Orin"
         }
       ],
       "grokProjects": [
@@ -92,80 +92,80 @@
     "commands": [
       {
         "command": "grok.open",
-        "title": "Grok: Open"
+        "title": "Orin: Open"
       },
       {
         "command": "grok.moveView",
-        "title": "Grok: Move Chat View"
+        "title": "Orin: Move Chat View"
       },
       {
         "command": "grok.newSession",
-        "title": "Grok: New Session"
+        "title": "Orin: New Session"
       },
       {
         "command": "grok.newWorktreeSession",
-        "title": "Grok: New Worktree Session"
+        "title": "Orin: New Worktree Session"
       },
       {
         "command": "grok.applyWorktree",
-        "title": "Grok: Apply Worktree"
+        "title": "Orin: Apply Worktree"
       },
       {
         "command": "grok.removeWorktree",
-        "title": "Grok: Remove Worktree"
+        "title": "Orin: Remove Worktree"
       },
       {
         "command": "grok.rewind",
-        "title": "Grok: Rewind Conversation"
+        "title": "Orin: Rewind Conversation"
       },
       {
         "command": "grok.compact",
-        "title": "Grok: Compact Conversation"
+        "title": "Orin: Compact Conversation"
       },
       {
         "command": "grok.pickModel",
-        "title": "Grok: Pick Model"
+        "title": "Orin: Pick Model"
       },
       {
         "command": "grok.toggleMode",
-        "title": "Grok: Toggle Plan / Agent Mode"
+        "title": "Orin: Toggle Plan / Agent Mode"
       },
       {
         "command": "grok.sendSelection",
-        "title": "Add Selection to Grok"
+        "title": "Add Selection to Orin"
       },
       {
         "command": "grok.sendFile",
-        "title": "Grok: Send File"
+        "title": "Orin: Send File"
       },
       {
         "command": "grok.insertAtMention",
-        "title": "Grok: Insert @-Mention"
+        "title": "Orin: Insert @-Mention"
       },
       {
         "command": "grok.showLogs",
-        "title": "Grok: Show Logs"
+        "title": "Orin: Show Logs"
       },
       {
         "command": "grok.settings",
-        "title": "Grok: Settings",
+        "title": "Orin: Settings",
         "icon": "$(gear)"
       },
       {
         "command": "grok.expandAllToolDetails",
-        "title": "Grok: Expand All Tool Details (This Session)"
+        "title": "Orin: Expand All Tool Details (This Session)"
       },
       {
         "command": "grok.collapseAllToolDetails",
-        "title": "Grok: Collapse All Tool Details (This Session)"
+        "title": "Orin: Collapse All Tool Details (This Session)"
       },
       {
         "command": "grok.findInSession",
-        "title": "Grok: Find in Conversation"
+        "title": "Orin: Find in Conversation"
       },
       {
         "command": "grok.logout",
-        "title": "Grok: Log Out"
+        "title": "Orin: Log Out"
       },
       {
         "command": "grok.linkRemote",

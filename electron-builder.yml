@@ -2,8 +2,8 @@
 # Entry: out/desktop/main.js (see package.json scripts dist / dist:mac / dist:win).
 # Does not affect the VS Code VSIX path (npm run package).
 
-appId: com.productcompass.grok-build-desktop
-productName: Grok Build Desktop
+appId: io.github.zanewnch.orin
+productName: Orin Desktop
 copyright: Copyright © Paweł Huryn
 
 # Keep installers out of the extension tree; never ship this folder in the VSIX.
@@ -11,10 +11,10 @@ directories:
   output: dist-desktop
   buildResources: resources
 
-# Packaged package.json main (extension still uses out/extension.js for VS Code).
+# Packaged package.json main (extension still uses out/vscode-extension/extension.js for VS Code).
 extraMetadata:
   main: out/desktop/main.js
-  name: grok-build-desktop
+  name: orin-desktop
   # NOTE: `grokExtensionName` is deliberately NOT set here. It is the telemetry
   # identity, and `name` above becomes the asar package name, so
   # `${publisher}.${name}` is PawelHuryn.grok-build-desktop and never matches
@@ -31,7 +31,7 @@ extraMetadata:
   # rcedit stamps `description` as the .exe FileDescription, which is the label
   # Windows shows in Task Manager and the UAC prompt. package.json's is the
   # marketplace blurb — a 300-character paragraph in a column meant for a name.
-  description: Grok Build Desktop (Community)
+  description: Orin Desktop
 
 # Layout inside app.asar (or app/ when --dir):
 #   package.json, out/**, media/**, resources/**, LICENSE, node_modules/{ws,jpeg-js,@agentclientprotocol/codex-acp}
@@ -161,7 +161,7 @@ dmg:
   # called "Grok Build Desktop <version>", and the second one races the first's
   # unmount — hdiutil detach then fails on a volume that is already gone or
   # still busy, which is what killed the first macOS run.
-  title: Grok Build Desktop ${version} ${arch}
+  title: Orin Desktop ${version} ${arch}
 
 win:
   # An explicit multi-size .ico rather than relying on the PNG conversion, so
@@ -196,9 +196,9 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: Grok Build Desktop
-  uninstallDisplayName: Grok Build Desktop (Community)
-  artifactName: Grok-Build-Desktop-${version}-${os}-${arch}.${ext}
+  shortcutName: Orin Desktop
+  uninstallDisplayName: Orin Desktop
+  artifactName: Orin-Desktop-${version}-${os}-${arch}.${ext}
 
 linux:
   icon: resources/grok-icon-round-512.png

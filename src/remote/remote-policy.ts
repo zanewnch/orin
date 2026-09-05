@@ -12,7 +12,7 @@
 
 import type { HostMsg, HostUiCapabilities, WebviewMsg } from "../protocol";
 import { isImageChip, type FileChip } from "../composer/chips";
-import { isPrimerText } from "../providers/grok-primer";
+import { isPrimerText } from "../providers/grok/grok-primer";
 import { projectMcpServersMessageForRemote } from "../mcp/mcp";
 import { countsAsUserBubble } from "../acp/plan-restore";
 import { historyEventCount } from "../session/rewind";

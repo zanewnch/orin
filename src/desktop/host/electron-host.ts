@@ -74,7 +74,7 @@ import {
   GLOBAL_CONFIG_STUB,
   projectConfigPath,
   PROJECT_CONFIG_STUB,
-} from "../../providers/grok-config";
+} from "../../providers/grok/grok-config";
 import {
   authorizeOpenUrl,
   desktopAuthRoots,
@@ -697,6 +697,7 @@ export function createElectronHost(opts: ElectronHostOptions): Host {
   }
 
   return {
+    hostKind: "desktop" as const,
     showInformationMessage(message, ...items) {
       const buttons = items as string[];
       return messageBox(getWindow, "info", message, buttons);

@@ -8,7 +8,7 @@ import {
   parseClaudeVersionOutput,
   resolveClaudeSpawnTarget,
   type ClaudeLocatorFs,
-} from "../../src/providers/claude-cli-locator";
+} from "../../src/providers/claude/claude-cli-locator";
 
 function fakeFs(files: string[], texts: Record<string, string> = {}): ClaudeLocatorFs {
   const set = new Set(files);

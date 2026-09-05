@@ -122,7 +122,7 @@ await send({ type: "initialState", effort: "", cwd: "/w", useCtrlEnter: false,
 await send({ type: "userMessage", text: "read the three files and tell me what they do" });
 
 // The batch padixa described: several reads in one group.
-await send(readCall("a", "src/extension.ts", 1, 150));
+await send(readCall("a", "src/vscode-extension/extension.ts", 1, 150));
 await send(readCall("b", "src/sidebar.ts", 20, 31));
 await send(readCall("c", "media/chat.js", 8400, 60));
 await win.waitForTimeout(150);

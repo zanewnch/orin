@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isPrimerSummary } from "../../src/providers/grok-primer";
+import { isPrimerSummary } from "../../src/providers/grok/grok-primer";
 import { occupancyFromUsageLog, sumUsage } from "../../src/acp/acp-dispatch";
 import * as path from "node:path";
 import {

@@ -292,8 +292,8 @@ describe("injected-token consumers", () => {
     expect(sidebar).not.toContain("consumeInjectedDeviceToken");
     expect(sidebar).not.toContain("RELAY_DEVICE_TOKEN_ENV");
     expect(sidebar).not.toContain("GROK_RELAY_DEVICE_TOKEN");
-    expect(src("vscode-host.ts")).not.toContain("resolveInjectedDeviceToken");
-    expect(src("vscode-host.ts")).not.toContain("consumeInjectedDeviceToken");
+    expect(src(path.join("vscode-extension", "vscode-host.ts"))).not.toContain("resolveInjectedDeviceToken");
+    expect(src(path.join("vscode-extension", "vscode-host.ts"))).not.toContain("consumeInjectedDeviceToken");
   });
 
   it("keeps the SecretStorage key in one place", () => {

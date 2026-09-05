@@ -232,7 +232,7 @@ function readPackageMeta(
   } catch {
     // Unreadable metadata must not promote a build to one that trusts its
     // environment. The safe answer to "is this a cloud build" is no.
-    return { version: "0.0.0", id: "PawelHuryn.grok-vscode-phuryn", cloudBuild: false };
+    return { version: "0.0.0", id: "zanewnch.orin", cloudBuild: false };
   }
 }
 
@@ -621,9 +621,10 @@ async function createApp(): Promise<void> {
     title: DESKTOP_APP_DISPLAY_NAME,
     // Match AFK Pilot dark page chrome; theme toggle may lighten the document.
     backgroundColor: "#1a1a1a",
-    // Windows draws a light system menu strip over a dark app otherwise. Hide
-    // it by default; Alt reveals the File/Edit/View/Help menus when needed.
-    autoHideMenuBar: true,
+    // Cursor keeps the workbench menu visible on Windows. The app menu is
+    // already themed and wired in `app-menu.ts`, so expose it as part of the
+    // persistent workbench chrome instead of hiding it behind Alt.
+    autoHideMenuBar: false,
     // Hold the first paint until Chromium has a settled frame. Showing on
     // construct (NSIS --force-run relaunch is the sharp case) lays the
     // document out against an unsettled viewport; boot focus then sticks it.
@@ -647,6 +648,10 @@ async function createApp(): Promise<void> {
     // Re-pin right before first show: a leftover per-origin zoom applied
     // between construct and first paint would resurrect the stacked-zoom bug.
     pinAppDocumentZoom(mainWindow);
+    // Cursor opens as a full workbench rather than a floating utility window.
+    // Maximize before the first paint so the rail, workspace, and composer
+    // establish their layout against the real workbench viewport.
+    if (!mainWindow.isMaximized()) mainWindow.maximize();
     mainWindowReadyToShow = true;
     mainWindow.show();
   });

@@ -36,7 +36,7 @@ CLI's typed native outcome while keeping its own gate as defense-in-depth.
 | **Cancel**                | Lowered          | Return `abandoned`; queue any comment as an ordinary send because abandon has no continuation step. | The planning turn ends in Agent mode. |
 
 The verdict is carried by the `exit_plan_mode` response itself. There is no
-bracketed marker or hidden primer. `src/providers/grok-primer.ts` contains legacy-only
+bracketed marker or hidden primer. `src/providers/grok/grok-primer.ts` contains legacy-only
 recognizers used to hide historical primer turns and keep their replay/rewind
 coordinates from shifting visible content.
 

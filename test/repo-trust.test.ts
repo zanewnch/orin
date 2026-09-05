@@ -13,7 +13,7 @@
 import { describe, expect, it } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { alwaysApproveSource, configForcesAlwaysApprove } from "../src/providers/grok-config";
+import { alwaysApproveSource, configForcesAlwaysApprove } from "../src/providers/grok/grok-config";
 import { sessionScopedRoots } from "../src/auth/auth-roots";
 import { resolveTreePath, writeTreeFile } from "../src/desktop/files/file-tree";
 

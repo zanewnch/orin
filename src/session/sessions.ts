@@ -1,7 +1,7 @@
 import * as nodeFs from "node:fs";
 import { homedir } from "node:os";
 import * as path from "node:path";
-import { isPrimerText, isPrimerSummary } from "../providers/grok-primer";
+import { isPrimerText, isPrimerSummary } from "../providers/grok/grok-primer";
 import {
   applyContextOccupancy,
   occupancyFromUsageLog,

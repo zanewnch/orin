@@ -80,7 +80,7 @@ describe("projects rail view registration", () => {
   });
 
   it("extension registers the projects view provider", () => {
-    const src = fs.readFileSync(path.join(root, "src", "extension.ts"), "utf8");
+    const src = fs.readFileSync(path.join(root, "src", "vscode-extension", "extension.ts"), "utf8");
     expect(src).toMatch(/GROK_PROJECTS_VIEW_ID/);
     expect(src).toMatch(/resolveProjectsRailView/);
   });

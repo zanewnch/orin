@@ -13,7 +13,7 @@ Standalone `grok.exe` runs its own PowerShell session and never goes through
 ACP, so the two hosts diverged: PowerShell profile functions and pipelines
 (`… | Format-List`) failed under cmd, forcing the agent into retry/re-wrap
 loops. The shell is the host's choice, not a CLI flag — so this is fixed
-entirely in `resolveTerminalShell` (`src/providers/terminal-manager.ts`).
+entirely in `resolveTerminalShell` (`src/providers/shared/terminal-manager.ts`).
 
 ## Fix
 

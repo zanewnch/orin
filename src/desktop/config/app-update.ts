@@ -105,7 +105,7 @@ export function pickLatestDesktopRelease(
     const version = `${semver.major}.${semver.minor}.${semver.patch}`;
     const url =
       (typeof r.html_url === "string" && r.html_url) ||
-      `https://github.com/phuryn/grok-build-vscode/releases/tag/${encodeURIComponent(tag)}`;
+      `https://github.com/zanewnch/orin/releases/tag/${encodeURIComponent(tag)}`;
     if (!best || compareSemver(semver, best.semver) > 0) {
       best = { version, url, semver };
     }
@@ -147,7 +147,7 @@ export function desktopUpdatePageUrl(currentVersion: string | null | undefined):
 
 /** GitHub API URL used by the main process (per_page=100 covers recent history). */
 export const DESKTOP_RELEASES_API_URL =
-  "https://api.github.com/repos/phuryn/grok-build-vscode/releases?per_page=100";
+  "https://api.github.com/repos/zanewnch/orin/releases?per_page=100";
 
 /** How often a long-running desk re-checks (12 hours). */
 export const DESKTOP_UPDATE_CHECK_INTERVAL_MS = 12 * 60 * 60 * 1000;

@@ -631,7 +631,7 @@ describe("desktop main wiring (source gates)", () => {
     expect(body).toContain("unlinkRemoteDevice");
 
     // VS Code palette still calls the method directly — no confirm there.
-    const ext = fs.readFileSync(path.join(testRepoRoot, "src", "extension.ts"), "utf8");
+    const ext = fs.readFileSync(path.join(testRepoRoot, "src", "vscode-extension", "extension.ts"), "utf8");
     expect(ext).toMatch(/registerCommand\("grok.unlinkRemote", \(\) => sidebar\.unlinkRemoteDevice\(\)\)/);
     const unlinkStart = sidebar.indexOf("async unlinkRemoteDevice()");
     const unlinkEnd = sidebar.indexOf("private async postRemoteStatus", unlinkStart);
@@ -1942,10 +1942,10 @@ describe("desktop DevTools gate (non-production only)", () => {
 });
 
 describe("desktop branding and menu", () => {
-  it("names the product Grok Build Desktop (Community) and links this repo only", () => {
-    expect(DESKTOP_APP_FULL_NAME).toBe("Grok Build Desktop (Community)");
+  it("names the product Orin Desktop and links this fork only", () => {
+    expect(DESKTOP_APP_FULL_NAME).toBe("Orin Desktop");
     expect(DESKTOP_PUBLIC_REPO_URL).toBe(
-      "https://github.com/phuryn/grok-build-vscode",
+      "https://github.com/zanewnch/orin",
     );
     const main = fs.readFileSync(
       path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "main.ts"),
@@ -1998,12 +1998,12 @@ describe("desktop branding and menu", () => {
     expect(theme).not.toContain("grokDesktopTheme");
   });
 
-  it("auto-hides the native menu bar so it does not paint light over dark chrome", () => {
+  it("keeps the native menu bar visible like the Cursor workbench", () => {
     const main = fs.readFileSync(
       path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "desktop", "main.ts"),
       "utf8",
     );
-    expect(main).toContain("autoHideMenuBar: true");
+    expect(main).toContain("autoHideMenuBar: false");
     // Main document is served over app-resource (real origin), not data:.
     expect(main).toContain("isAppDocumentUrl");
     expect(main).not.toContain("desk-theme:get");
@@ -4659,7 +4659,7 @@ describe("openFile / openDiff session roots (P2-4 / P2-5)", () => {
 
     // VS Code host never switches folders and reports success on setActive.
     const vscodeHost = fs.readFileSync(
-      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "vscode-host.ts"),
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "vscode-extension", "vscode-host.ts"),
       "utf8",
     );
     expect(vscodeHost).toMatch(/canSwitchWorkspaceFolder:\s*false/);

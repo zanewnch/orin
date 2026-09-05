@@ -1,6 +1,6 @@
 # Grok Build for VS Code (Community)
 
-[![License: FSL-1.1-MIT](https://img.shields.io/badge/License-FSL--1.1--MIT-blue.svg)](https://github.com/phuryn/grok-build-vscode/blob/main/LICENSE) ![Agents](https://img.shields.io/badge/Agents-Grok%20Build%20%C2%B7%20Codex%20%C2%B7%20Claude%20Code-000000) [![VS Code](https://img.shields.io/badge/VS%20Code-Extension-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com) [![Cursor](https://badgen.net/badge/Cursor/Extension/007ACC)](https://cursor.com) [![The Product Compass](https://img.shields.io/badge/The%20Product%20Compass-productcompass.pm-FF6B35)](https://www.productcompass.pm)
+[![License: FSL-1.1-MIT](https://img.shields.io/badge/License-FSL--1.1--MIT-blue.svg)](https://github.com/zanewnch/orin/blob/main/LICENSE) ![Agents](https://img.shields.io/badge/Agents-Grok%20Build%20%C2%B7%20Codex%20%C2%B7%20Claude%20Code-000000) [![VS Code](https://img.shields.io/badge/VS%20Code-Extension-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com) [![Cursor](https://badgen.net/badge/Cursor/Extension/007ACC)](https://cursor.com)
 
 > **GUI for Grok Build CLI (incl. Grok 4.6)** — not affiliated with or endorsed by SpaceXAI (formerly xAI). *Grok*, *Grok Build*, and *xAI* are trademarks of xAI; this project uses those names only to describe what it's compatible with.
 
@@ -8,9 +8,9 @@ The GUI for **Grok Build CLI** (incl. **Grok 4.6**), right in your editor — wi
 
 No manual setup: the extension **walks you through installing the `grok` CLI and signing in** — with a **SuperGrok or X Premium+ subscription**, or an **xAI API key** — right from the sidebar, one click per step.
 
-![Grok Build in the VS Code sidebar, running Grok](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/grok_4.5.png)
+![Orin in the VS Code sidebar, running Grok](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/grok_4.5.png)
 
-![Generated image rendered inline from /imagine](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/imagine.webp)
+![Generated image rendered inline from /imagine](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/imagine.webp)
 
 ---
 
@@ -27,7 +27,7 @@ _Click any feature to expand._
 
 When Grok proposes an edit, hit **open diff →** to review the whole file in VS Code's native diff editor, focused on the first changed line, then *Allow once / always* or *Reject*. The file is written only **after** you approve.
 
-![Permission card with a native VS Code diff preview before approval](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/permission_diff.png)
+![Permission card with a native VS Code diff preview before approval](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/permission_diff.png)
 
 </details>
 
@@ -36,7 +36,7 @@ When Grok proposes an edit, hit **open diff →** to review the whole file in VS
 
 Switch from the bottom toolbar — even mid-turn, so you can flip to **Auto accept** to stop approving cards without stopping Grok. **Plan** is enforced by the *extension*, not the CLI — workspace writes and non-read-only commands are genuinely blocked until you approve the plan (see [How it works](#how-it-works)). **Auto accept** approves actions automatically; approving a plan returns you to whichever mode you were in before planning.
 
-![The mode picker — Agent, Plan, and Auto accept](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/agent_modes.png)
+![The mode picker — Agent, Plan, and Auto accept](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/agent_modes.png)
 
 </details>
 
@@ -52,7 +52,7 @@ Type `/imagine <prompt>` (or `/imagine-video <prompt>`) and the result renders *
 
 **Ctrl+V a screenshot**, drag-drop an image, or attach one with the **+** picker (png/jpg/gif/webp, up to 20 MiB) — it's sent as vision input, so you can ask *"what's wrong with this UI?"* about a dialog you just captured. Disk imports keep their file path so Grok can also act on the real file, and chips restore when you reopen the session.
 
-![Several pasted images attached in the composer as removable chips](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/paste_attach_images.png)
+![Several pasted images attached in the composer as removable chips](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/paste_attach_images.png)
 
 </details>
 
@@ -61,9 +61,9 @@ Type `/imagine <prompt>` (or `/imagine-video <prompt>`) and the result renders *
 
 The **microphone button** dictates speech via [SpaceXAI's Speech-to-Text API](https://docs.x.ai/developers/model-capabilities/audio/speech-to-text) — words appear live as you talk. Say **"grok send"** to submit hands-free and keep dictating; messages spoken while Grok responds queue and flush when it finishes.
 
-It works out of the box once you're signed in (your `grok login` token is reused automatically) — you only need [`ffmpeg`](https://ffmpeg.org) installed to record. Setup, devices, and costs: **[docs/voice-setup.md](https://github.com/phuryn/grok-build-vscode/blob/main/docs/voice-setup.md)**.
+It works out of the box once you're signed in (your `grok login` token is reused automatically) — you only need [`ffmpeg`](https://ffmpeg.org) installed to record. Setup, devices, and costs: **[docs/voice-setup.md](https://github.com/zanewnch/orin/blob/main/docs/voice-setup.md)**.
 
-![Voice control with live transcription in the composer](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/voice_mode.png)
+![Voice control with live transcription in the composer](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/voice_mode.png)
 
 </details>
 
@@ -72,7 +72,7 @@ It works out of the box once you're signed in (your `grok login` token is reused
 
 The active editor rides along automatically; add more by **typing `@` in the composer** (a workspace file picker opens — arrow keys + Enter, fuzzy-matched), dragging from the Explorer, right-click → **Grok: Send File**, **Alt+G**, or the **+** button. Chips send as `@/path` references, so content stays current and history stays small. **Shift-drag** embeds the file inline instead.
 
-![Composer with an image, a file, and a selection chip attached](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/file_chips.png)
+![Composer with an image, a file, and a selection chip attached](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/file_chips.png)
 
 </details>
 
@@ -93,7 +93,7 @@ Sessions run in **parallel**: start a new one with **+** while another is mid-tu
 
 The green/red dot is an **unread badge** — it survives a VS Code restart and clears when you open the session, so after firing off a few agents the green dots are exactly the results waiting for you.
 
-![Session history dropdown with status dots](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/session_history.png)
+![Session history dropdown with status dots](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/session_history.png)
 
 </details>
 
@@ -102,7 +102,7 @@ The green/red dot is an **unread badge** — it survives a VS Code restart and c
 
 A message you send mid-turn **never cancels** anything. By default it **queues** — a pending block at the end of the chat (Edit / Remove), sent the moment the turn ends; type more and it merges into the same message. Hit **Steer** on it to redirect Grok *now* instead: the text goes straight into the running turn without losing the tool work in flight. Prefer that always? Turn on **Steer by default** (gear → *Config & debug*).
 
-![A queued message with the Steer button](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/steer.png)
+![A queued message with the Steer button](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/steer.png)
 
 </details>
 
@@ -111,7 +111,7 @@ A message you send mid-turn **never cancels** anything. By default it **queues**
 
 Gear → *Fork conversation* copies the conversation into a **new session** named `(Fork) <the original's name>` and opens it — try a tangent or a different approach while the original stays **byte-for-byte unchanged** in your history. It branches the conversation, not your code: files on disk are untouched.
 
-![Fork conversation in the gear menu](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/fork.png)
+![Fork conversation in the gear menu](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/fork.png)
 
 </details>
 
@@ -141,7 +141,7 @@ When Grok runs a Deep Research, Workflow, or Goal task, a progress card streams 
 
 Click the **context donut** for the exact `used / window (%)`, plus what the conversation has **billed** — input, cache read, output, and the CLI-reported **USD cost** — as a session total and a per-turn split with its model calls. **Compact conversation** lives here too, right next to the number that tells you when you need it.
 
-![The context popover — window usage, billed totals, and Compact](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/context.png)
+![The context popover — window usage, billed totals, and Compact](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/context.png)
 
 </details>
 
@@ -150,7 +150,7 @@ Click the **context donut** for the exact `used / window (%)`, plus what the con
 
 When Grok delegates work to a subagent, the chat shows a card with the task and a live timer, then the subagent's output when it finishes — background subagents included, whose result folds back into the card when it lands.
 
-![A subagent call rendered as a card in the chat](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/subagents.png)
+![A subagent call rendered as a card in the chat](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/subagents.png)
 
 </details>
 
@@ -159,7 +159,7 @@ When Grok delegates work to a subagent, the chat shows a card with the task and 
 
 Every action appears as a category-iconed row, batched and summarized ("Explored 5 items", "Edited 2 files"); a failed tool turns red with the reason. Edits show a `+N −M` change count and expand to an inline diff at the file's real line numbers; shell commands expand to an **IN/OUT block** with the full command and its complete output — exactly what Grok received, exit code included. To audit an Auto-accept run, pre-expand everything with `grok.expandCommandOutputs`, or **Grok: Expand All Tool Details** from the Command Palette.
 
-![A tool batch with a command expanded to its IN/OUT block](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/tool_calls.png)
+![A tool batch with a command expanded to its IN/OUT block](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/tool_calls.png)
 
 </details>
 
@@ -168,7 +168,7 @@ Every action appears as a category-iconed row, batched and summarized ("Explored
 
 LaTeX in answers — inline `\(…\)`, display `\[…\]`, matrices, integrals, Greek — renders as real typeset math via [MathJax](https://www.mathjax.org), bundled so it works **offline**. Hover a display equation to copy its source or export it as PNG or SVG. (Bare `$…$` is deliberately not a delimiter — it would mangle "it costs $5".)
 
-![LaTeX expressions rendered as typeset math](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/v1.4.5%20LaTeX%20expressions.png)
+![LaTeX expressions rendered as typeset math](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/v1.4.5%20LaTeX%20expressions.png)
 
 </details>
 
@@ -177,7 +177,7 @@ LaTeX in answers — inline `\(…\)`, display `\[…\]`, matrices, integrals, G
 
 A ` ```mermaid ` block renders as a real diagram via [Mermaid](https://mermaid.js.org) — bundled, offline, themed to your light/dark mode. Hover to copy the source or export it as PNG or SVG; while it's still streaming, or if it's malformed, the readable source is shown instead.
 
-![Mermaid diagram rendered inline in the chat](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/v1.4.6%20Mermaid%20diagrams.png)
+![Mermaid diagram rendered inline in the chat](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/v1.4.6%20Mermaid%20diagrams.png)
 
 </details>
 
@@ -200,9 +200,9 @@ The host talks **ACP** (JSON-RPC over stdio), not a Grok-specific protocol, so t
 <details>
 <summary><strong>Reasoning effort</strong> — trade tokens for depth</summary>
 
-Gear → the effort dots next to the model, `none` → `xhigh`. On recent CLIs it applies **live** to the running session; older ones restart, with an optional *Summarize & Restart* that carries context forward.
+Gear → **Effort**, then the advertised levels (`none` → `xhigh`). The composer chip next to Agent shows the current level and opens the searchable model list. On recent CLIs effort applies **live** to the running session; older ones restart, with an optional *Summarize & Restart* that carries context forward.
 
-![Model and reasoning-effort picker in the gear menu](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/effort.png)
+![Model and reasoning-effort picker in the gear menu](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/effort.png)
 
 </details>
 
@@ -215,7 +215,7 @@ A **projects rail** lists every repository with Grok history and its newest conv
 
 While a device is linked, the extension also **keeps the machine awake** (`caffeinate` on macOS, `SetThreadExecutionState` on Windows, `systemd-inhibit` on Linux) so a turn you kicked off from your phone isn't cut short by idle sleep. The display still sleeps — only system sleep is blocked — and the lock is released the moment you sign out. Turn it off with `grok.remote.keepAwake`. A **closed laptop lid still suspends** on every OS; no application can override that.
 
-![AFK Pilot — your Grok agent from any browser](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/remote.webp)
+![AFK Pilot — your Grok agent from any browser](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/remote.webp)
 
 </details>
 
@@ -226,7 +226,7 @@ While a device is linked, the extension also **keeps the machine awake** (`caffe
 - **VS Code** 1.106+ (or a compatible editor on the same base — Cursor 3.x qualifies; Antigravity is still on base 1.104 and keeps the last compatible extension version).
 - **The Grok Build CLI** (`grok`) on macOS, Linux, or Windows. The CLI ships a native Windows build, so the extension runs natively on all three — no WSL required (WSL2 + Remote-WSL still works if you prefer it).
 - **A login:** either a **SuperGrok or X Premium+** subscription (`grok login`) or an xAI API key. Either subscription unlocks **Grok Build**; with an API key you also get the **grok-4.x** models and **grok-imagine**. (Grok's free tier does **not** include the CLI agent.)
-- **Voice control** is optional and works out of the box once you're signed in — it just needs [`ffmpeg`](https://ffmpeg.org) to record. Setup + advanced options: [docs/voice-setup.md](https://github.com/phuryn/grok-build-vscode/blob/main/docs/voice-setup.md).
+- **Voice control** is optional and works out of the box once you're signed in — it just needs [`ffmpeg`](https://ffmpeg.org) to record. Setup + advanced options: [docs/voice-setup.md](https://github.com/zanewnch/orin/blob/main/docs/voice-setup.md).
 
 ---
 
@@ -238,7 +238,7 @@ While a device is linked, the extension also **keeps the machine awake** (`caffe
 
 Grok opens in the **Secondary Side Bar** (right side, next to other AI tools). Prefer it elsewhere? Gear → **Config & debug** → **Move view** relocates it to the Panel or Primary Side Bar in one click.
 
-> Prefer the terminal, building from source, or installing into several IDEs at once? See the project [INSTALL docs](https://github.com/phuryn/grok-build-vscode/blob/main/docs/INSTALL.md).
+> Prefer the terminal, building from source, or installing into several IDEs at once? See the project [INSTALL docs](https://github.com/zanewnch/orin/blob/main/docs/INSTALL.md).
 
 ---
 
@@ -276,7 +276,7 @@ Grok opens in the **Secondary Side Bar** (right side, next to other AI tools). P
 | `grok.thumbsFeedback` | `false` | Show thumbs on a finished Grok turn so you can send a rating to SpaceXAI. Off by default. On, thumbs appear only when this Grok session supports feedback — never on Codex or Claude. Toggle from Settings → General → **Thumbs feedback to SpaceXAI**. |
 | `grok.telemetry.enabled` | `true` | Send anonymous, privacy-first usage telemetry (see [Privacy](#privacy)). Also honors VS Code's global `telemetry.telemetryLevel`. |
 | `grok.chatFontScale` | `100` | Zoom for the chat panel only, as a percent (`150`, `200`, …). Scales the whole chat UI without rescaling the rest of VS Code (unlike `Ctrl/Cmd+Shift+=`). Applies live; supports User (global) and Workspace (local) scope. |
-| `grok.voiceApiKey` | `""` | Optional override key for voice Speech-to-Text. Empty = reuse your `grok login` token automatically, else `GROK_VOICE_API_KEY` / `XAI_API_KEY` from the workspace `.env`. See [docs/voice-setup.md](https://github.com/phuryn/grok-build-vscode/blob/main/docs/voice-setup.md). |
+| `grok.voiceApiKey` | `""` | Optional override key for voice Speech-to-Text. Empty = reuse your `grok login` token automatically, else `GROK_VOICE_API_KEY` / `XAI_API_KEY` from the workspace `.env`. See [docs/voice-setup.md](https://github.com/zanewnch/orin/blob/main/docs/voice-setup.md). |
 | `grok.ffmpegPath` | `""` | Path to `ffmpeg` for microphone recording. Empty = use `ffmpeg` from `PATH`. |
 | `grok.voiceInputDevice` | `""` | Microphone device override. Empty = system default (Windows auto-detects the first DirectShow audio device). |
 | `grok.voiceSendPhrase` | `"grok send"` | Spoken phrase that auto-submits when it ends a transcription. Empty = disable hands-free sending. |
@@ -297,25 +297,25 @@ VS Code commands (not Grok slash commands):
 
 | Command | What it does |
 |---|---|
-| `Grok: Open` | Open the Grok sidebar |
-| `Grok: New Session` | Start a fresh session |
-| `Grok: Compact Conversation` | Compact the current session to reclaim context |
-| `Grok: Pick Model` | Open the model picker |
-| `Grok: Toggle Plan / Agent Mode` | Open the mode picker (Agent / Plan / Auto accept) |
-| `Grok: Send File` | Add a file to the composer (right-clicked file, active editor, or a file picker) |
+| `Orin: Open` | Open the Orin sidebar |
+| `Orin: New Session` | Start a fresh session |
+| `Orin: Compact Conversation` | Compact the current session to reclaim context |
+| `Orin: Pick Model` | Open the model picker |
+| `Orin: Toggle Plan / Agent Mode` | Open the mode picker (Agent / Plan / Auto accept) |
+| `Orin: Send File` | Add a file to the composer (right-clicked file, active editor, or a file picker) |
 | `Add Selection to Grok` | Attach the selected lines as a snippet chip in the composer |
-| `Grok: Insert @-Mention` | Insert an `@`-mention for the active file into the composer |
+| `Orin: Insert @-Mention` | Insert an `@`-mention for the active file into the composer |
 | `Grok: Expand All Tool Details (This Session)` | Open every tool group, command IN/OUT box, and edit inline diff, and keep new ones open — this session only |
 | `Grok: Collapse All Tool Details (This Session)` | Collapse them all, and keep new ones collapsed — this session only |
-| `Grok: Show Logs` | Open the Grok output channel (ACP messages, errors) |
-| `Grok: Log Out` | Sign out of the Grok CLI (`grok logout`) and return to the sign-in screen |
+| `Orin: Show Logs` | Open the Orin output channel (ACP messages, errors) |
+| `Orin: Log Out` | Sign out of the Grok CLI (`grok logout`) and return to the sign-in screen |
 
 | Key | Action |
 |---|---|
 | `Ctrl+;` / `Cmd+;` | Open Grok sidebar |
 | `Alt+G` | Insert `@`-mention for the active file (when the editor is focused) |
 
-Grok's own **slash commands** (`/imagine`, `/compact`, …) autocomplete in the composer when you type `/`, sourced live from your installed CLI version. Reference snapshot: [docs/SLASH-COMMANDS.md](https://github.com/phuryn/grok-build-vscode/blob/main/docs/SLASH-COMMANDS.md).
+Grok's own **slash commands** (`/imagine`, `/compact`, …) autocomplete in the composer when you type `/`, sourced live from your installed CLI version. Reference snapshot: [docs/SLASH-COMMANDS.md](https://github.com/zanewnch/orin/blob/main/docs/SLASH-COMMANDS.md).
 
 </details>
 
@@ -327,7 +327,7 @@ The extension is intentionally **thin**: it speaks JSON-RPC over `grok agent std
 
 Plan Mode is the one place the extension adds defense-in-depth. The CLI owns the plan review and receives native JSON-RPC success outcomes (`approved`, `cancelled` for Keep planning, or `abandoned` for Cancel), so approval or revision continues inside the original turn. An Approve/Keep-planning comment is interjected before that verdict releases the turn; a Cancel comment queues as the next ordinary prompt because abandonment has no continuation step. The extension's **gate** still blocks workspace writes and non-read-only commands while planning because the CLI's own terminal path remains porous. No hidden primer, bracket marker, follow-up verdict prompt, or verdict-time turn cancellation is sent. Plan is disabled fail-closed when the CLI is older than the required version or its version cannot be verified.
 
-Full diagram, message flow, module map, and design notes: **[docs/architecture.md](https://github.com/phuryn/grok-build-vscode/blob/main/docs/architecture.md)**.
+Full diagram, message flow, module map, and design notes: **[docs/architecture.md](https://github.com/zanewnch/orin/blob/main/docs/architecture.md)**.
 
 ---
 
@@ -356,12 +356,12 @@ Neither is required, and nothing here depends on them.
 
 ## Privacy
 
-**Privacy by design** — no message content, code, or file paths leave your machine automatically. The only automatic report is an anonymous, opt-out `session_start` (turn it off with `grok.telemetry.enabled: false` or VS Code's global `telemetry.telemetryLevel`). It carries an install id plus a low-cardinality settings snapshot, including mode / model / effort, host kind, UI preferences, whether voice input is available, and which agents are connected — **never** message content, code, paths, or free-text settings. The full field list is in [docs/privacy.md](https://github.com/phuryn/grok-build-vscode/blob/main/docs/privacy.md). Data leaves only through features you explicitly enable or invoke: Voice input sends audio to SpaceXAI for transcription; the optional **Read simplified summaries** switch in VS Code or AFK Pilot sends the cleaned spoken reply to SpaceXAI for a brief version; optional **Thumbs feedback to SpaceXAI** (off by default) sends a rating on a finished Grok turn; Remote Control relays the chat to your linked devices. Each is disclosed separately from telemetry.
+**Privacy by design** — no message content, code, or file paths leave your machine automatically. The only automatic report is an anonymous, opt-out `session_start` (turn it off with `grok.telemetry.enabled: false` or VS Code's global `telemetry.telemetryLevel`). It carries an install id plus a low-cardinality settings snapshot, including mode / model / effort, host kind, UI preferences, whether voice input is available, and which agents are connected — **never** message content, code, paths, or free-text settings. The full field list is in [docs/privacy.md](https://github.com/zanewnch/orin/blob/main/docs/privacy.md). Data leaves only through features you explicitly enable or invoke: Voice input sends audio to SpaceXAI for transcription; the optional **Read simplified summaries** switch in VS Code or AFK Pilot sends the cleaned spoken reply to SpaceXAI for a brief version; optional **Thumbs feedback to SpaceXAI** (off by default) sends a rating on a finished Grok turn; Remote Control relays the chat to your linked devices. Each is disclosed separately from telemetry.
 
-More: [docs/privacy.md](https://github.com/phuryn/grok-build-vscode/blob/main/docs/privacy.md).
+More: [docs/privacy.md](https://github.com/zanewnch/orin/blob/main/docs/privacy.md).
 
 ---
 
 ## License & attribution
 
-Licensed under the **Functional Source License, Version 1.1, MIT Future License (FSL-1.1-MIT)** — see [LICENSE](https://github.com/phuryn/grok-build-vscode/blob/main/LICENSE). In short: use, modify, and redistribute freely for any purpose **except** offering a competing commercial product or service. Versions up to and including 1.8.1 were published under MIT and remain MIT. The copyright notice and license text must travel with all copies, including compiled builds — if you're reusing this project, see [docs/attribution.md](https://github.com/phuryn/grok-build-vscode/blob/main/docs/attribution.md) for how to credit it properly.
+Licensed under the **Functional Source License, Version 1.1, MIT Future License (FSL-1.1-MIT)** — see [LICENSE](https://github.com/zanewnch/orin/blob/main/LICENSE). In short: use, modify, and redistribute freely for any purpose **except** offering a competing commercial product or service. Versions up to and including 1.8.1 were published under MIT and remain MIT. The copyright notice and license text must travel with all copies, including compiled builds — if you're reusing this project, see [docs/attribution.md](https://github.com/zanewnch/orin/blob/main/docs/attribution.md) for how to credit it properly.

@@ -91,7 +91,7 @@ describe("host <-> webview message contract (src/protocol.ts is the source of tr
   it("contributes find-in-conversation as a palette command and a Cmd/Ctrl+F fallback", () => {
     expect(packageJson.contributes.commands).toContainEqual({
       command: "grok.findInSession",
-      title: "Grok: Find in Conversation",
+      title: "Orin: Find in Conversation",
     });
     expect(packageJson.contributes.keybindings).toContainEqual({
       command: "grok.findInSession",
@@ -104,7 +104,7 @@ describe("host <-> webview message contract (src/protocol.ts is the source of tr
   it("contributes a native title-bar settings command on the chat view", () => {
     expect(packageJson.contributes.commands).toContainEqual({
       command: "grok.settings",
-      title: "Grok: Settings",
+      title: "Orin: Settings",
       icon: "$(gear)",
     });
     expect(packageJson.contributes.menus["view/title"]).toContainEqual({

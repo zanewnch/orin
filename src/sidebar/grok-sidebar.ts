@@ -39,12 +39,12 @@ import { AcpClient, EffortLevel, ExitPlanRequest, PermissionRequest, QuestionReq
 import type { AcpProvider, BackendSessionListEntry } from "../acp/acp-backend";
 import { isAdapterProvider, isAcpProvider, ACP_PROVIDERS } from "../acp/acp-backend";
 import { CODEX_ACP_ADAPTER_VERSION, CodexBackend, isCodexCredentialError } from "../acp/codex-backend";
-import { locateCodexCli, resolveCodexHome } from "../providers/codex-cli-locator";
-import { CODEX_MANAGED_VERSION, installManagedCodex } from "../providers/codex-managed-installer";
-import { warmCodexModelCache } from "../providers/codex-model-cache";
+import { locateCodexCli, resolveCodexHome } from "../providers/codex/codex-cli-locator";
+import { CODEX_MANAGED_VERSION, installManagedCodex } from "../providers/codex/codex-managed-installer";
+import { warmCodexModelCache } from "../providers/codex/codex-model-cache";
 import { CLAUDE_ACP_ADAPTER_VERSION, ClaudeBackend, isClaudeCredentialError } from "../acp/claude-backend";
-import { locateClaudeCli, parseClaudeVersionOutput } from "../providers/claude-cli-locator";
-import { warmClaudeModelCache } from "../providers/claude-model-cache";
+import { locateClaudeCli, parseClaudeVersionOutput } from "../providers/claude/claude-cli-locator";
+import { warmClaudeModelCache } from "../providers/claude/claude-model-cache";
 import {
   adapterEntriesEligibleForClear,
   adapterListEntry,
@@ -64,7 +64,7 @@ import {
   type ProviderConnections,
   type ProviderModelCache,
   type ProviderModelInfo,
-} from "../providers/provider-ui";
+} from "../providers/shared/provider-ui";
 import {
   nextWakeAt,
   ROUTINES_KEY,
@@ -184,7 +184,7 @@ import {
   OFFICIAL_EXTENSION_ID,
 } from "../telemetry";
 import { randomUUID } from "node:crypto";
-import { execGrokCli } from "../providers/cli-process";
+import { execGrokCli } from "../providers/shared/cli-process";
 import { listGitWorktreePaths } from "../projects/git-worktree-list";
 import {
   locateGrokCli,
@@ -200,7 +200,7 @@ import {
   GROK_REQUIRED_VERSION,
   GROK_STDIO_DOWNGRADE_TARGET,
   type CliVersionCache,
-} from "../providers/cli-locator";
+} from "../providers/shared/cli-locator";
 import { OpenClock } from "../open-timing";
 import {
   TerminalManager,
@@ -210,7 +210,7 @@ import {
   resolvedTerminalShellDialect,
   setTerminalShellPreference,
   type ShellPreference,
-} from "../providers/terminal-manager";
+} from "../providers/shared/terminal-manager";
 import {
   FileChip,
   MAX_VISION_IMAGE_BYTES,
@@ -266,7 +266,7 @@ import {
   configForcesAlwaysApprove,
   globalConfigPath,
   projectConfigPath,
-} from "../providers/grok-config";
+} from "../providers/grok/grok-config";
 import { sessionScopedRoots } from "../auth/auth-roots";
 import { fileUriToPath, parseFileRef, shouldReadFileInline } from "../composer/file-ref";
 import {
@@ -282,7 +282,7 @@ import {
   planReviewFileName,
   planReviewSessionDirectoryName,
 } from "../acp/plan-review";
-import { isPrimerText } from "../providers/grok-primer";
+import { isPrimerText } from "../providers/grok/grok-primer";
 import { AsyncSerialQueue } from "../async-serial";
 import { HOST_CAPABILITIES, HostMsg, INTERRUPTED_SEND_CODE, SESSION_SUPERSEDED_CODE, WebviewMsg, type GithubState, type ProjectSetupGithub } from "../protocol";
 import type {
@@ -2482,7 +2482,7 @@ export class GrokSidebar {
         void this.trackAttach(this.pickFileFromComputer());
       } else {
         void this.host.showInformationMessage(
-          "Grok: open a file in the editor first, then run this command.",
+          "Orin: open a file in the editor first, then run this command.",
         );
       }
       return;
@@ -2812,6 +2812,16 @@ Only continue if you trust this code.`,
   private noticeAlwaysApproveOnce(): void {
     if (this.alwaysApproveNoticeShown) return;
     this.alwaysApproveNoticeShown = true;
+    // Keep desktop background state notices out of the work surface. The
+    // portable host maps information messages to a native modal, which would
+    // block the whole chat on every launch even though the mode button already
+    // communicates the effective state.
+    if (this.host.hostKind === "desktop") {
+      this.host.appendLine(
+        'Grok: "always-approve" is set in config.toml; Auto accept is active for this session.',
+      );
+      return;
+    }
     const OPEN = "Open config.toml";
     void this.host.showInformationMessage(
       'Grok: "always-approve" is set in your grok config.toml, so tool actions are auto-approved for every session (CLI and extension). The mode shows "Auto accept" to reflect this — the extension can\'t override a global config setting per-session.',
@@ -5008,7 +5018,7 @@ Only continue if you trust this code.`,
     const wt = session.worktree;
     if (!wt) {
       return void this.host.showInformationMessage(
-        "This session is not in a worktree. Start one with Grok: New Worktree Session.",
+        "This session is not in a worktree. Start one with Orin: New Worktree Session.",
       );
     }
     if (!session.client?.sessionId) {
@@ -10704,7 +10714,7 @@ ${many ? `${working.length} conversations are` : "A conversation is"} still work
         term.show();
         // Windows ships a native CLI installed via PowerShell; the default VS Code
         // terminal there is PowerShell, so use its syntax. Everything else is POSIX.
-        const done = "Done. Click 'Re-check connection' in the Grok sidebar.";
+        const done = "Done. Click 'Re-check connection' in the Orin sidebar.";
         term.sendText(
           process.platform === "win32"
             ? `irm https://x.ai/cli/install.ps1 | iex; Write-Host "\`n${done}"`
@@ -19244,4 +19254,3 @@ ${many ? `${working.length} conversations are` : "A conversation is"} still work
     });
   }
 }
-

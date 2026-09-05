@@ -1,8 +1,8 @@
-import type { ModelInfo } from "../acp/acp";
-import type { AcpProvider, BackendSessionListEntry } from "../acp/acp-backend";
-import { isAdapterProvider } from "../acp/acp-backend";
-import { normalizeWorkspaceFsPath } from "../host";
-import type { SessionListEntry, SessionMetaOverrides } from "../session/sessions";
+import type { ModelInfo } from "../../acp/acp";
+import type { AcpProvider, BackendSessionListEntry } from "../../acp/acp-backend";
+import { isAdapterProvider } from "../../acp/acp-backend";
+import { normalizeWorkspaceFsPath } from "../../host";
+import type { SessionListEntry, SessionMetaOverrides } from "../../session/sessions";
 
 export const PROVIDER_ORDER: readonly AcpProvider[] = ["grok", "codex", "claude"];
 

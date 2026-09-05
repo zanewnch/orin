@@ -161,6 +161,55 @@ body.has-rail .app-main {
   height: 100%;
   overflow: hidden;
 }
+
+/* Cursor-style fixed activity strip for the desktop workspace. The buttons
+   are wired to the real project/history/settings surfaces by chat.js. */
+.desk-activity-bar {
+  display: none;
+  flex: 0 0 44px;
+  width: 44px;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  gap: 6px;
+  background: var(--vscode-activityBar-background, var(--vscode-sideBar-background));
+  color: var(--vscode-activityBar-foreground, var(--vscode-descriptionForeground));
+  border-right: 1px solid var(--vscode-panel-border, var(--vscode-editorWidget-border, #444));
+}
+body.desk.has-rail .desk-activity-bar { display: flex; }
+.desk-activity-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-left: 2px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: .82;
+}
+.desk-activity-btn svg { width: 19px; height: 19px; }
+.desk-activity-letter { font-size: 15px; font-weight: 600; line-height: 1; }
+.desk-activity-btn:hover { background: var(--vscode-toolbar-hoverBackground, rgba(255,255,255,.08)); opacity: 1; }
+.desk-activity-btn.active {
+  border-left-color: var(--vscode-activityBar-activeBorder, var(--vscode-focusBorder));
+  color: var(--vscode-activityBar-activeFocusBorder, var(--vscode-foreground));
+  opacity: 1;
+}
+.desk-activity-btn:focus-visible { outline: 1px solid var(--vscode-focusBorder); outline-offset: -1px; }
+.desk-activity-spacer { flex: 1; min-height: 12px; }
+.desk-activity-more { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; margin: 2px 0; padding: 7px; border: 0; border-radius: 5px; background: transparent; color: var(--vscode-foreground); opacity: .72; cursor: pointer; }
+.desk-activity-more:hover, .desk-activity-more:focus-visible { background: color-mix(in oklab, var(--vscode-foreground) 10%, transparent); opacity: 1; }
+.desk-activity-more svg { width: 16px; height: 16px; }
+@media (max-width: 620px) {
+  body.desk.has-rail .desk-activity-bar { display: none; }
+}
+
 #projects-rail,
 .projects-rail {
   /* Fixed default, not viewport-relative. `min(260px, 38vw)` meant that until
@@ -1104,6 +1153,104 @@ a:hover {
   gap: 2px;
 }
 .top-bar > .icon-btn { flex: none; }
+.desk-workbench-nav {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 1px;
+  margin-right: 6px;
+}
+.desk-workbench-btn {
+  width: 28px;
+  height: 28px;
+  padding: 5px;
+  opacity: .78;
+}
+.desk-workbench-btn:hover:not(:disabled), .desk-workbench-btn:focus-visible { opacity: 1; }
+.desk-workbench-btn[aria-pressed="true"] { background: color-mix(in oklab, var(--vscode-foreground) 13%, transparent); opacity: 1; }
+.desk-workbench-btn svg { width: 16px; height: 16px; }
+.desk-workbench-project {
+  display: inline-flex;
+  align-items: center;
+  max-width: 180px;
+  height: 28px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--vscode-foreground);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: .88;
+}
+.desk-workbench-project:hover, .desk-workbench-project:focus-visible { background: color-mix(in oklab, var(--vscode-foreground) 9%, transparent); opacity: 1; }
+.desk-workbench-workspace {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 180px;
+  height: 28px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--vscode-foreground);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: .88;
+}
+.desk-workbench-workspace:hover, .desk-workbench-workspace:focus-visible { background: color-mix(in oklab, var(--vscode-foreground) 9%, transparent); opacity: 1; }
+.desk-workbench-workspace-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.desk-workbench-workspace svg { width: 13px; height: 13px; flex: none; }
+@media (max-width: 760px) { .desk-workbench-workspace { display: none; } }
+.desk-command-palette-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 11vh;
+  background: color-mix(in oklab, #000 42%, transparent);
+}
+.desk-command-palette-backdrop[hidden] { display: none; }
+.desk-command-palette {
+  width: min(620px, calc(100vw - 32px));
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--vscode-foreground) 20%, transparent);
+  border-radius: 8px;
+  background: var(--vscode-editorWidget-background, var(--vscode-sideBar-background));
+  box-shadow: 0 18px 48px color-mix(in oklab, #000 55%, transparent);
+}
+.desk-command-search-wrap { display: flex; align-items: center; gap: 9px; padding: 10px 13px; border-bottom: 1px solid color-mix(in oklab, var(--vscode-foreground) 12%, transparent); color: var(--vscode-descriptionForeground); }
+.desk-command-search-wrap span { font-size: 21px; line-height: 1; }
+.desk-command-search-wrap input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--vscode-foreground); font: inherit; font-size: 14px; }
+.desk-command-list { max-height: 42vh; overflow: auto; padding: 5px; }
+.desk-command-item { display: block; width: 100%; padding: 8px 10px; border: 0; border-radius: 4px; background: transparent; color: var(--vscode-foreground); text-align: left; font: inherit; font-size: 13px; cursor: pointer; }
+.desk-command-item.selected, .desk-command-item:hover { background: var(--vscode-list-activeSelectionBackground, color-mix(in oklab, var(--vscode-foreground) 12%, transparent)); color: var(--vscode-list-activeSelectionForeground, var(--vscode-foreground)); }
+.desk-command-hint { padding: 8px 13px; border-top: 1px solid color-mix(in oklab, var(--vscode-foreground) 10%, transparent); color: var(--vscode-descriptionForeground); font-size: 11px; }
+.desk-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 22px;
+  min-height: 22px;
+  padding: 0 8px;
+  background: var(--vscode-statusBar-background, #007acc);
+  color: var(--vscode-statusBar-foreground, #fff);
+  font-size: 11px;
+  line-height: 22px;
+  user-select: none;
+}
+.desk-status-left, .desk-status-right { display: flex; align-items: center; min-width: 0; gap: 3px; }
+.desk-status-right { justify-content: flex-end; }
+.desk-status-item { display: inline-flex; align-items: center; height: 20px; padding: 0 5px; white-space: nowrap; opacity: .92; }
+.desk-status-item:hover { background: color-mix(in oklab, var(--vscode-statusBar-foreground, #fff) 15%, transparent); opacity: 1; }
+.desk-status-connected { font-weight: 600; }
+body.desk-agent-focus .composer-card { border-color: color-mix(in oklab, var(--vscode-focusBorder, #3794ff) 70%, var(--vscode-editorWidget-border, #444)); box-shadow: 0 0 0 1px color-mix(in oklab, var(--vscode-focusBorder, #3794ff) 22%, transparent); }
+@media (max-width: 760px) { .desk-status-right .desk-status-item:nth-child(-n+2) { display: none; } }
 .session-tabs {
   display: flex;
   align-items: stretch;
@@ -3447,8 +3594,20 @@ textarea#input::placeholder {
   flex-shrink: 1;
   min-width: 0;
   overflow: hidden;
-  max-width: 140px;
+  max-width: 160px;
   color: var(--vscode-descriptionForeground);
+}
+.composer-mode-chip {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--vscode-foreground) 8%, transparent);
+  padding: 0 9px;
+}
+.composer-effort-chip {
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--vscode-foreground) 10%, transparent);
+  padding: 0 8px;
+  font-weight: 500;
+  color: var(--vscode-foreground);
 }
 #mode-btn svg:last-of-type,
 #model-btn svg:last-of-type {
@@ -3556,19 +3715,90 @@ textarea#input::placeholder {
 /* ---- gear popover: model + effort row ---- */
 
 .gear-popover { min-width: 230px; }
-
-.model-effort-row {
+.gear-popover.model-picker-menu {
+  min-width: 260px;
+  max-height: 380px;
+}
+.cursor-setting-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  padding: 4px 6px;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--vscode-foreground);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
 }
+.cursor-setting-row:hover { background: var(--vscode-list-hoverBackground); }
+.cursor-setting-row.active {
+  outline: 1px solid var(--vscode-widget-border, var(--vscode-editorWidget-border));
+  outline-offset: -1px;
+  background: color-mix(in srgb, var(--vscode-foreground) 6%, transparent);
+}
+.cursor-setting-row.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.cursor-setting-label { color: var(--vscode-foreground); }
+.cursor-setting-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--vscode-descriptionForeground);
+  min-width: 0;
+}
+.cursor-setting-value svg { width: 14px; height: 14px; flex: none; opacity: 0.8; }
 .model-name-btn {
   flex-shrink: 1;
   min-width: 0;
-  padding: 3px 5px;
   font-size: 13px;
+}
+.model-picker-search-wrap {
+  padding: 8px 8px 6px;
+  position: sticky;
+  top: 0;
+  background: var(--vscode-editorWidget-background);
+  z-index: 1;
+}
+.model-picker-search {
+  width: 100%;
+  box-sizing: border-box;
+  height: 28px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--vscode-foreground) 8%, transparent);
+  color: var(--vscode-foreground);
+  font: inherit;
+  font-size: 12px;
+  outline: none;
+}
+.model-picker-search::placeholder { color: var(--vscode-descriptionForeground); }
+.model-picker-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+}
+.model-picker-effort {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+}
+.model-picker-row {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+.model-manage-providers {
+  justify-content: center;
+  color: var(--vscode-descriptionForeground);
 }
 
 .effort-dots {
@@ -4707,6 +4937,18 @@ body.session-superseded .msg-edit-btn {
   opacity: 0;
   transition: opacity 0.1s;
 }
+.history-row.is-removing {
+  pointer-events: none;
+  opacity: 0.45;
+  transform: translateX(8px);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+.history-row.is-removing .history-row-actions::after {
+  content: "Deleting…";
+  color: var(--vscode-errorForeground);
+  font-size: 11px;
+  white-space: nowrap;
+}
 .history-row:hover .history-row-actions,
 .history-row.active .history-row-actions { opacity: 1; }
 .history-action-btn {
@@ -4731,6 +4973,140 @@ body.session-superseded .msg-edit-btn {
   border: 1px solid var(--vscode-focusBorder);
   border-radius: 3px;
   outline: none;
+}
+
+/* Chat-first interaction polish. These controls are state surfaces, not
+   generic toolbar pills: the active mode/model uses a quiet accent line, and
+   popovers enter from the control that opened them. */
+#mode-btn[aria-expanded="true"],
+#model-btn[aria-expanded="true"] {
+  background: color-mix(in srgb, var(--vscode-focusBorder) 14%, transparent);
+  color: var(--vscode-foreground);
+}
+.gear-popover.model-picker-menu,
+#mode-popover {
+  animation: chat-popover-in 0.12s ease-out;
+  transform-origin: bottom left;
+}
+@keyframes chat-popover-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.model-picker-search-wrap {
+  padding: 9px 9px 7px;
+  border-bottom: 1px solid var(--vscode-editorWidget-border);
+}
+.model-picker-search {
+  border: 1px solid transparent;
+  background: var(--vscode-input-background, color-mix(in srgb, var(--vscode-foreground) 8%, transparent));
+}
+.model-picker-search:focus {
+  border-color: var(--vscode-focusBorder);
+}
+.model-picker-row {
+  min-height: 42px;
+  border-left: 2px solid transparent;
+  transition: background 0.1s ease, border-color 0.1s ease;
+}
+.model-picker-row.active {
+  border-left-color: var(--vscode-focusBorder);
+}
+.model-picker-row .provider-glyph {
+  width: 18px;
+  height: 18px;
+}
+.mode-popover-item {
+  min-height: 54px;
+  border-left: 2px solid transparent;
+  transition: background 0.1s ease, border-color 0.1s ease;
+}
+.mode-popover-item.active {
+  border-left-color: var(--vscode-focusBorder);
+}
+
+/* Goal/workflow updates are an inline disclosure in the transcript. The row
+   remains visible when collapsed; only secondary detail folds away. */
+.run-progress-card {
+  position: relative;
+  overflow: hidden;
+  transition: background 0.14s ease, border-color 0.14s ease;
+}
+.run-progress-card .run-progress-row {
+  min-height: 24px;
+  cursor: pointer;
+}
+.run-progress-card .run-progress-row::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  opacity: 0.65;
+  transition: transform 0.16s ease;
+}
+.run-progress-card.run-progress-collapsed .run-progress-row::before {
+  transform: rotate(-45deg) translate(-1px, 1px);
+}
+.run-progress-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 0.18s ease, opacity 0.14s ease;
+}
+.run-progress-body > * { min-height: 0; }
+.run-progress-card.run-progress-collapsed .run-progress-body {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+}
+.run-progress-body.run-progress-empty { display: none; }
+.run-progress-card:not(.run-progress-done) .run-progress-badge svg {
+  animation: run-progress-orbit 2.2s linear infinite;
+}
+@keyframes run-progress-orbit { to { transform: rotate(360deg); } }
+
+.plan-notice {
+  animation: chat-inline-reveal 0.16s ease-out;
+}
+.card.plan {
+  animation: chat-inline-reveal 0.18s ease-out;
+  border-left-width: 3px;
+}
+.card.plan .plan-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+}
+.card.plan .plan-toggle::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.14s ease;
+}
+.card.plan .plan-toggle:has(+ .plan-body:not([hidden]))::before {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+@keyframes chat-inline-reveal {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gear-popover.model-picker-menu,
+  #mode-popover,
+  .plan-notice,
+  .card.plan { animation: none; }
+  .run-progress-card,
+  .run-progress-body,
+  .run-progress-card .run-progress-row::before,
+  .card.plan .plan-toggle::before { transition: none; }
+  .run-progress-card:not(.run-progress-done) .run-progress-badge svg { animation: none; }
 }
 
 /* ---- add popover ---- */

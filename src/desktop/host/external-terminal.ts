@@ -3,7 +3,7 @@
  * Interactive CLI actions (login, install, mcp list) must not be silent no-ops.
  */
 import * as path from "node:path";
-import { grokCliNeedsShell } from "../../providers/cli-process";
+import { grokCliNeedsShell } from "../../providers/shared/cli-process";
 
 export type ExternalTerminalPlan =
   | {

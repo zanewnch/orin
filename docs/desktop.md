@@ -214,7 +214,7 @@ Double-click / Start Menu launches need no flags. For scripted smoke tests:
 
 | | Extension | Desktop |
 |---|---|---|
-| Entry | `out/extension.js` | `out/desktop/main.js` |
+| Entry | `out/vscode-extension/extension.js` | `out/desktop/main.js` |
 | Host | VS Code `Host` | Electron `Host` |
 | Package | `.vsix` via `npm run package` | installers via `npm run dist:*` |
 | Store listing | `README.marketplace.md` only | GitHub Releases + root `README.md` |

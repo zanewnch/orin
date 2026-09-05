@@ -76,7 +76,7 @@ describe("source gates — capability at the ownership boundary", () => {
   });
 
   it("VS Code host declares rehydrate capability false and empty install suffix", () => {
-    const src = readFileSync(path.join(root, "src", "vscode-host.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "vscode-extension", "vscode-host.ts"), "utf8");
     expect(src).toMatch(/webviewReloadsUnderLiveSession:\s*false/);
     expect(src).toMatch(/remoteInstallIdSuffix:\s*""/);
     expect(src).toMatch(/canRelocateView:\s*true/);

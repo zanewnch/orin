@@ -125,7 +125,7 @@ if (-not $NoTest) {
 if (git tag --list $tag) { throw "Tag $tag already exists - bump package.json/changelog first." }
 
 # 4. build the vsix that will be attached to the release
-$vsix = "grok-vscode-phuryn-$version.vsix"
+$vsix = "orin-$version.vsix"
 # install.ps1 sets this so a local staging vsix can build. A release must not
 # inherit it from the shell — that is how a staging artifact could ship.
 Remove-Item Env:GROK_ALLOW_STAGING_RELAY_VSIX -ErrorAction SilentlyContinue

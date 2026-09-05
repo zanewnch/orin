@@ -39,6 +39,7 @@ describe("model picker provider marks and manage-providers", () => {
     expect(rows).toHaveLength(1);
     expect(rows[0].querySelector(".provider-glyph.provider-grok")).toBeTruthy();
     expect(rows[0].textContent).toContain("Grok Build");
+    expect(h.doc.querySelector(".model-picker-search")).toBeTruthy();
     expect(h.doc.querySelectorAll(".model-provider-heading")).toHaveLength(0);
   });
 

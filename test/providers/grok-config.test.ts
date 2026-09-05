@@ -9,7 +9,7 @@ import {
   projectConfigPath,
   PROJECT_CONFIG_STUB,
   readUiPermissionMode,
-} from "../../src/providers/grok-config";
+} from "../../src/providers/grok/grok-config";
 
 // A realistic grok config.toml, mirroring the on-disk shape.
 const CONFIG = (permission: string) => `[cli]

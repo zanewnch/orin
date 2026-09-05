@@ -19,7 +19,7 @@ const root = path.resolve(__dirname, "..");
 
 const header = `# Grok Build for VS Code (Community)
 
-[![License: FSL-1.1-MIT](https://img.shields.io/badge/License-FSL--1.1--MIT-blue.svg)](https://github.com/phuryn/grok-build-vscode/blob/main/LICENSE) ![Agents](https://img.shields.io/badge/Agents-Grok%20Build%20%C2%B7%20Codex%20%C2%B7%20Claude%20Code-000000) [![VS Code](https://img.shields.io/badge/VS%20Code-Extension-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com) [![Cursor](https://badgen.net/badge/Cursor/Extension/007ACC)](https://cursor.com) [![The Product Compass](https://img.shields.io/badge/The%20Product%20Compass-productcompass.pm-FF6B35)](https://www.productcompass.pm)
+[![License: FSL-1.1-MIT](https://img.shields.io/badge/License-FSL--1.1--MIT-blue.svg)](https://github.com/zanewnch/orin/blob/main/LICENSE) ![Agents](https://img.shields.io/badge/Agents-Grok%20Build%20%C2%B7%20Codex%20%C2%B7%20Claude%20Code-000000) [![VS Code](https://img.shields.io/badge/VS%20Code-Extension-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com) [![Cursor](https://badgen.net/badge/Cursor/Extension/007ACC)](https://cursor.com)
 
 > **GUI for Grok Build CLI (incl. Grok 4.6)** — not affiliated with or endorsed by SpaceXAI (formerly xAI). *Grok*, *Grok Build*, and *xAI* are trademarks of xAI; this project uses those names only to describe what it's compatible with.
 
@@ -27,9 +27,9 @@ The GUI for **Grok Build CLI** (incl. **Grok 4.6**), right in your editor — wi
 
 No manual setup: the extension **walks you through installing the \`grok\` CLI and signing in** — with a **SuperGrok or X Premium+ subscription**, or an **xAI API key** — right from the sidebar, one click per step.
 
-![Grok Build in the VS Code sidebar, running Grok](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/grok_4.5.png)
+![Orin in the VS Code sidebar, running Grok](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/grok_4.5.png)
 
-![Generated image rendered inline from /imagine](https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/docs/screenshots/imagine.webp)
+![Generated image rendered inline from /imagine](https://raw.githubusercontent.com/zanewnch/orin/main/docs/screenshots/imagine.webp)
 
 ---
 
@@ -51,7 +51,7 @@ const installBlock = `## Install
 
 Grok opens in the **Secondary Side Bar** (right side, next to other AI tools). Prefer it elsewhere? Gear → **Config & debug** → **Move view** relocates it to the Panel or Primary Side Bar in one click.
 
-> Prefer the terminal, building from source, or installing into several IDEs at once? See the project [INSTALL docs](https://github.com/phuryn/grok-build-vscode/blob/main/docs/INSTALL.md).
+> Prefer the terminal, building from source, or installing into several IDEs at once? See the project [INSTALL docs](https://github.com/zanewnch/orin/blob/main/docs/INSTALL.md).
 
 ---
 
@@ -134,15 +134,15 @@ function buildMarketplaceReadme(githubReadme) {
   // Marketplace prefers absolute image/doc URLs (no local repo tree in the store).
   body = body.replace(
     /\((docs\/screenshots\/[^)]+)\)/g,
-    "(https://raw.githubusercontent.com/phuryn/grok-build-vscode/main/$1)",
+    "(https://raw.githubusercontent.com/zanewnch/orin/main/$1)",
   );
   body = body.replace(
     /\]\((docs\/[^)]+)\)/g,
-    "](https://github.com/phuryn/grok-build-vscode/blob/main/$1)",
+    "](https://github.com/zanewnch/orin/blob/main/$1)",
   );
   body = body.replace(
     /\]\(LICENSE\)/g,
-    "](https://github.com/phuryn/grok-build-vscode/blob/main/LICENSE)",
+    "](https://github.com/zanewnch/orin/blob/main/LICENSE)",
   );
 
   // README.md order is Requirements → Install → Quick start → Configuration.

@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AcpClient, type ModelInfo } from "../acp/acp";
-import { CodexBackend, type CodexBackendOptions } from "../acp/codex-backend";
+import { AcpClient, type ModelInfo } from "../../acp/acp";
+import { CodexBackend, type CodexBackendOptions } from "../../acp/codex-backend";
 
 export interface WarmCodexModelCacheOptions {
   cliPath: string;

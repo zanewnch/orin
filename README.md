@@ -1,4 +1,6 @@
-# Grok Build (Community)
+# Orin
+
+> Based on [phuryn/grok-build-vscode](https://github.com/phuryn/grok-build-vscode) by Paweł Huryn, licensed under [FSL-1.1-MIT](LICENSE).
 
 [![License: FSL-1.1-MIT](https://img.shields.io/badge/License-FSL--1.1--MIT-blue.svg)](LICENSE) ![Agents](https://img.shields.io/badge/Agents-Grok%20Build%20%C2%B7%20Codex%20%C2%B7%20Claude%20Code-000000) [![VS Code](https://img.shields.io/badge/VS%20Code-Extension-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com) [![Cursor](https://badgen.net/badge/Cursor/Extension/007ACC)](https://cursor.com) [![Companion](https://img.shields.io/badge/Companion-afkpilot-0E639C)](https://github.com/phuryn/afkpilot) [![The Product Compass](https://img.shields.io/badge/The%20Product%20Compass-productcompass.pm-FF6B35)](https://www.productcompass.pm)
 
@@ -6,7 +8,7 @@
 
 Two ways to use the same agent UI on top of the **Grok Build CLI**:
 
-| | **VS Code extension** | **Grok Build Desktop** |
+| | **VS Code extension** | **Orin Desktop** |
 |---|---|---|
 | **What** | Sidebar chat inside VS Code / Cursor | Standalone Electron app (no editor required) |
 | **Get it** | [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=PawelHuryn.grok-vscode-phuryn) · [Open VSX](https://open-vsx.org/extension/PawelHuryn/grok-vscode-phuryn) | [afkpilot.com/desktop](https://afkpilot.com/desktop) (see [Desktop install](#grok-build-desktop)) |
@@ -208,7 +210,7 @@ The host talks **ACP** (JSON-RPC over stdio), not a Grok-specific protocol, so t
 <details>
 <summary><strong>Reasoning effort</strong> — trade tokens for depth</summary>
 
-Gear → the effort dots next to the model, `none` → `xhigh`. On recent CLIs it applies **live** to the running session; older ones restart, with an optional *Summarize & Restart* that carries context forward.
+Gear → **Effort**, then the advertised levels (`none` → `xhigh`). The composer chip next to Agent shows the current level and opens the searchable model list. On recent CLIs effort applies **live** to the running session; older ones restart, with an optional *Summarize & Restart* that carries context forward.
 
 ![Model and reasoning-effort picker in the gear menu](docs/screenshots/effort.png)
 
@@ -250,7 +252,7 @@ Grok opens in the **Secondary Side Bar** (right side, next to other AI tools). P
 
 > Prefer the terminal, building from source, or installing into several IDEs at once? See **[docs/INSTALL.md](docs/INSTALL.md)**.
 
-### Grok Build Desktop
+### Orin Desktop
 
 Standalone app for **macOS** (Apple Silicon + Intel) and **Windows** (x64). Same agent UI as the extension; no VS Code required.
 
@@ -258,9 +260,9 @@ Standalone app for **macOS** (Apple Silicon + Intel) and **Windows** (x64). Same
 
 | Platform | File |
 |---|---|
-| macOS Apple Silicon | `Grok-Build-Desktop-<version>-mac-arm64.dmg` |
-| macOS Intel | `Grok-Build-Desktop-<version>-mac-x64.dmg` |
-| Windows x64 | `Grok-Build-Desktop-<version>-win-x64.exe` |
+| macOS Apple Silicon | `Orin-Desktop-<version>-mac-arm64.dmg` |
+| macOS Intel | `Orin-Desktop-<version>-mac-x64.dmg` |
+| Windows x64 | `Orin-Desktop-<version>-win-x64.exe` |
 
 (Zip archives are also published for macOS: `…-mac-arm64.zip` / `…-mac-x64.zip`.)
 
@@ -329,18 +331,18 @@ VS Code commands (not Grok slash commands):
 
 | Command | What it does |
 |---|---|
-| `Grok: Open` | Open the Grok sidebar |
-| `Grok: New Session` | Start a fresh session |
-| `Grok: Compact Conversation` | Compact the current session to reclaim context |
-| `Grok: Pick Model` | Open the model picker |
-| `Grok: Toggle Plan / Agent Mode` | Open the mode picker (Agent / Plan / Auto accept) |
-| `Grok: Send File` | Add a file to the composer (right-clicked file, active editor, or a file picker) |
+| `Orin: Open` | Open the Orin sidebar |
+| `Orin: New Session` | Start a fresh session |
+| `Orin: Compact Conversation` | Compact the current session to reclaim context |
+| `Orin: Pick Model` | Open the model picker |
+| `Orin: Toggle Plan / Agent Mode` | Open the mode picker (Agent / Plan / Auto accept) |
+| `Orin: Send File` | Add a file to the composer (right-clicked file, active editor, or a file picker) |
 | `Add Selection to Grok` | Attach the selected lines as a snippet chip in the composer |
-| `Grok: Insert @-Mention` | Insert an `@`-mention for the active file into the composer |
+| `Orin: Insert @-Mention` | Insert an `@`-mention for the active file into the composer |
 | `Grok: Expand All Tool Details (This Session)` | Open every tool group, command IN/OUT box, and edit inline diff, and keep new ones open — this session only |
 | `Grok: Collapse All Tool Details (This Session)` | Collapse them all, and keep new ones collapsed — this session only |
-| `Grok: Show Logs` | Open the Grok output channel (ACP messages, errors) |
-| `Grok: Log Out` | Sign out of the Grok CLI (`grok logout`) and return to the sign-in screen |
+| `Orin: Show Logs` | Open the Orin output channel (ACP messages, errors) |
+| `Orin: Log Out` | Sign out of the Grok CLI (`grok logout`) and return to the sign-in screen |
 
 | Key | Action |
 |---|---|

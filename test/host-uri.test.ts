@@ -172,7 +172,7 @@ describe("closeDiffTabs URI comparison symmetry (regression #2)", () => {
     const hostSrc = readFileSync(path.join(root, "src", "types", "host.ts"), "utf8");
     expect(hostSrc).toMatch(/closeDiffTabs\(\s*original:\s*Uri\s*,\s*modified:\s*Uri\s*\)/);
 
-    const adapter = readFileSync(path.join(root, "src", "vscode-host.ts"), "utf8");
+    const adapter = readFileSync(path.join(root, "src", "vscode-extension", "vscode-host.ts"), "utf8");
     // Both sides must go through toVsCodeUri before .toString() compare.
     // Behavioural proof of the encoder lives in integration/extension.test.ts
     // (real VS Code); this only pins the source contract so a dual-encoder
@@ -208,7 +208,7 @@ describe("asRelativePath takes Uri (remote identity)", () => {
     expect(hostSrc).toMatch(/asRelativePath\(\s*uri:\s*Uri\s*\)/);
     expect(hostSrc).not.toMatch(/asRelativePath\(\s*fsPath:\s*string\s*\)/);
 
-    const adapter = readFileSync(path.join(root, "src", "vscode-host.ts"), "utf8");
+    const adapter = readFileSync(path.join(root, "src", "vscode-extension", "vscode-host.ts"), "utf8");
     const start = adapter.indexOf("asRelativePath(uri");
     expect(start).toBeGreaterThan(-1);
     const body = adapter.slice(start, start + 250);
@@ -272,9 +272,9 @@ describe("typed Host command surface (design #5)", () => {
  */
 describe("URI identity at the Host boundary (remote-safe class fix)", () => {
   const hostSrc = () => readFileSync(path.join(root, "src", "types", "host.ts"), "utf8");
-  const adapter = () => readFileSync(path.join(root, "src", "vscode-host.ts"), "utf8");
+  const adapter = () => readFileSync(path.join(root, "src", "vscode-extension", "vscode-host.ts"), "utf8");
   const sidebar = () => readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8");
-  const extension = () => readFileSync(path.join(root, "src", "extension.ts"), "utf8");
+  const extension = () => readFileSync(path.join(root, "src", "vscode-extension", "extension.ts"), "utf8");
 
   it("HostContext carries extensionUri + globalStorageUri (Uri), not path strings", () => {
     const src = hostSrc();
@@ -428,7 +428,7 @@ describe("isFsPathInWorkspace (platform-aware path containment)", () => {
   });
 
   it("isInWorkspace adapter delegates to isFsPathInWorkspace (no toLowerCase)", () => {
-    const src = readFileSync(path.join(root, "src", "vscode-host.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "vscode-extension", "vscode-host.ts"), "utf8");
     const start = src.indexOf("isInWorkspace(fsPath");
     expect(start).toBeGreaterThan(-1);
     const body = src.slice(start, start + 700);
@@ -455,7 +455,7 @@ describe("untitledTextOpenOptions (View all language passthrough)", () => {
   });
 
   it("vscode-host openUntitledText uses untitledTextOpenOptions and does not default to plaintext", () => {
-    const src = readFileSync(path.join(root, "src", "vscode-host.ts"), "utf8");
+    const src = readFileSync(path.join(root, "src", "vscode-extension", "vscode-host.ts"), "utf8");
     const start = src.indexOf("async openUntitledText");
     expect(start).toBeGreaterThan(-1);
     const body = src.slice(start, start + 400);

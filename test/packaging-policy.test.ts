@@ -21,15 +21,15 @@ describe("marketplace vs GitHub README", () => {
     scripts: Record<string, string>;
   };
 
-  it("GitHub README covers Grok Build Desktop and both hosts", () => {
-    expect(github).toMatch(/Grok Build Desktop/);
+  it("GitHub README covers Orin Desktop and both hosts", () => {
+    expect(github).toMatch(/Orin Desktop/);
     expect(github).toMatch(/VS Code extension/i);
     // Desktop downloads moved from GitHub Releases to the site, which detects
     // the visitor's platform. The assertion follows the download source rather
     // than pinning the old one.
     expect(github).toMatch(/afkpilot\.com\/desktop/);
-    expect(github).toMatch(/Grok-Build-Desktop-<version>-mac-arm64\.dmg/);
-    expect(github).toMatch(/Grok-Build-Desktop-<version>-win-x64\.exe/);
+    expect(github).toMatch(/Orin-Desktop-<version>-mac-arm64\.dmg/);
+    expect(github).toMatch(/Orin-Desktop-<version>-win-x64\.exe/);
   });
 
   // Owner, 2026-08-07: *"the key for me is what people see in marketplaces
@@ -56,7 +56,7 @@ describe("marketplace vs GitHub README", () => {
     // another product is named. "Later in the document" is the only
     // machine-checkable form of "not the headline".
     const firstExtension = marketplace.search(/Grok Build for VS Code \(Community\)/);
-    const firstDesktop = marketplace.search(/Grok Build Desktop/i);
+    const firstDesktop = marketplace.search(/Orin Desktop/i);
     expect(firstExtension).toBeGreaterThanOrEqual(0);
     if (firstDesktop >= 0) {
       expect(firstDesktop).toBeGreaterThan(firstExtension);
@@ -64,7 +64,7 @@ describe("marketplace vs GitHub README", () => {
       // sold, not mentioned.
       expect(firstDesktop).toBeGreaterThan(marketplace.length / 2);
       // A footnote is named a handful of times, not threaded throughout.
-      expect((marketplace.match(/Grok Build Desktop/gi) || []).length).toBeLessThanOrEqual(3);
+      expect((marketplace.match(/Orin Desktop/gi) || []).length).toBeLessThanOrEqual(3);
     }
     // AFK Pilot may be named anywhere — it IS the extension's Remote Control
     // feature, not a separate product being cross-sold.
@@ -312,11 +312,11 @@ describe("VSIX excludes desktop app", () => {
 describe("desktop artifact naming (electron-builder.yml)", () => {
   const yml = read("electron-builder.yml");
 
-  it("uses the stable Grok-Build-Desktop-${version}-${os}-${arch}.${ext} pattern", () => {
+  it("uses the stable Orin-Desktop-${version}-${os}-${arch}.${ext} pattern", () => {
     expect(yml).toMatch(
-      /artifactName:\s*Grok-Build-Desktop-\$\{version\}-\$\{os\}-\$\{arch\}\.\$\{ext\}/,
+      /artifactName:\s*Orin-Desktop-\$\{version\}-\$\{os\}-\$\{arch\}\.\$\{ext\}/,
     );
-    expect(yml).toMatch(/productName:\s*Grok Build Desktop/);
+    expect(yml).toMatch(/productName:\s*Orin Desktop/);
     expect(yml).toMatch(/extraMetadata:[\s\S]*main:\s*out\/desktop\/main\.js/);
     // The telemetry identity must NOT be committed. Nothing in the source
     // tree can tell our build from a fork's — a fork copies every file, and

@@ -2273,7 +2273,7 @@ suite("VS Code host adapter URI surface", () => {
 
   // Compiled extension output (CommonJS) — not recompiled by integration/tsconfig.
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const hostMod = require("../out/vscode-host") as {
+  const hostMod = require("../out/vscode-extension/vscode-host") as {
     createVsCodeHost: (output: vscode.OutputChannel) => {
       asRelativePath(uri: PortableUri): string;
       fs: {

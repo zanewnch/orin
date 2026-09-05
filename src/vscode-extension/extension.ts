@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { GrokSidebar } from "./sidebar";
+import { GrokSidebar } from "../sidebar";
 import { createVsCodeHost, createVsCodeHostContext, fromVsCodeUri, wrapWebviewView } from "./vscode-host";
 import {
   GROK_VIEW_ID,
@@ -15,7 +15,7 @@ import {
   withAttempt,
   type PanelPosition,
   type PlacementRecord,
-} from "./view-move";
+} from "../view-move";
 
 /**
  * Put the chat somewhere this editor will actually show it.

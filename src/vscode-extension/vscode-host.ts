@@ -2,7 +2,7 @@
  * VS Code implementation of the portable {@link Host} interface (and the
  * HostContext / HostWebviewView adapters).
  *
- * Lives in its own module so `host.ts` and `sidebar.ts` stay free of the
+ * Lives under `vscode-extension/` so `host.ts` and `sidebar/` stay free of the
  * `vscode` import — that is the whole point of the seam (a desktop host
  * implements Host without this file existing at all).
  */
@@ -13,7 +13,7 @@ import {
   GLOBAL_CONFIG_STUB,
   projectConfigPath,
   PROJECT_CONFIG_STUB,
-} from "./providers/grok-config";
+} from "../providers/grok/grok-config";
 import type {
   ConfigInspect,
   ConfigTarget,
@@ -38,14 +38,14 @@ import type {
   HostWebview,
   HostWebviewView,
   HostEditorWebview,
-} from "./host";
-import { Uri, isFsPathInWorkspace, untitledTextOpenOptions } from "./host";
+} from "../host";
+import { Uri, isFsPathInWorkspace, untitledTextOpenOptions } from "../host";
 import {
   GROK_CHAT_VIEW_ID,
   hostAcceptedSecondarySideBar,
   SECONDARY_SIDE_BAR_PROBE_KEY,
   type PanelPosition,
-} from "./view-move";
+} from "../view-move";
 
 function toVsCodeTarget(target: ConfigTarget | undefined): vscode.ConfigurationTarget {
   switch (target) {

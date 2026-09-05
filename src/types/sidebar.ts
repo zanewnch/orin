@@ -1,6 +1,6 @@
 import type { AcpProvider } from "../acp/acp-backend";
 import type { HostMsg } from "./protocol-host";
-import type { ProviderHistoryCursor } from "../providers/provider-ui";
+import type { ProviderHistoryCursor } from "../providers/shared/provider-ui";
 import type { RemotePcmIngress } from "../remote/remote-voice";
 import type { Session } from "../session/session";
 import type { PcmVoiceStreamer } from "../voice/voice-streamer";

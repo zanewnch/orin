@@ -9,7 +9,7 @@ import {
   PLAN_MODE_UNVERIFIED_REASON,
   readCliBinaryIdentity,
   type CliVersionCache,
-} from "../../src/providers/cli-locator";
+} from "../../src/providers/shared/cli-locator";
 
 const sidebar = readFileSync(new URL("../../src/sidebar/grok-sidebar.ts", import.meta.url), "utf8");
 const updateStart = sidebar.indexOf("  private async maybeUpdateCliOnUpgrade(");

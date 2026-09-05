@@ -20,7 +20,7 @@ import { GrokSidebar } from "../src/sidebar";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sidebar = fs.readFileSync(path.join(root, "src", "sidebar", "grok-sidebar.ts"), "utf8").replace(/\r\n/g, "\n");
-const modelCache = fs.readFileSync(path.join(root, "src", "providers", "codex-model-cache.ts"), "utf8");
+const modelCache = fs.readFileSync(path.join(root, "src", "providers", "codex", "codex-model-cache.ts"), "utf8");
 
 function methodBody(signature: string): string {
   const start = sidebar.indexOf(signature);

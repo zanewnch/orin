@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import packageManifest from "../../package.json";
-import { grokCliNeedsShell } from "../providers/cli-process";
+import { grokCliNeedsShell } from "../providers/shared/cli-process";
 import type {
   AcpBackend,
   BackendConfigState,

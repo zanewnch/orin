@@ -308,11 +308,11 @@ export function resolveMessageBoxChoice(
 }
 
 /** Public repo linked from the Help menu — this repo only. */
-export const DESKTOP_PUBLIC_REPO_URL = "https://github.com/phuryn/grok-build-vscode";
+export const DESKTOP_PUBLIC_REPO_URL = "https://github.com/zanewnch/orin";
 
-export const DESKTOP_APP_FULL_NAME = "Grok Build Desktop (Community)";
-export const DESKTOP_APP_SHORT_NAME = "Grok Build Desktop";
+export const DESKTOP_APP_FULL_NAME = "Orin Desktop";
+export const DESKTOP_APP_SHORT_NAME = "Orin Desktop";
 
 /** Window title / About. Carries "(Community)" because the window is where a
  *  user actually reads the name, and this is not an xAI product. */
-export const DESKTOP_APP_DISPLAY_NAME = "Grok Build Desktop (Community)";
+export const DESKTOP_APP_DISPLAY_NAME = "Orin Desktop";

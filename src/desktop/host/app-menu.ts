@@ -223,9 +223,39 @@ export function desktopAppMenuTemplate(opts: {
         { role: "selectAll" },
       ],
     },
+    // Keep the same workbench menu groups Cursor exposes on Windows. These
+    // groups are intentionally lightweight in the standalone chat client,
+    // but their presence preserves familiar menu navigation and accelerators.
+    {
+      label: "Selection",
+      submenu: [
+        { role: "selectAll", label: "Select All" },
+      ],
+    },
     {
       label: "View",
       submenu: viewSubmenu,
+    },
+    {
+      label: "Go",
+      submenu: [
+        { label: "Back", enabled: false },
+        { label: "Forward", enabled: false },
+      ],
+    },
+    {
+      label: "Run",
+      submenu: [
+        { label: "Start Debugging", enabled: false },
+        { label: "Run Without Debugging", enabled: false },
+      ],
+    },
+    {
+      label: "Terminal",
+      submenu: [
+        { label: "New Terminal", enabled: false },
+        { label: "Split Terminal", enabled: false },
+      ],
     },
     {
       label: "Help",
